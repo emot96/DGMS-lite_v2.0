@@ -1,0 +1,273 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
+    <title>Customer Name</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+      integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+      crossorigin="anonymous"
+    />
+
+    <link rel="stylesheet" href="{% static './css/navbar.css' %}" />
+    <link rel="stylesheet" href="{% static './css/customer.css' %}" />
+    <link rel="stylesheet" href="{% static './css/footer.css' %}" />
+  </head>
+
+  <body>
+    <!-- Side Vertical Navigation bar-->
+    <nav>
+      <!-- Toogle for responsive nav bar-->
+      <div class="hamburger">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+      </div>
+
+      <!-- side nav -->
+      <div class="sidenav">
+        <div class="img">
+          <img
+            src="{% static './images/emot.png' %}"
+            class="logo"
+            alt="logo_emot"
+          />
+        </div>
+
+        <div class="dropdown-btn">
+          <a href="{% url 'dashboard' %}"
+            ><img
+              src="{% static './images/Dashboard.png' %}"
+              alt="dashboard"
+            />Dashboards</a
+          >
+          <button id="a">+</button>
+        </div>
+
+        <div class="dropdown-container">
+          <div class="sub-link">
+            <a href="{% url 'dashboard' %}">DGMS Dashboard</a>
+          </div>
+          <div class="sub-link"><a href="#">Coming soon</a></div>
+          <div class="sub-link"><a href="#">Coming soon</a></div>
+        </div>
+
+        <div class="active">
+          <a href="{% url 'customerInfo' %}"
+            ><img
+              src="{% static './images/customer.png' %}"
+              alt="customer"
+            />Customer Info</a
+          >
+        </div>
+        <div>
+          <a href="{% url 'update' %}"
+            ><img
+              src="{% static './images/update.png' %}"
+              alt="update"
+            />Update</a
+          >
+        </div>
+      </div>
+    </nav>
+    <!--end side nav-->
+
+    <div class="main">
+      <!-- Upper horizontal nav bar -->
+
+      <nav class="hor_nav">
+        <div class="left">
+          <div class="user_img">
+            <img src="{% static './images/emot.png' %}" alt="user_img" />
+          </div>
+          <div class="name">Admin</div>
+        </div>
+
+        <div class="right">
+          <a href="alert.html" target="_blank"
+            ><div class="notify">
+              <div>
+                <img
+                  src="{% static './images/notification.png' %}"
+                  alt="notifications"
+                />
+              </div>
+              <div class="not-txt">
+                <div class="not-no">{{alert_count}}</div>
+              </div>
+            </div></a
+          >
+          <div class="type">DGMS</div>
+
+          <div onclick="dropFunction()" class="user_name">
+            {{username}} &ensp;
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-caret-down-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
+              />
+            </svg>
+          </div>
+
+          <div id="user-dropdown" class="drop-cont">
+            <div><a href="{% url 'password_change' %}">Change Password</a></div>
+            <hr />
+            <div><a href="{% url 'logoutUser' %}" id="logout">Logout</a></div>
+          </div>
+        </div>
+      </nav>
+      <!-- end horizontal nav -->
+      {% for d in Manager_Detais %}
+      <div class="cont">
+        <div class="row">
+          <div class="cust_name">{{d.Customer_Name }}</div>
+
+          <div class="manager">
+            <div class="manager_head">Manager</div>
+            <hr />
+            <div><span class="mbold">Name : </span>{{d.Manager_Name }}</div>
+            <div>
+              <span class="mbold">Email : </span> {{d.Manager_Email_ID }}
+            </div>
+            <div class="m_contact">
+              <div><span class="mbold">Contact : </span> {{d.Contact_No }}</div>
+              <div><span class="mbold">Mobile : </span> {{d.Mobile_No }}</div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+
+        <div class="user_info">
+          <ul class="top">
+            <li class="head">
+              <div>Users</div>
+              <div class="total">Total : {{Total_User}}</div>
+            </li>
+            <li>
+              <form class="drop_downs">
+                {{myFilter.form}}
+                <button type="submit" class="go">GO</button>
+              </form>
+            </li>
+          </ul>
+
+          <hr class="devider" />
+
+          <div class="user_info_table">
+            <table class="user_table">
+              <tr>
+                <th>S.NO</th>
+                <th>NAME</th>
+                <th>DEVICE ID</th>
+                <th>EMAIL</th>
+                <th>CONTACT</th>
+                <th>CITY</th>
+                <th>STATE</th>
+                <th>COUNTRY</th>
+                <th>PINCODE</th>
+                <th>ADDRESS</th>
+              </tr>
+
+              {% for u in User_details %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{u.User_Name}}</td>
+                <td>{{u.Device_ID}}</td>
+                <td>{{u.Email_ID}}</td>
+                <td>{{u.Contact1}}</td>
+                <td>{{u.City}}</td>
+                <td>{{u.State}}</td>
+                <td>{{u.Country}}</td>
+                <td>{{u.Pincode}}</td>
+                <td>{{u.Address}}</td>
+              </tr>
+              {% endfor %}
+            </table>
+          </div>
+          <!-- class ="user_info_table" ends here -->
+        </div>
+        <!-- class ="user_info" ends here -->
+      </div>
+      <!-- class ="cont" ends here -->
+
+      <div class="footer">
+        <div class="footer-content">
+          <div>© 2021 eMoT. All Rights Reserved.</div>
+
+          <div class="web-links">
+            <div>
+              <a href="https://www.emot.co.in/about-us/" target="_blank"
+                >About us</a
+              >
+            </div>
+            <div>
+              <a href="https://www.emot.co.in/contact/" target="_blank"
+                >Contact us</a
+              >
+            </div>
+            <div>
+              <a href="https://www.emot.co.in/emot/" target="_blank"
+                >eMoT IoT</a
+              >
+            </div>
+          </div>
+
+          <div class="social-media">
+            <a href="https://www.facebook.com/emot.co.in/" target="_blank"
+              ><img
+                src="{% static './images/facebook.png' %}"
+                alt="facebook"
+                title="facebook"
+            /></a>
+            <a href="https://twitter.com/Emot86007134" target="_blank"
+              ><img
+                src="{% static './images/twitter.png' %}"
+                alt="twitter"
+                title="twitter"
+            /></a>
+            <a
+              href="https://www.linkedin.com/company/emot-elekron/"
+              target="_blank"
+              ><img
+                src="{% static './images/linkedin.png' %}"
+                alt="linkedin"
+                title="linkedin"
+            /></a>
+            <a href="https://www.instagram.com/elekronemot/" target="_blank"
+              ><img
+                src="{% static './images/instagram.png' %}"
+                alt="instagram"
+                title="instagram"
+            /></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--class="main" ends here-->
+
+    <!-- js -->
+
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+      crossorigin="anonymous"
+    ></script>
+
+    <script type="text/javascript" src="{% static './js/navbar.js' %}"></script>
+  </body>
+</html>

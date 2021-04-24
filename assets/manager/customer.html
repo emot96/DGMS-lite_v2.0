@@ -1,0 +1,249 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
+    <title>Customer Name</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+      integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+      crossorigin="anonymous"
+    />
+
+    <link rel="stylesheet" href="{% static './css/navbar.css' %}" />
+    <link rel="stylesheet" href="{% static './css/customer.css' %}" />
+  </head>
+
+  <body>
+    <!-- Side Vertical Navigation bar-->
+    <nav>
+      <!-- Toogle for responsive nav bar-->
+      <div class="hamburger">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+      </div>
+
+      <!-- side nav -->
+      <div class="sidenav">
+        <div class="img">
+          <img
+            src="{% static './images/logo.png' %}"
+            class="logo"
+            alt="logo_emot"
+          /><img
+            src="{% static './images/logo1.png' %}"
+            class="logo1"
+            alt="logo_emot"
+          />
+        </div>
+
+        <div class="dropdown-btn active">
+          <a href="{% url 'dashboard' %}"
+            ><img
+              src="{% static './images/Dashboard.png' %}"
+              alt="dashboard"
+            />Dashboards</a
+          >
+          <button id="a">+</button>
+        </div>
+
+        <div class="dropdown-container">
+          <div class="sub-link active">
+            <a href="{% url 'dashboard' %}">DGMS Dashboard</a>
+          </div>
+          <div class="sub-link"><a href="#">Coming soon</a></div>
+          <div class="sub-link"><a href="#">Coming soon</a></div>
+        </div>
+
+        <div>
+          <a href="{% url 'addCustomer' %}"
+            ><img src="{% static './images/customer.png' %}" alt="customer" />
+            Add Customer</a
+          >
+        </div>
+        <div>
+          <a href="{% url 'assetInfo' %}"
+            ><img src="{% static './images/device.png' %}" alt="asset" /> Add
+            Asset</a
+          >
+        </div>
+        <div>
+          <a href="{% url 'update' %}"
+            ><img src="{% static './images/update.png' %}" alt="update" />
+            update</a
+          >
+        </div>
+        <div>
+          <a href="{% url 'setAlert' %}"
+            ><img src="{% static './images/alert.png' %}" alt="setAlert" /> Set
+            Alert</a
+          >
+        </div>
+      </div>
+    </nav>
+    <!--end side nav-->
+
+    <div class="main">
+      <!-- Upper horizontal nav bar -->
+
+      <nav class="hor_nav">
+        <div class="name">Admin</div>
+
+        <div class="right">
+          <div class="notify">
+            <img
+              src="{% static './images/notification.png' %}"
+              alt="notifications"
+            />
+          </div>
+          <div class="type">DGMS</div>
+
+          <div class="user_img">
+            <img src="{% static './images/user.png' %}" alt="user_img" />
+          </div>
+
+          <div onclick="dropFunction()" class="user_name">
+            {{username}} &ensp;
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-caret-down-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
+              />
+            </svg>
+          </div>
+
+          <div id="user-dropdown" class="drop-cont">
+            <div><a href="{% url 'password_change' %}">Change Password</a></div>
+            <hr />
+            <div><a href="{% url 'logoutUser' %}" id="logout">Logout</a></div>
+          </div>
+        </div>
+      </nav>
+      <!-- end horizontal nav -->
+      {% for d in Manager_Detais %}
+      <div class="cont">
+        <div class="row">
+          <div class="cust_name">{{d.Customer_Name }}</div>
+
+          <div class="manager">
+            <div class="manager_head">Manager</div>
+            <hr />
+            <div><span class="mbold">Name : </span> {{d.Manager_Name }}</div>
+            <div>
+              <span class="mbold">Email : </span>{{d.Manager_Email_ID }}
+            </div>
+            <div class="m_contact">
+              <div><span class="mbold">Contact : </span>{{d.Contact_No }}</div>
+              <div><span class="mbold">Mobile : </span> {{d.Mobile_No }}</div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+
+        <div class="user_info">
+          <ul class="top">
+            <li class="head">
+              <div>Users</div>
+              <div class="total">Total : {{Total_User}}</div>
+            </li>
+            <li>
+              <form class="drop_downs">
+                {{myFilter.form}}
+                <!-- <select name="current_status">
+                  <option value="" selected disabled hidden>Country</option>
+                  <option>India</option>
+                </select>
+
+                <select name="state">
+                  <option value="" selected disabled hidden>state</option>
+                  <option value="Bangalore">Karnataka</option>
+                  <option value="Hyderabad">Uttar Pradesh</option>
+                </select>
+
+                <select name="location">
+                  <option value="" selected disabled hidden>City</option>
+                  <option value="Bangalore">Bangalore</option>
+                  <option value="Hyderabad">Hyderabad</option>
+                </select>
+
+                <select name="attribute">
+                  <option value="" selected disabled hidden>User</option>
+                  <option>Ravi Singh</option>
+                </select>
+
+                <select name="attribute">
+                  <option value="" selected disabled hidden>Device ID</option>
+                  <option>Device ID</option>
+                </select> -->
+                <button class="go">GO</button>
+              </form>
+            </li>
+          </ul>
+
+          <hr class="devider" />
+
+          <div class="user_info_table">
+            <table class="user_table">
+              <tr>
+                <th>S.NO</th>
+                <th>NAME</th>
+                <th>DEVICE ID</th>
+                <th>EMAIL</th>
+                <th>CONTACT</th>
+                <th>CITY</th>
+                <th>STATE</th>
+                <th>COUNTRY</th>
+                <th>PINCODE</th>
+                <th>ADDRESS</th>
+              </tr>
+
+              {% for u in User_details %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{u.User_Name}}</td>
+                <td>{{u.Device_ID}}</td>
+                <td>{{u.Email_ID}}</td>
+                <td>{{u.Contact1}}</td>
+                <td>{{u.City}}</td>
+                <td>{{u.State}}</td>
+                <td>{{u.Country}}</td>
+                <td>{{u.Pincode}}</td>
+                <td>{{u.Address}}</td>
+              </tr>
+              {% endfor %}
+            </table>
+          </div>
+          <!-- class ="user_info_table" ends here -->
+        </div>
+        <!-- class ="user_info" ends here -->
+      </div>
+      <!-- class ="cont" ends here -->
+    </div>
+    <!--class="main" ends here-->
+
+    <!-- js -->
+
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+      crossorigin="anonymous"
+    ></script>
+
+    <script type="text/javascript" src="{% static './js/navbar.js' %}"></script>
+  </body>
+</html>

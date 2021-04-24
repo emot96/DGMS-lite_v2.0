@@ -1,0 +1,602 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
+    <meta http-equiv="refresh" content="60" />
+    <title>{{Loc}}</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+      integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+      crossorigin="anonymous"
+    />
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+    <link rel="stylesheet" href="{% static './css/navbar.css' %}" />
+    <link rel="stylesheet" href="{% static './css/dgmsInfo.css' %}" />
+    <link rel="stylesheet" href="{% static './css/internal_nav.css' %}" />
+    <link rel="stylesheet" href="{% static './css/dgmsDashboard.css' %}" />
+    <link rel="stylesheet" href="{% static './css/chart.css' %}" />
+    <link rel="stylesheet" href="{% static './css/footer.css' %}" />
+  </head>
+
+  <body>
+    <!-- Side Vertical Navigation bar-->
+    <nav>
+      <!-- Toogle for responsive nav bar-->
+      <div class="hamburger">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+      </div>
+
+      <!-- side nav -->
+      <div class="sidenav">
+        <div class="img">
+          <img
+            src="{% static './images/emot.png' %}"
+            class="logo"
+            alt="logo_emot"
+          />
+        </div>
+
+        <div class="dropdown-btn active">
+          <a href="{% url 'dashboard' %}"
+            ><img
+              src="{% static './images/Dashboard.png' %}"
+              alt="dashboard"
+            />Dashboards</a
+          >
+          <button id="a">+</button>
+        </div>
+
+        <div class="dropdown-container">
+          <div class="sub-link active">
+            <a href="{% url 'dashboard' %}">DGMS Dashboard</a>
+          </div>
+          <div class="sub-link"><a href="#">Coming soon</a></div>
+          <div class="sub-link"><a href="#">Coming soon</a></div>
+        </div>
+      </div>
+    </nav>
+    <!--end side nav-->
+
+    <div class="main">
+      <!-- Upper horizontal nav bar -->
+
+      <nav class="hor_nav">
+        <div class="left">
+          <div class="user_img">
+            <img src="{% static './images/ccd.png' %}" alt="user_img" />
+          </div>
+          <div class="name">{{Customer_Name}}</div>
+        </div>
+       {% if request.user.is_user == True %}
+        <div class="right">
+          <a href="{% url 'device_alert' device_id  %}" target="_blank"
+            ><div class="notify">
+              <div>
+                <img
+                  src="{% static './images/notification.png' %}"
+                  alt="notifications"
+                />
+              </div>
+              <div class="not-txt">
+                <div class="not-no">{{alert_count}}</div>
+              </div>
+            </div></a
+          >
+          {% else %}
+          <div class="right">
+            <a href="{% url 'alert'  %}" target="_blank"
+              ><div class="notify">
+                <div>
+                  <img
+                    src="{% static './images/notification.png' %}"
+                    alt="notifications"
+                  />
+                </div>
+                <div class="not-txt">
+                  <div class="not-no">{{alert_count}}</div>
+                </div>
+              </div></a
+            >
+            {% endif %}
+          <div class="type">DGMS</div>
+
+          <div onclick="dropFunction()" class="user_name">
+            {{username}} &ensp;
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-caret-down-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
+              />
+            </svg>
+          </div>
+
+          <div id="user-dropdown" class="drop-cont">
+            <div><a href="{% url 'password_change' %}">Change Password</a></div>
+            <hr />
+            <div><a href="{% url 'logoutUser' %}" id="logout">Logout</a></div>
+          </div>
+        </div>
+      </nav>
+      <!-- end horizontal nav -->
+
+      <div class="dg_info">
+        <div class="b"></div>
+        <div class="row">
+          <div class="dg_info_dev">
+            <div class="flex_cont">
+              <div class="asset_name">{{Cit}}-{{Loc}}</div>
+              <div class="weather-img">
+                <img src="http://openweathermap.org/img/w/{{icon}}.png" />
+              </div>
+              <div class="weather">{{temperature}} &deg; C</div>
+              <div class="kva">{{Rat}} kVA</div>
+              {% if Star == 1 %}
+              <div class="star">
+                <img src="{% static './images/star1.png' %}" />
+              </div>
+              {% elif Star == 2 %}
+              <div class="star">
+                <img src="{% static './images/star2.png' %}" />
+              </div>
+              {% elif Star == 3 %}
+              <div class="star">
+                <img src="{% static './images/star3.png' %}" />
+              </div>
+              {% elif Star == 4 %}
+              <div class="star">
+                <img src="{% static './images/star4.png' %}" />
+              </div>
+              {% else %}
+              <div class="star">
+                <img src="{% static './images/star5.png' %}" />
+              </div>
+              {% endif %}
+            </div>
+            <!-- </div> -->
+            <div class="inst_dgms">DGMS Installation Date: {{DDOI}}</div>
+          </div>
+
+          <div class="dg_info_status">
+            {% if Stat == 'ON' %}
+            <div class="status" id="dg_on">ON</div>
+            {% else %}
+            <div class="status" id="dg_off">OFF</div>
+            {% endif %}
+            <div>{{diff}}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cont">
+        <div class="internal_nav">
+          <div class="row">
+            <div class="active_link">
+              <p><a href="{% url 'dgmsDashboard' device_id %}">Dashboard</a></p>
+            </div>
+            <!-- <div class="active_link" ><p><a href="kpi.html">KPI</a></p></div> -->
+
+            <div class="drop_asset">
+              <p>KPI</p>
+
+              <div class="drop-down">
+                <div>
+                  <a href="{% url 'energyPara' device_id %}"
+                    >Energy Parameters</a
+                  >
+                </div>
+                <hr />
+                <div>
+                  <a href="{% url 'loadKPI' device_id %}">Load Side KPI</a>
+                </div>
+                <hr />
+                <div>
+                  <a href="{% url 'enginePara' device_id %}"
+                    >Engine Parameters</a
+                  >
+                </div>
+                <hr />
+                <div>
+                  <a href="{% url 'performanceKPI' device_id %}"
+                    >Performance based KPI</a
+                  >
+                </div>
+                <hr />
+                <div>
+                  <a href="{% url 'deviceInfoKPI' device_id %}"
+                    >DGMS Device Info</a
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="drop_asset">
+              <p>Asset Information</p>
+
+              <div class="drop-down">
+                <div>
+                  <a href="{% url 'asset' device_id  %}">Asset Detail</a>
+                </div>
+                <hr />
+                <div>
+                  <a href="{% url 'servicehistory' device_id  %}"
+                    >Service History</a
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="drop_asset">
+              <p>Reports</p>
+
+              <div class="drop-down">
+                <div>
+                  <a href="{% url 'fuel_report' device_id  %}"
+                    >Fuel filled report</a
+                  >
+                </div>
+                <hr />
+                <div>
+                  <a href="{% url 'operational_report' device_id  %}"
+                    >Operational report</a
+                  >
+                </div>
+                <hr />
+                <div>
+                  <a href="{% url 'performance_report' device_id  %}"
+                    >Performance report</a
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <p><a href="{% url 'device_alert' device_id  %}">Alerts</a></p>
+            </div>
+          </div>
+        </div>
+        <!-- class ="internal_nav" ends here -->
+
+        <div class="dashboard">
+          <div class="row">
+            <div class="left_side">
+              <div class="three">
+                <div class="row">
+                  <div class="container">
+                    <div class="heading">Run Hour</div>
+                    <img src="{% static './images/running.png' %}" alt="run" />
+                    <div class="value">{{hh}}</div>
+                  </div>
+
+                  <div class="container">
+                    <div class="heading">Unit Generated</div>
+                    <img
+                      src="{% static './images/energy.png' %}"
+                      alt="energy"
+                    />
+                    <div class="value">{{UG}} kWh</div>
+                  </div>
+
+                  <div class="container">
+                    <div class="heading">Carbon Footprint</div>
+                    <img
+                      src="{% static './images/footprint.png' %}"
+                      alt="footprint"
+                    />
+                    <div class="value">{{Carbon_Foot_Print}} kg</div>
+                  </div>
+                </div>
+              </div>
+              <!-- class ="three" ends here -->
+
+              <div class="three">
+                <div class="row">
+                  <div class="container">
+                    <div class="heading">Average Fuel Consumption</div>
+                    <img
+                      src="{% static './images/gas-station.png' %}"
+                      alt="battery"
+                    />
+                    <div class="value">{{AvgFC}} L/Hr</div>
+                  </div>
+
+                  <div class="container">
+                    <div class="heading">Average Load</div>
+                    <img
+                      src="{% static './images/law-scale.png' %}"
+                      alt="battery"
+                    />
+                    <div class="value">{{Energy_OA}} %</div>
+                  </div>
+
+                  <div class="container">
+                    <div class="heading">Peak Load</div>
+                    <img
+                      src="{% static './images/trend.png' %}"
+                      alt="battery"
+                    />
+                    <div class="value">{{MaxDLoad}} kVA</div>
+                  </div>
+                </div>
+              </div>
+              <!-- class ="three" ends here -->
+
+              <div class="three">
+                <div class="row">
+                  <div class="container">
+                    <div class="heading">Room Temp.</div>
+                    <img
+                      src="{% static './images/thermometer.png' %}"
+                      alt="run"
+                    />
+                    <div class="value">{{RT}}</div>
+                  </div>
+
+                  <div class="container">
+                    <div class="heading">Run Count</div>
+                    <img
+                      src="{% static './images/pedometer.png' %}"
+                      alt="run"
+                    />
+                    <div class="value">{{DeviceC}}</div>
+                  </div>
+
+                  <div class="container">
+                    <div class="heading">Battery Voltage</div>
+                    <img
+                      src="{% static './images/lighting.png' %}"
+                      alt="battery"
+                    />
+                    <div class="value">{{BV}} V DC</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- class ="left_side" ends here -->
+
+            <div class="right_side">
+              <div class="fuel_info">
+                <div class="fuel_nav">
+                  <div class="nav_text">Fuel Info</div>
+                </div>
+
+                <div class="fuel_body">
+                  <span class="bold">Available Fuel:</span> {{Fuel2}} L
+                </div>
+                <div class="fuel_body">
+                  <span class="bold">Fuel Percentage:</span> {{Fuel_Per}} %
+                </div>
+                <div class="fuel_body">
+                  <span class="bold">Fuel Tank Size:</span> {{Tank_Size}} L
+                </div>
+              </div>
+              <!-- class ="fuel_info" ends here -->
+
+              <div class="asset_info">
+                <div class="asset_nav">
+                  <div class="nav_text">Asset info</div>
+                </div>
+
+                <div class="asset_body">
+                  <span class="bold">Date of Installation:</span> {{DOI}}
+                </div>
+                <div class="asset_body">
+                  <span class="bold">Warranty Status:</span> {{WS}}
+                </div>
+                <div class="asset_body">
+                  <span class="bold">Last Service Date:</span> {{LSD}}
+                </div>
+                <div class="asset_body">
+                  <span class="bold">Next Service Date:</span> {{NSD}}
+                </div>
+                <div class="asset_body">
+                  <span class="bold">Service Provider:</span> {{SP}}
+                </div>
+              </div>
+              <!-- class ="asset_info" ends here -->
+            </div>
+            <!-- class ="right_side" ends here -->
+          </div>
+          <!-- class ="row" ends here -->
+
+          <div class="graphs-dg">
+            <div class="one-graph">
+              <!-- <div class="graph_nav">
+        GSM Signal
+      </div> -->
+              <canvas id="diesel_level"></canvas>
+              <script>
+                var ctx = document.getElementById('diesel_level').getContext('2d');
+                var myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                        datasets: [{
+                            label: 'Diesel Level',
+                            // fill: false,
+                            data: [{% for f in Fuel1 %} {{f}}, {% endfor %}],
+                            backgroundColor: "rgba(190, 144, 212,0.4)",
+                            borderColor: "rgba(190, 144, 212,0.5)",
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Diesel Level',
+                            fill: false,
+                            type: 'line',
+                            data: [{% for f in Fuel1 %} {{f}}, {% endfor %}],
+                            borderColor:'rgba(155, 89, 182, 1)',
+                            borderWidth: 2
+                        },
+                        // {
+                        //     label: 'min diesel level',
+                        //     type: 'line',
+                        //     fill: false,
+                        //     data: [1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1],
+                        //     // backgroundColor: [
+                        //     //     'rgba(255, 255, 255, 0.4)'
+
+                        //     // ],
+                        //     borderColor: [
+                        //         'rgba(238, 238, 0, 1)'
+
+                        //     ],
+                        //     borderWidth: 2
+                        // },{
+                        //     label: 'max diesel level',
+                        //     type: 'line',
+                        //     fill: false,
+                        //     data: [12, 12, 12, 12, 12, 12, 12,12, 12, 12, 12, 12, 12, 12],
+                        //     // backgroundColor: [
+                        //     //     'rgba(255, 255, 255, 0.4)'
+
+                        //     // ],
+                        //     borderColor: [
+                        //         'rgba(240, 52, 52, 1)'
+
+                        //     ],
+                        //     borderWidth: 2
+                        // }
+                    ]
+                    },
+
+
+                    options: {
+
+                      legend: {
+
+                                labels: {
+                                    fontColor: "black",
+                                    fontSize: 13,
+                                    display: false
+                                }
+                            },
+
+                        scales: {
+                            yAxes: [{
+                                gridLines: {
+                                    color: "rgba(0,0,0,0.3)",
+                                },
+                                ticks: {
+                                    fontColor: "black",
+                                    beginAtZero: true,
+                                    fontSize: 17
+                                }
+                            }],
+
+                            xAxes: [{
+                                gridLines: {
+                                    color: "rgba(0,0,0,0.3)",
+                                },
+                                ticks: {
+                                  autoSkip: true,
+                                  maxTicksLimit: 12,
+                                  fontColor: "black",
+                                  fontSize: 17,
+                                  maxRotation: 0,
+                                }
+                            }]
+                        },
+
+                            title: {
+                                display: true,
+                                text: 'Diesel Level',
+                                fontSize: 17,
+                                fontColor: "balck",
+                                fontFamily: "Helvetica"
+                            }
+                    }
+                });
+              </script>
+            </div>
+          </div>
+          <!-- class ="kpi-graphs" ends here -->
+        </div>
+        <!-- class ="dashboard" ends here -->
+      </div>
+      <!-- class ="cont" ends here -->
+
+      <div class="footer">
+        <div class="footer-content">
+          <div>© 2021 eMoT. All Rights Reserved.</div>
+
+          <div class="web-links">
+            <div>
+              <a href="https://www.emot.co.in/about-us/" target="_blank"
+                >About us</a
+              >
+            </div>
+            <div>
+              <a href="https://www.emot.co.in/contact/" target="_blank"
+                >Contact us</a
+              >
+            </div>
+            <div>
+              <a href="https://www.emot.co.in/emot/" target="_blank"
+                >eMoT IoT</a
+              >
+            </div>
+          </div>
+
+          <div class="social-media">
+            <a href="https://www.facebook.com/emot.co.in/" target="_blank"
+              ><img
+                src="{% static './images/facebook.png' %}"
+                alt="facebook"
+                title="facebook"
+            /></a>
+            <a href="https://twitter.com/Emot86007134' %}" target="_blank"
+              ><img
+                src="{% static './images/twitter.png' %}"
+                alt="twitter"
+                title="twitter"
+            /></a>
+            <a
+              href="https://www.linkedin.com/company/emot-elekron/"
+              target="_blank"
+              ><img
+                src="{% static './images/linkedin.png' %}"
+                alt="linkedin"
+                title="linkedin"
+            /></a>
+            <a href="https://www.instagram.com/elekronemot/" target="_blank"
+              ><img
+                src="{% static './images/instagram.png' %}"
+                alt="instagram"
+                title="instagram"
+            /></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--class="main" ends here-->
+
+    <!-- js -->
+
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+      crossorigin="anonymous"
+    ></script>
+
+    <script type="text/javascript" src="{% static './js/navbar.js' %}"></script>
+    <!-- <script type="text/javascript" src="../js/dgmsDashboard.js"></script> -->
+  </body>
+</html>

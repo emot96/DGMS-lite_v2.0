@@ -1,0 +1,33 @@
+{% load static %} {% static "images" as baseUrl %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Welcome to eMoT DGMS</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link rel="stylesheet" href="{% static './css/index.css' %}" />
+  </head>
+
+  <body>
+    <div class="content">
+      <img src="{% static './images/emot.png' %}" id="logo" alt="eMoT_logo" />
+      <br /><br /><br />
+      <span id="text1">WELCOME</span> <br />
+      <br />
+      <span id="text2">
+        to <span style="color: red">e</span
+        ><span style="color: #094b91">MoT</span> DGMS
+      </span>
+      <br />
+      
+<!--button to go to login page-->
+<button onclick="location.href='login'"> <span id="text3"> LOG IN </span></button>
+
+      </button>
+      <br />
+    </div>
+  </body>
+</html>

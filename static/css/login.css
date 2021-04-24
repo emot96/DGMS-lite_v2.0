@@ -1,0 +1,237 @@
+@import url('https://fonts.googleapis.com/css2?family=Philosopher:wght@700&display=swap');
+
+
+body{
+
+background: url('../images/back.png') no-repeat center center fixed;
+-webkit-background-size: cover;
+-moz-background-size: cover;
+-o-background-size: cover;
+ background-size: cover;
+ background-attachment: fixed;
+
+}
+
+
+#content{
+top: 53%;
+left: 67%;
+-ms-transform: translateY(-50%);
+transform: translateY(-50%);
+position: absolute;
+}
+
+#login{
+
+height: 500px;
+width: 400px;
+background: #F2F3F4;  
+margin-bottom: 40px;
+border: 0px solid #3BD330;
+border-radius: 5px;
+box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+
+}
+
+#login:hover{
+box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+
+}
+
+img{
+
+	height: 70px;
+	width:  60px;
+	padding-top: 10px;
+	margin: 0px;
+	
+}
+
+/* CSS for 'emot-elekron' text */
+
+#text1{
+color: #1B2631;
+font-family: 'Philosopher', sans-serif;
+font-size: 20px;
+padding-top: 10px;
+margin: 0px;
+}
+
+/* CSS for 'Login' text */
+#text2{
+ padding-top: 12px;
+ margin: 0px;
+ font-family: Helvetica, sans-serif;
+ font-size: 25px;
+ font-weight: normal;
+ color: #0F792A;
+}
+
+/* CSS for input fields */
+
+input{
+  width: 90%;
+  padding: 12px 20px;
+  margin: 15px 0;
+  display: inline-block;
+  border: 1px solid #3BD330;
+  border-radius: 5px;
+  box-sizing: border-box; 
+}
+
+input:hover{
+
+	 cursor: pointer;
+	 border: 1px solid #0F792A;
+     box-shadow: 0px 0px 0px 0.5px #0F792A inset;
+}
+
+
+
+
+p{
+	font-family: Helvetica, sans-serif;
+}
+
+
+a{
+	color: #0F792A;
+}
+
+
+/* Login button and animations*/
+
+button{
+cursor: pointer;
+height: 40px;
+width: 100px;
+outline:none;
+display: inline-block;
+border: none;
+box-shadow: 1px 2px #928D8C;
+margin-bottom: 50px;
+margin-top: 15px;
+}
+
+
+button:active{
+box-shadow: none;
+}
+
+
+
+button[name=login]{
+background-color: #3DE79E;
+margin-right: 10px;
+}
+
+button[name=login]:hover{
+background-color: #1AE48D;
+}
+
+
+
+
+
+
+/*----------------------------------------- Media Queries ----------------------------------*/
+
+
+@media (min-width: 50px) and (max-width: 450px){
+  
+body{
+
+	background: url('../images/back1.png') no-repeat center center fixed;
+-webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  background-attachment: fixed;
+
+}
+
+#content{
+	position: absolute;
+	left: 50%;
+	top: 10%;
+	width: 50%;
+	height:50%;
+	transform: translate(-0%) translate(-50%);
+}
+
+#login{
+
+height: 500px;
+width: 300px;
+}
+
+}
+
+@media (min-width: 481px) and (max-width: 768px){  
+
+body{
+
+background: url('../images/back1.png') no-repeat center center fixed;
+-webkit-background-size: cover;
+-moz-background-size: cover;
+-o-background-size: cover;
+ background-size: cover;
+ background-attachment: fixed;
+
+}
+
+#content{
+	position: absolute;
+	left: 50%;
+	top: 20%;
+	width: 50%;
+	height:50%;
+	transform: translate(-0%) translate(-50%);
+}
+
+#login{
+
+height: 500px;
+width: 400px;
+
+
+}
+
+}
+
+
+@media (min-width: 769px) and (max-width: 1200px){  
+
+body{
+
+	background: url('../images/back1.png') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  background-attachment: fixed;
+
+}
+
+#content{
+	position: absolute;
+	left: 50%;
+	top: 20%;
+	width: 50%;
+	height:50%;
+	transform: translate(-0%) translate(-50%);
+}
+
+#login{
+
+height: 500px;
+width: 400px;
+
+}
+
+}
+
+
+
+
+

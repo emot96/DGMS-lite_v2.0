@@ -1,0 +1,63 @@
+canvas#diesel_level{
+    /* background-color: rgb(52, 29, 83); */
+    width:100%!important;
+    height:75vh !important;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgb(198, 198, 198);
+  }
+
+  /* canvas#max_load{
+    background-color: rgb(255, 255, 255);
+    width:100%!important;
+    height:53.5vh !important;
+    margin: 25px 0px 15px 0px;
+  } */
+
+  canvas#run_count,#gsm,#gt_battery,#vln_avg,#avg_voltage,#freq,#rpm,#watts_load,#avg_cur,#cur_rby,#diesel_level1,#dg_battery,#energy_op,#run_hr,#unit_gen,#load_ef,#peak_load,#carbon{
+    background-color: rgb(81, 81, 81);
+    width:100%!important;
+    height:75vh !important;
+    margin: 13px 0px 15px 0px;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgb(198, 198, 198);
+  }
+
+
+
+  
+  /* canvas#gsm{
+     background-color: rgb(4, 2, 54);
+  }
+
+  canvas#gt_battery{
+    background-color: #1C2833;
+ }
+
+ canvas#diesel_level1{
+ 
+  background-color: rgb(52, 29, 83);
+}
+
+canvas#dg_battery{
+  background-color: rgb(4, 37, 58);
+}
+
+canvas#rpm{
+  background-color:  rgb(3, 56, 24);
+}
+
+canvas#cur_rby{
+  background-color: #ffffff;
+}
+
+canvas#energy_op{
+  background-color: #7B7D7D ;
+}
+
+canvas#run_hr{
+  background-color: rgb(255, 255, 255);
+} */

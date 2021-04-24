@@ -1,0 +1,127 @@
+@import url("fonts.css");
+
+
+.asset_detail{
+    background-color: #C2EDFD;
+    min-height: 70vh;
+    margin: 90px 20px 20px 20px ;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.asset_img img{
+
+    height: 250px;
+    width: 270px;
+    position:absolute; 
+    top:33%; 
+    left:40%; 
+    border:none;
+    box-shadow: rgba(0, 0, 0, 1) 0px 3px 3px 0px;
+}
+
+.asset_info{
+
+    display: flex;
+    gap: 10px;
+    padding: 30px;
+    font-size: 25px;
+}
+
+.download_info img{
+    height: 15px;
+    width: 15px;
+    cursor: pointer;
+}
+
+
+.inside-asset{
+   margin: 120px 20px 20px 20px;
+}
+
+
+.inside_lower{
+	background-color: white;
+	margin-bottom: 15px;
+	box-shadow: 0 5px 6px -6px black;
+	width: 100%;
+	overflow-x:auto;
+	white-space: nowrap;
+}
+
+
+.inside_div{
+	display: flex;
+	padding : 10px;
+	
+}
+
+.inside_div1{
+	padding : 10px;
+	
+	
+}
+
+.inside_div2{
+	display: flex;
+	
+}
+
+.attribute, .vertical_line, .info{
+	margin-right: 20px;
+
+}
+
+.attribute{
+	color: #094A8B;
+	font-size: 15px;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+.attribute1{
+	color: #76760A;
+	font-size: 15px;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+
+.vertical_line{
+	height: 22px;
+	width: 0.5px;
+	background-color: #BFBFBF;
+}
+
+.info{
+	font-size: 15px;
+	text-align: center;
+}
+
+.dev1{
+	margin-top: 5px;
+	margin-bottom: 5px;
+	width: 100%;
+}
+
+
+.dev2{
+	margin-top: 0px;
+	margin-bottom: 5px;
+	width: 100%;
+}  
+
+
+@media screen and (max-width: 600px){
+  
+	
+.asset_img img{
+
+    height: 150px;
+    width: 130px;
+	top:30%; 
+    left:60%; 
+    
+}
+	
+
+}

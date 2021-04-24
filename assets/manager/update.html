@@ -1,0 +1,287 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
+    <title>Update</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+      integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+      crossorigin="anonymous"
+    />
+
+    <link rel="stylesheet" href="{% static './css/navbar.css' %}" />
+    <link rel="stylesheet" href="{% static './css/addCustomer.css' %}" />
+    <link rel="stylesheet" href="{% static './css/footer.css' %}" />
+    <link rel="stylesheet" href="{% static './css/updateTable.css' %}" />
+  </head>
+
+  <body>
+    <!-- Side Vertical Navigation bar-->
+    <nav>
+      <!-- Toogle for responsive nav bar-->
+      <div class="hamburger">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+      </div>
+
+      <!-- side nav -->
+      <div class="sidenav">
+        <div class="img">
+          <img
+            src="{% static './images/logo.png' %}"
+            class="logo"
+            alt="logo_emot"
+          /><img
+            src="{% static './images/logo1.png' %}"
+            class="logo1"
+            alt="logo_emot"
+          />
+        </div>
+
+        <div class="dropdown-btn">
+          <a href="dashboard"
+            ><img
+              src="{% static './images/Dashboard.png' %}"
+              alt="dashboard"
+            />Dashboards</a
+          >
+          <button id="a">+</button>
+        </div>
+
+        <div class="dropdown-container">
+          <div class="sub-link">
+            <a href="dashboard">DGMS Dashboard</a>
+          </div>
+          <div class="sub-link"><a href="#">Coming soon</a></div>
+          <div class="sub-link"><a href="#">Coming soon</a></div>
+        </div>
+
+        <div>
+          <a href="customerInfo"
+            ><img
+              src="{% static './images/customer.png' %}"
+              alt="customer"
+            />Customer Info</a
+          >
+        </div>
+        <div>
+          <a href="custTable"
+            ><img src="{% static './images/customer.png' %}" alt="customer" />
+            Add Customer</a
+          >
+        </div>
+        <div>
+          <a href="assetTable"
+            ><img src="{% static './images/device.png' %}" alt="asset" /> Add
+            Asset</a
+          >
+        </div>
+        <div class="active">
+          <a href="update"
+            ><img src="{% static './images/update.png' %}" alt="update" />
+            update</a
+          >
+        </div>
+        <div>
+          <a href="setAlert"
+            ><img src="{% static './images/alert.png' %}" alt="setAlert" /> Set
+            Alert</a
+          >
+        </div>
+      </div>
+    </nav>
+    <!--end side nav-->
+
+    <div class="main">
+      <!-- Upper horizontal nav bar -->
+
+      <nav class="hor_nav">
+        <div class="left">
+          <div class="user_img">
+            <img src="{% static './images/emot.png' %}" alt="user_img" />
+          </div>
+          <div class="name">Admin</div>
+        </div>
+
+        <div class="right">
+          <div class="notify">
+            <img
+              src="{% static './images/notification.png' %}"
+              alt="notifications"
+            />
+          </div>
+          <div class="type">DGMS</div>
+
+          <div onclick="dropFunction()" class="user_name">
+            {{username}} &ensp;
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-caret-down-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
+              />
+            </svg>
+          </div>
+
+          <div id="user-dropdown" class="drop-cont">
+            <div><a href="{% url 'password_change' %}">Change Password</a></div>
+            <hr />
+            <div><a href="{% url 'logoutUser' %}" id="logout">Logout</a></div>
+          </div>
+        </div>
+      </nav>
+      <!-- end horizontal nav -->
+
+      <div class="cont">
+        <!------------------------------------For Customer----------------------------->
+        <div class="back">
+          <div class="head" id="customer">
+            <div class="head_text">Update Price</div>
+          </div>
+          <div class="form_body" id="cust_form">
+            <form>
+              <div class="row">
+                <div>
+                  <label>Loaction</label> <br />
+                  <input type="text" placeholder="city" />
+                </div>
+
+                <div>
+                  <label>Diesel Price</label> <br />
+                  <input type="text" />
+                </div>
+
+                <div>
+                  <label>Energy Price</label> <br />
+                  <input type="text" />
+                </div>
+              </div>
+
+              <hr />
+
+              <div class="form_bottom">
+                <div class="reset">
+                  <input type="reset" id="resetbtn" style="display: none" />
+                  <img
+                    src="{% static './images/arrow-circle.png' %}"
+                    onclick="document.getElementById('resetbtn').click()"
+                  />
+                </div>
+                <div class="submit_btn">
+                  <button>SUBMIT</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- class ="back" ends here -->
+        <div class="table_back">
+          <div class="table">
+            <table>
+              <thead>
+                <tr>
+                  <th>S.NO</th>
+                  <th>LOCATION</th>
+                  <th>DIESEL PRICE</th>
+                  <th>ENERGY PRICE</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td>1.</td>
+                  <td>Hyderabad</td>
+                  <th>78</th>
+                  <th>12</th>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- class ="table" ends here -->
+
+          <div class="total_records">
+            <div class="tr_text">Total Records Fetched: 2</div>
+          </div>
+        </div>
+        <!-- class ="table_back" ends here -->
+      </div>
+      <!-- class ="cont" ends here -->
+      <div class="footer">
+        <div class="footer-content">
+          <div>© 2021 eMoT. All Rights Reserved.</div>
+
+          <div class="web-links">
+            <div>
+              <a href="https://www.emot.co.in/about-us/" target="_blank"
+                >About us</a
+              >
+            </div>
+            <div>
+              <a href="https://www.emot.co.in/contact/" target="_blank"
+                >Contact us</a
+              >
+            </div>
+            <div>
+              <a href="https://www.emot.co.in/emot/" target="_blank"
+                >eMoT IoT</a
+              >
+            </div>
+          </div>
+
+          <div class="social-media">
+            <a href="https://www.facebook.com/emot.co.in/" target="_blank"
+              ><img
+                src="{% static './images/facebook.png' %}"
+                alt="facebook"
+                title="facebook"
+            /></a>
+            <a href="https://twitter.com/Emot86007134" target="_blank"
+              ><img
+                src="{% static './images/twitter.png' %}"
+                alt="twitter"
+                title="twitter"
+            /></a>
+            <a
+              href="https://www.linkedin.com/company/emot-elekron/"
+              target="_blank"
+              ><img
+                src="{% static './images/linkedin.png' %}"
+                alt="linkedin"
+                title="linkedin"
+            /></a>
+            <a href="https://www.instagram.com/elekronemot/" target="_blank"
+              ><img
+                src="{% static './images/instagram.png' %}"
+                alt="instagram"
+                title="instagram"
+            /></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--class="main" ends here-->
+
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+      crossorigin="anonymous"
+    ></script>
+
+    <script type="text/javascript" src="{% static './js/navbar.js' %}"></script>
+  </body>
+</html>

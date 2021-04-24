@@ -1,0 +1,125 @@
+@import url("fonts.css");
+
+.back{
+    margin: 20px 80px 30px 80px;   
+}
+
+.head{
+    
+    display: inline-block;
+    min-width: 18%;
+    text-align: center;
+    min-height: 50px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.head_text{
+    padding: 12px 10px 0px 10px;
+    text-transform: uppercase;
+    font-size: 18px;
+    color: white;
+}
+
+.form_body{
+    background-color: white;
+    min-height: 30vh;
+    display: inline-block;
+    min-width: 90%;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    
+}
+
+.form_body form{
+    padding: 10px 0px 10px 0px;
+}
+
+.form_body form .row{
+    margin: 0;
+    padding: 0;
+    margin: 30px;
+
+}
+
+.form_body form .row div{
+    margin-right: 6rem;
+   
+}
+
+.form_bottom{
+    display: flex;
+    float: right;
+    margin: 10px 10px 20px 10px;
+}
+
+.reset img{
+    height: 25px;
+    width: 25px;
+    margin-top: 7px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.submit_btn button{
+    color: white;
+    background-color: #67CE57;
+    border: none;
+    width: 100px;
+    height: 40px;
+    outline: none;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+
+.submit_btn button:active{
+  background-color: #3c7b32;
+  box-shadow: none;
+}
+
+.form_body form label{
+    font-weight: bold;
+}
+
+.form_body form input,select, textarea{
+    width: 11.2rem;
+    height: 2rem;
+    border-radius: 4px;
+    outline: none;
+    border: 1px solid rgb(184, 184, 184);
+}
+
+.form_body form textarea{
+    height: 4rem;
+}
+
+.sub_head{
+    margin: 0px 30px 0px 30px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: green;
+}
+
+/*---------- style for customer --------------*/
+#customer{
+    background-color: #47B9D0;
+}
+#cust_form{
+    border-bottom: 5px solid #47B9D0;
+}
+
+/*---------- style for manager --------------*/
+
+#manager{
+    background-color: #FF7285;
+}
+
+#man_form{
+    border-bottom: 5px solid #FF7285;
+}
+
+/*---------- style for user --------------*/
+#users{
+    background-color: #2CCC5C;
+}
+
+#users_form{
+    border-bottom: 5px solid #2CCC5C;
+}

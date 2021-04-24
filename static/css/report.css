@@ -1,0 +1,147 @@
+@import url("fonts.css");
+
+
+/*-------------------CSS for download drop down-------------*/
+
+.download_report{
+    margin: 0px 30px 0px 30px;
+}
+
+.download_report .download{
+    display: flex; justify-content: flex-end;
+    cursor: pointer;
+}
+
+
+.download_report .download div{
+    margin-right: 10px;
+}
+
+.download_report img{
+    height: 12px;
+    width: 12px;
+    margin-bottom: 3px;
+}
+
+
+.report-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #ffffff;
+    min-width: 100px;
+    min-height: 10vh;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 5;
+    text-align: center;
+    right: 2.5%;
+    cursor: pointer;
+  }
+
+  .report-dropdown-content div{
+      background-color: rgb(69, 69, 69);
+      padding:10px;
+      color: white;
+  }
+  .report-dropdown-content hr{
+      margin: 0;
+      padding:0;
+      border: 0.2px solid white;
+  }
+  
+
+  .report-dropdown-content div:hover{
+    color: rgb(154, 213, 255);
+}
+
+  .show {display: block;}
+
+
+
+
+/*-------------------CSS for report table-------------*/
+
+
+.report{
+    margin: 0px 32px 0px 20px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.report_table{
+    background-color: white;
+    min-height: 56vh;
+    max-height: 56vh;
+    overflow-y: auto;
+    margin-bottom: 0px;;
+    text-align: center;
+    
+}
+
+.report_table table{
+    border-spacing: 0 1em;
+    width: 100%;
+   
+}
+
+.report_table thead th{
+    
+    color: #000000;
+    position: sticky;
+    padding: 8px;
+    height: 5vh;
+    top: 0; /* Don't forget this, required for the stickiness */
+    /*text-transform: uppercase;*/
+}
+.report_table th, .report_table td{
+    font-size: 13.5px;
+    padding: 10px;
+   
+}
+
+.report_table tbody tr:nth-child(odd){
+    background-color: #e7e7e7;
+
+}
+
+.report_table tfoot,
+.report_table tfoot th,
+.report_table tfoot td {
+  font-weight: bold;
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: 0;
+  background-color: #515151;
+  color: rgb(255, 255, 255);
+  z-index:4;
+}
+
+
+
+/*-------------------CSS for total records-------------*/
+
+.total_records{
+    background-color: #0d1545;
+    min-height: 3vh;
+}
+
+.tr_text{
+    margin-left: 10px;
+    font-size: 12px;
+    color: white;
+}
+
+
+
+/*-------------------style for fuel-------------*/
+
+#fuel th{
+    background-color: #E4E8AB;
+}
+
+#op th{
+    background-color: #D7BDF8;
+}
+
+#per th{
+    background-color: #6BF29C;
+}

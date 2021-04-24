@@ -1,0 +1,38 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Login</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link rel="stylesheet" href="{% static './css/login.css' %}" />
+  </head>
+
+  <body>
+    <div id="content">
+      <div id="login">
+        <div align="center">
+          <img
+            align="center"
+            src="{% static './images/emot.png' %}"
+            class="logo"
+            alt="eMoT logo"
+          />
+          <br />
+          <p id="text1">
+            <span style="color: red">e</span
+            ><span style="color: #094b91">MoT</span> - Elekron
+          </p>
+          <br />
+
+          {% block content %}
+          {% endblock %}
+
+      </div>
+    </div>
+  </body>
+</html>

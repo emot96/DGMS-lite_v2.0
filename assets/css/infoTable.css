@@ -1,0 +1,88 @@
+@import url("fonts.css");
+
+
+
+.head{
+    
+    display: inline-block;
+    min-width: 18%;
+    text-align: center;
+    min-height: 50px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    margin: 22px;
+    background-color: #47B9D0;
+}
+
+.head_text{
+    padding: 12px 10px 0px 10px;
+    text-transform: uppercase;
+    font-size: 18px;
+    color: white;
+}
+
+.add-links{
+    display: flex;
+    gap: 20px;
+    float: right;
+    margin: 40px 30px 30px 30px;
+}
+
+
+.table_back{
+    margin: 0px 25px 0px 25px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.table{
+    background-color: white;
+    min-height: 71vh;
+    max-height: 71vh;
+    overflow-y: auto;
+    margin-bottom: 0px;;
+    text-align: center;
+    
+}
+
+.table table{
+    border-spacing: 0 1em;
+    width: 100%;
+   
+}
+
+.table thead th{
+    
+    color: #ffffff;
+    position: sticky;
+    padding: 8px;
+    height: 5vh;
+    top: 0; /* Don't forget this, required for the stickiness */
+    /*text-transform: uppercase;*/
+    background-color: rgb(51, 91, 99);
+}
+.table th, td{
+    font-size: 13.5px;
+    padding: 10px;
+   
+}
+
+.table tbody tr:nth-child(odd){
+    background-color: #e7e7e7;
+
+}
+
+
+/*-------------------CSS for total records-------------*/
+
+.total_records{
+    background-color: #0d1545;
+    min-height: 3vh;
+}
+
+.tr_text{
+    margin-left: 10px;
+    font-size: 12px;
+    color: white;
+}
+
+
+

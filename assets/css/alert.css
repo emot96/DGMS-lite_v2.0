@@ -1,0 +1,131 @@
+@import url("fonts.css");
+
+.alerts{
+    margin: 25px 10px 10px 10px;
+    background-color: white;
+    min-height: 80vh;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    font-size: 14px;
+    border-radius: 10px;
+}
+.alert-top{
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.alert-left{
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 17px;
+}
+
+.alert-right{
+    display: flex;
+    text-transform: uppercase;
+    font-size: 13px;
+}
+
+.alert-right .row{
+    margin:0;
+    padding:0;
+    gap: 10px;
+}
+
+.alert-top form select,input{
+ margin-right: 0px ;
+ border: none;
+ font-size: 13px;
+ width: 8rem;
+ height: 1.6rem;
+ border-radius: 5px;
+ outline:none;
+opacity: 0.9;
+border: 1px solid rgb(216, 216, 216);
+
+}
+
+
+.alert-top form select:hover,input:hover{
+ 
+ opacity: 1;
+ -webkit-box-shadow: 3px 3px 3px #666;
+    -moz-box-shadow: 3px 3px 3px #666;
+    box-shadow:3px 3px 3px #666;
+}
+
+
+.drop_downs .go, .alert-right .go{
+    text-transform: inherit;
+    outline: none;
+    border: none;
+    margin-right: 10px;
+    background-color: #0d4162;
+    color: #ffffff;
+    border-radius: 50%;
+    width: 28px;
+    height: 25px;
+    text-align: center;
+    box-shadow: 1px 1.5px 1px  rgba(50, 50, 50, 0.6);
+	font-size: 11px;
+	margin-left: 10px;
+ 
+}
+
+.drop_downs .go:hover, .alert-right .go:hover{
+   
+    background-color: rgb(27, 84, 120);
+    
+}
+
+.drop_downs .go:active, .alert-right .go:hover{
+    background-color: rgb(27, 84, 120);
+    box-shadow: none;
+}
+
+
+.alert-right img{
+    width: 20px;
+    height: 20px;
+    margin-left: 30px;
+    cursor: pointer;
+}
+
+
+.alert-back{
+    /* background-color: teal; */
+    min-height:75vh;
+    max-height: 75vh;
+    overflow:auto;
+}
+.alert-table{
+    /* width: 100%; */
+    border-collapse: separate;
+    border-spacing: 0em;
+    width: 100%;
+
+}
+
+.alert-table tr.t_body td{
+    border-bottom: 2px solid rgb(224, 224, 224);
+    padding: 10px;
+}
+
+.alert-table thead th{
+    background-color: rgb(230, 230, 230);
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    text-transform: uppercase;
+}
+
+.alert-table img{
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+}
+
+/* .alert-table th:nth-child(5){
+    width: 0%;
+} */

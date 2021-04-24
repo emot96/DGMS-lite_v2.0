@@ -1,0 +1,107 @@
+@import url("fonts.css");
+
+body{
+
+background: #11998e;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #38ef7d, #11998e);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #38ef7d, #11998e); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+
+
+.content{
+
+	position: absolute;
+	left: 50%;
+	top: 20%;
+	width: 50%;
+	height:50%;
+	transform: translate(-0%) translate(-50%);
+	text-align: center;
+	color: #1B2631;
+	font-family: 'Philosopher', sans-serif;
+ 
+}
+
+
+/* font size For 'welcome' text */
+#text1{
+
+font-size: 45px;
+}
+
+/*  font size for 'To DGMS' text */
+#text2{
+font-size: 25px;
+}
+
+/* Login text and animations on it*/
+button{
+margin-top: 70px;
+background-color: white;
+height: 50px;
+width: 150px;
+display: inline-block;
+cursor: pointer;
+border: 2px solid #73AD21;
+border-radius: 30px;
+box-shadow: 1px 3px;
+outline:none;
+}
+
+
+button:hover {
+margin-top: 65px;
+box-shadow: 4px 8px;
+}
+
+button:active{
+margin-top: 70px;
+box-shadow: 1px 3px;
+}
+
+
+/*  CSS for 'Login' text */
+#text3{
+font-family: Helvetica, sans-serif;
+color: #1B2631;
+font-size: 20px;
+}
+
+
+
+
+
+
+/*----------------------------------------- Media Queries ----------------------------------*/
+
+@media (min-width: 50px) and (max-width: 1200px){
+  
+#text1{
+	font-size: 55px;
+}
+
+#logo{
+
+   height: 122px;
+   width: 102px;
+
+}
+
+#text2{
+font-size: 35px;
+}
+
+
+button{
+height: 60px;
+width: 160px;
+}
+
+#text3{
+font-size: 30px;
+
+}
+
+
+}

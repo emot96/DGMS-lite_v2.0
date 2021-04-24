@@ -1,0 +1,1 @@
+web: gunicorn emot.wsgi --log-file -

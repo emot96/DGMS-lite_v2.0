@@ -1,0 +1,37 @@
+.footer{
+    margin-top: 30px;
+    background-color: rgb(52, 52, 52);
+    min-height: 10vh;
+    color: white;
+}
+
+.footer-content{
+    padding: 30px;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between
+}
+
+.web-links{
+    display: flex;
+    gap: 1.5rem;
+    color: rgb(0, 202, 30);
+}
+
+.web-links a{
+    text-decoration: none;
+    color: inherit;
+}
+
+.web-links a:hover{
+    text-decoration: none;
+    color: white;
+}
+
+.social-media img{
+    margin-left: 5px;
+    margin-right: 5px;
+    height: 25px;
+    width: 25px;
+    cursor: pointer;
+}

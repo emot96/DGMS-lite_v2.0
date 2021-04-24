@@ -1,0 +1,1290 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
+    <title>{{Loc}}</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+      integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+    <link rel="stylesheet" href="{% static './css/navbar.css' %}" />
+    <link rel="stylesheet" href="{% static './css/dgmsInfo.css' %}" />
+    <link rel="stylesheet" href="{% static './css/internal_nav.css' %}" />
+    <link rel="stylesheet" href="{% static './css/time-range.css' %}">
+    <link rel="stylesheet" href="{% static './css/kpi.css' %}" />
+    <link rel="stylesheet" href="{% static './css/chart.css' %}" />
+    <link rel="stylesheet" href="{% static './css/footer.css' %}" />
+  </head>
+
+  <body>
+    <!-- Side Vertical Navigation bar-->
+    <nav>
+      <!-- Toogle for responsive nav bar-->
+      <div class="hamburger">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+      </div>
+
+      <!-- side nav -->
+      <div class="sidenav">
+        <div class="img">
+          <img
+            src="{% static './images/logo.png' %}"
+            class="logo"
+            alt="logo_emot"
+          /><img
+            src="{% static './images/logo1.png' %}"
+            class="logo1"
+            alt="logo_emot"
+          />
+        </div>
+
+        <div class="dropdown-btn active">
+          <a href="{% url 'dashboard' %}"
+            ><img
+              src="{% static './images/Dashboard.png' %}"
+              alt="dashboard"
+            />Dashboards</a
+          >
+          <button id="a">+</button>
+        </div>
+
+        <div class="dropdown-container">
+          <div class="sub-link active">
+            <a href="{% url 'dashboard' %}">DGMS Dashboard</a>
+          </div>
+          <div class="sub-link"><a href="#">Coming soon</a></div>
+          <div class="sub-link"><a href="#">Coming soon</a></div>
+        </div>
+
+        <div>
+          <a href="{% url 'alert'  %}"
+            ><img
+              src="{% static './images/alert.png' %}"
+              alt="notification"
+            />Alerts <span class="notification"><p>5</p></span></a
+          >
+        </div>
+      </div>
+    </nav>
+    <!--end side nav-->
+
+    <div class="main">
+      <!-- Upper horizontal nav bar -->
+      <nav class="hor_nav">
+        <div class="left">
+          <div class="user_img">
+            <img src="{% static './images/ccd.png' %}" alt="user_img" />
+          </div>
+          <div class="name">{{Customer_Name}}</div>
+        </div>
+
+        <div class="right">
+          <div class="notify">
+            <img
+              src="{% static './images/notification.png' %}"
+              alt="notifications"
+            />
+          </div>
+          <div class="type">DGMS</div>
+
+          <div onclick="dropFunction()" class="user_name">
+            {{username}} &ensp;
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-caret-down-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
+              />
+            </svg>
+          </div>
+
+          <div id="user-dropdown" class="drop-cont">
+            <div><a href="{% url 'password_change' %}">Change Password</a></div>
+            <hr />
+            <div><a href="{% url 'logoutUser' %}" id="logout">Logout</a></div>
+          </div>
+        </div>
+      </nav>
+      <!-- end horizontal nav -->
+
+      <div class="dg_info">
+        <div class="b"></div>
+        <div class="row">
+          <div class="dg_info_dev">
+            <div>{{Cit}}-{{Loc}}<span class="kva">{{Rat}} kVA</span></div>
+            <div class="star">Star Rating: {{Star}}</div>
+          </div>
+
+          <div class="dg_info_status">
+            {% if Stat == 'ON' %}
+            <div class="status" id="dg_on">ON</div>
+            {% else %}
+            <div class="status" id="dg_off">OFF</div>
+            {% endif %}
+            <div>{{diff}}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cont">
+        <div class="internal_nav">
+          <div class="row">
+            <div>
+              <p><a href="{% url 'dgmsDashboard' device_id %}">Dashboard</a></p>
+            </div>
+            <div class="drop_asset">
+              <p><a href="{% url 'kpi' device_id %}"></a>KPI</p>
+
+              <div class="drop-down">
+                <div><a href="#">Device Info KPI</a></div>
+                <hr />
+                <div><a href="#">Electrical KPI</a></div>
+                <hr />
+                <div><a href="#">Load Side KPI</a></div>
+                <hr />
+                <div><a href="#">other KPI</a></div>
+              </div>
+            </div>
+
+            <div class="drop_asset">
+              <p>Asset Information</p>
+
+              <div class="drop-down">
+                <div>
+                  <a href="{% url 'asset' device_id  %}">Asset Detail</a>
+                </div>
+                <hr />
+                <div>
+                  <a href="{% url 'servicehistory' device_id  %}"
+                    >Service History</a
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="drop_asset">
+              <p>Reports</p>
+
+              <div class="drop-down">
+                <div>
+                  <a href="{% url 'fuel_report' device_id  %}"
+                    >Fuel filled report</a
+                  >
+                </div>
+                <hr />
+                <div>
+                  <a href="{% url 'operational_report' device_id  %}"
+                    >Operational report</a
+                  >
+                </div>
+                <hr />
+                <div>
+                  <a href="{% url 'performance_report' device_id  %}"
+                    >Performance report</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- class ="internal_nav" ends here -->
+
+        <div class="select-time-bar">
+          <div class="page-info">Device Info KPI</div>
+          <hr />
+
+          <div class="time-select">
+            <div class="time-range">
+              <form class="row" method="get">
+                {{myFilter.form.as_ul}}
+                <div class="go">
+                  <button type="submit" name="date">Go</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="row">
+              <div class="time-right">
+                <form class="row" method="get">
+                  <select name="time_range">
+                    {% if TR == None %}
+                    <option value="" selected disabled hidden>
+                      Select Time Range
+                    </option>
+                    {% else %}
+                    <option value="" selected disabled hidden>
+                      {{TR}}
+                    </option>
+                    {% endif %}
+                    <!-- <option>{{TR}}</option> -->
+                    <option>Last 30 mins</option>
+                    <option>Last 1 hour</option>
+                    <option>Last 2 hours</option>
+                    <option>Last 7 hours</option>
+                    <option>Last 12 hours</option>
+                    <option>Last 24 hours</option>
+                    <option>Last 2 days</option>
+                    <option>Last 5 days</option>
+                    <option>Last 1 week</option>
+                    <option>Last 2 weeks</option>
+                    <option>Last 1 month</option>
+                    <option>Last 2 months</option>
+                    <option>Last 6 months</option>
+                    <option>Last 1 year</option>
+                    <option>Last 2 years</option>
+                  </select>
+
+                  <div class="go">
+                    <button class="go" type="submit" name="range">GO</button>
+                  </div>
+                </form>
+              </div>
+
+              <div class="print">
+                <img
+                  src="{% static './images/printing.png' %}"
+                  alt="user_img"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+          <!--  class ="top-right" ends here  -->
+
+          <div class="kpi">
+            <div class="row">
+              <div class="left_side">
+                <div class="two">
+                  <div class="row">
+                    <div class="run_hour">
+                      <div class="heading">Run Hour</div>
+                      <img
+                        src="{% static './images/running.png' %}"
+                        alt="run"
+                      />
+                      <div class="value">{{hh}}</div>
+                    </div>
+
+                    <div class="unit_gen">
+                      <div class="heading">Unit Generated</div>
+                      <img
+                        src="{% static './images/energy.png' %}"
+                        alt="energy"
+                      />
+                      <div class="value">{{UG}} kWh</div>
+                    </div>
+
+                    <div class="carbon_foot">
+                      <div class="heading">Carbon Footprint</div>
+                      <img
+                        src="{% static './images/footprint.png' %}"
+                        alt="footprint"
+                      />
+                      <div class="value">{{Carbon_Foot_Print}} kg</div>
+                    </div>
+
+                    <div class="run_count">
+                      <div class="heading">Run Count</div>
+                      <img
+                        src="{% static './images/running.png' %}"
+                        alt="battery"
+                      />
+                      <div class="value">{{DeviceC}}</div>
+                    </div>
+                  </div>
+                </div>
+                <!-- class ="two" ends here -->
+
+                <div class="three">
+                  <div class="row">
+                    <div class="load">
+                      <div class="heading">Load Efficiency</div>
+                      <div class="value">{{Energy_OA}} %</div>
+                    </div>
+
+                    <div class="mdl">
+                      <div class="heading">Peak Load Overall</div>
+                      <div class="value">{{MaxDLoad}} kVA</div>
+                    </div>
+                  </div>
+                </div>
+                <!-- class ="three" ends here -->
+
+                <div class="four">
+                  <div id="diesel_level">
+                    <div class="four_nav">Diesel Level</div>
+                    <canvas id="diesel_level1"></canvas>
+                    <script>
+                      var diesel_lev = document.getElementById('diesel_level1').getContext('2d');
+                      var chart1 = new Chart(diesel_lev, {
+                          type: 'line',
+                          data: {
+                              labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                              datasets: [{
+                                  label: 'Diesel Level',
+                                  data: [{% for f in DL %} {{f}}, {% endfor %}],
+                                  backgroundColor: [
+                                      'rgba(0, 230, 64, 0.2)'
+
+                                  ],
+                                  borderColor: [
+                                      'rgba(0, 230, 64, 1)'
+
+                                  ],
+                                  borderWidth: 1
+                              }]
+                          },
+                          options: {
+                            legend: {
+                                     display:false
+                                  },
+
+                              scales: {
+                                  yAxes: [{
+                                      ticks: {
+                                          fontColor: "black",
+                                          fontSize: 15,
+                                          beginAtZero: true
+                                      }
+                                  }],
+
+                                  xAxes: [{
+                                      ticks: {
+                                        autoSkip: true,
+                                        maxTicksLimit: 12,
+                                        fontSize: 15,
+                                        fontColor: "black",
+                                      }
+                                  }]
+                              }
+                          }
+                      });
+                    </script>
+                  </div>
+                </div>
+                <!-- class ="four" ends here -->
+              </div>
+              <!-- class ="left_side" ends here -->
+              <div class="right_side">
+                <div class="fuel_info">
+                  <div class="fuel_nav">
+                    <div class="nav_text">Fuel Info</div>
+                  </div>
+
+                  <div class="fuel_body">
+                    <span class="bold">Total Fuel Consumed:</span
+                    >{{Fuel_Consumed}} L
+                  </div>
+                  <div class="fuel_body">
+                    <span class="bold">Price:</span>INR {{price}}
+                  </div>
+                  <!-- <div class="fuel_body">Price: 100430Rs</div> -->
+                </div>
+                <!-- class ="fuel_info" ends here -->
+
+                <div class="asset_info">
+                  <div class="asset_nav">
+                    <div class="nav_text">Device info</div>
+                  </div>
+
+                  <div class="asset_body">
+                    <span class="bold">Power Supply:</span> {{PowerStatus}}
+                  </div>
+                  <div class="asset_body">
+                    <span class="bold"> Battery Volts:</span> {{BatteryVoltage}}
+                    VDC
+                  </div>
+                  <div class="asset_body">
+                    <span class="bold">Network Strength:</span> {{GSMSignal}}
+                  </div>
+                </div>
+                <!-- class ="asset_info" ends here -->
+
+                <div class="alerts">
+                  <div class="alert_nav">
+                    <div class="nav_text">Alerts</div>
+                  </div>
+
+                  <div class="alert_body">
+                    <div class="circle" id="critical"></div>
+                    <div class="alert_msg">
+                      <div class="alert_time">Today 2:23 P.M.</div>
+                      <div class="msg_text">
+                        Some message here Lorem, ipsum dolor sit amet
+                        consectetur adipisicing elit.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="alert_body">
+                    <div class="circle" id="warning"></div>
+                    <div class="alert_msg">
+                      <div class="alert_time">Today 2:23 P.M.</div>
+                      <div class="msg_text">
+                        Some message here Lorem, ipsum dolor sit amet
+                        consectetur adipisicing elit.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- class ="alerts" ends here -->
+
+                <div class="alert_foot">
+                  <div class="foot_cont">
+                    <div class="circle" id="critical"></div>
+                    <div class="foot_text">Critical</div>
+                    <div class="circle" id="warning"></div>
+                    <div class="foot_text">Warning</div>
+                  </div>
+                </div>
+                <!-- class ="alert_foot" ends here -->
+              </div>
+              <!-- class ="right_side" ends here -->
+            </div>
+            <!-- class ="row" ends here -->
+
+            <div class="graphs-kpi">
+              <div class="one-graph">
+                <div class="graph_nav">DG Battery Voltage</div>
+                <canvas id="dg_battery"></canvas>
+                <script>
+                  var dg_battery = document.getElementById('dg_battery').getContext('2d');
+                  var chart2 = new Chart(dg_battery, {
+                    type: 'line',
+                    data: {
+                        labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                        datasets: [{
+                            label: 'DG Battery Voltage',
+                            data: [{% for d in DBV %} {{d}}, {% endfor %}],
+                            backgroundColor: [
+                                'rgba(155, 89, 182, 0.2)'
+
+                            ],
+                            borderColor: [
+                                'rgba(155, 89, 182, 1)'
+
+                            ],
+                            borderWidth: 5
+                        }]
+                    },
+                    options: {
+                      legend: {
+                          display:false
+
+                      },
+
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    fontColor: "black",
+                                    fontSize: 18,
+                                    beginAtZero: true
+                                }
+                            }],
+
+                            xAxes: [{
+                                ticks: {
+                                  autoSkip: true,
+                                  maxTicksLimit: 12,
+                                  fontSize: 18,
+                                  fontColor: "black",
+                                }
+                            }]
+                        }
+                    }
+                  });
+                </script>
+              </div>
+
+              <div class="one-graph">
+                <div class="graph_nav">Peak Load</div>
+
+                <canvas id="max_load"></canvas>
+                <script>
+                  var max_load = document.getElementById('max_load').getContext('2d');
+                                  var chart3 = new Chart(max_load, {
+                                      type: 'line',
+                                      data: {
+                                          labels: [{% for t in TimeN %} '{{t}}', {% endfor %}],
+                                          datasets: [{
+                                              label: 'Max. Demand Load',
+                                              data: [{% for d in Details1 %} {{d}}, {% endfor %}],
+
+                                              backgroundColor: [
+                                                  'rgba(255, 255, 126, 0.2)'
+
+                                              ],
+                                              borderColor: [
+                                                  'rgba(255, 255, 126, 1)'
+
+                                              ],
+                                              borderWidth: 5
+                                          }]
+                                      },
+                                      options: {
+                                        legend: {
+
+                                          display:false
+
+                                        },
+
+                                          scales: {
+                                              yAxes: [{
+                                                  ticks: {
+                                                      fontColor: "black",
+                                                      fontSize: 18,
+                                                      beginAtZero: true
+                                                  }
+                                              }],
+
+                                              xAxes: [{
+                                                  ticks: {
+                                                      autoSkip: true,
+                                                      maxTicksLimit: 12,
+                                                      fontSize: 18,
+                                                      fontColor: "black",
+                                                  }
+                                              }]
+                                          }
+                                      }
+                                  });
+                </script>
+              </div>
+
+              <div class="two-graph">
+                <div class="row">
+                  <div class="first_graph">
+                    <div class="graph_nav">Watts total</div>
+                    <canvas id="watts_load"></canvas>
+                    <script>
+                      var watts_load = document.getElementById('watts_load').getContext('2d');
+                                          var chart4 = new Chart(watts_load, {
+                                              type: 'line',
+                                              data: {
+                                                  labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                                  datasets: [{
+                                                      label: 'Total Watts',
+                                                      data: [{% for w in WT %} {{w}}, {% endfor %}],
+
+                                                      backgroundColor: [
+                                                          'rgba(242, 217, 132, 0.2)'
+
+                                                      ],
+                                                      borderColor: [
+                                                          'rgba(242, 217, 132, 1)'
+
+                                                      ],
+                                                      borderWidth: 1
+                                                  }]
+                                              },
+                                              options: {
+                                                legend: {
+
+                                                  display:false
+
+                                                },
+
+                                                  scales: {
+                                                      yAxes: [{
+                                                          ticks: {
+                                                              fontColor: "black",
+                                                              fontSize: 15,
+                                                              beginAtZero: true
+                                                          }
+                                                      }],
+
+                                                      xAxes: [{
+                                                          ticks: {
+                                                            autoSkip: true,
+                                                            maxTicksLimit: 12,
+                                                              fontSize: 15,
+                                                              fontColor: "black",
+                                                          }
+                                                      }]
+                                                  }
+                                              }
+                                          });
+                    </script>
+                  </div>
+
+                  <div class="second_graph">
+                    <div class="graph_nav">Energy Output</div>
+                    <canvas id="energy_op"></canvas>
+                    <script>
+                      var energy_op = document.getElementById('energy_op').getContext('2d');
+                                          var chart5 = new Chart(energy_op, {
+                                              type: 'line',
+                                              data: {
+                                                  labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                                  datasets: [{
+                                                      label: 'Energy Output',
+                                                      data: [{% for e in EO %} {{e}}, {% endfor %}],
+
+                                                      backgroundColor: [
+                                                          'rgba(249, 105, 14, 0.2)'
+
+                                                      ],
+                                                      borderColor: [
+                                                          'rgba(249, 105, 14, 1)'
+
+                                                      ],
+                                                      borderWidth: 1
+                                                  }]
+                                              },
+                                              options: {
+                                                legend: {
+
+                                                  display:false
+
+                                                },
+
+                                                  scales: {
+                                                      yAxes: [{
+                                                          ticks: {
+                                                              fontColor: "black",
+                                                              fontSize: 15,
+                                                              beginAtZero: true
+                                                          }
+                                                      }],
+
+                                                      xAxes: [{
+                                                          ticks: {
+                                                            autoSkip: true,
+                                                            maxTicksLimit: 12,
+                                                              fontSize: 15,
+                                                              fontColor: "black",
+                                                          }
+                                                      }]
+                                                  }
+                                              }
+                                          });
+                    </script>
+                  </div>
+                </div>
+              </div>
+
+              <div class="two-graph">
+                <div class="row">
+                  <div class="first_graph">
+                    <div class="graph_nav">VLN Average</div>
+                    <canvas id="vln_avg"></canvas>
+                    <script>
+                      var vln_avg = document.getElementById('vln_avg').getContext('2d');
+                                          var chart6 = new Chart(vln_avg, {
+                                              type: 'line',
+                                              data: {
+                                                  labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                                  datasets: [{
+                                                      label: 'VLN Average',
+                                                      data: [{% for v in VLN %} {{v}}, {% endfor %}],
+
+                                                      backgroundColor: [
+                                                          'rgba(249, 105, 14, 0.2)'
+
+                                                      ],
+                                                      borderColor: [
+                                                          'rgba(249, 105, 14, 1)'
+
+                                                      ],
+                                                      borderWidth: 1
+                                                  }]
+                                              },
+                                              options: {
+                                                legend: {
+
+                                                  display:false
+
+                                                },
+
+                                                  scales: {
+                                                      yAxes: [{
+                                                          ticks: {
+                                                              fontColor: "black",
+                                                              fontSize: 15,
+                                                              beginAtZero: true
+                                                          }
+                                                      }],
+
+                                                      xAxes: [{
+                                                          ticks: {
+                                                            autoSkip: true,
+                                                            maxTicksLimit: 12,
+                                                              fontSize: 15,
+                                                              fontColor: "black",
+                                                          }
+                                                      }]
+                                                  }
+                                              }
+                                          });
+                    </script>
+                  </div>
+
+                  <div class="second_graph">
+                    <div class="graph_nav">Average Voltage VLL</div>
+                    <canvas id="avg_voltage"></canvas>
+                    <script>
+                      var avg_voltage = document.getElementById('avg_voltage').getContext('2d');
+                                          var chart7 = new Chart(avg_voltage, {
+                                              type: 'line',
+                                              data: {
+                                                  labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                                  datasets: [{
+                                                      label: 'Average Voltage VLL',
+                                                      data: [{% for v in VLL %} {{v}}, {% endfor %}],
+
+                                                      backgroundColor: [
+                                                          'rgba(249, 105, 14, 0.2)'
+
+                                                      ],
+                                                      borderColor: [
+                                                          'rgba(249, 105, 14, 1)'
+
+                                                      ],
+                                                      borderWidth: 1
+                                                  }]
+                                              },
+                                              options: {
+                                                legend: {
+
+                                                  display:false
+
+                                                },
+
+                                                  scales: {
+                                                      yAxes: [{
+                                                          ticks: {
+                                                              fontColor: "black",
+                                                              fontSize: 15,
+                                                              beginAtZero: true
+                                                          }
+                                                      }],
+
+                                                      xAxes: [{
+                                                          ticks: {
+                                                            autoSkip: true,
+                                                            maxTicksLimit: 12,
+                                                              fontSize: 15,
+                                                              fontColor: "black",
+                                                          }
+                                                      }]
+                                                  }
+                                              }
+                                          });
+                    </script>
+                  </div>
+                </div>
+              </div>
+
+              <div class="two-graph">
+                <div class="row">
+                  <div class="first_graph">
+                    <div class="graph_nav">Avarage Current</div>
+                    <canvas id="avg_cur"></canvas>
+                    <script>
+                      var avg_cur = document.getElementById('avg_cur').getContext('2d');
+                                          var chart8 = new Chart(avg_cur, {
+                                              type: 'line',
+                                              data: {
+                                                  labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                                  datasets: [{
+                                                      label: 'Average Current',
+                                                      data: [{% for v in CA %} {{v}}, {% endfor %}],
+
+                                                      backgroundColor: [
+                                                          'rgba(154, 18, 179, 0.2)'
+
+                                                      ],
+                                                      borderColor: [
+                                                          'rgba(154, 18, 179, 1)'
+
+                                                      ],
+                                                      borderWidth: 1
+                                                  }]
+                                              },
+                                              options: {
+                                                legend: {
+
+                                                  display:false
+
+                                                },
+
+                                                  scales: {
+                                                      yAxes: [{
+                                                          ticks: {
+                                                              fontColor: "black",
+                                                              fontSize: 15,
+                                                              beginAtZero: true
+                                                          }
+                                                      }],
+
+                                                      xAxes: [{
+                                                          ticks: {
+                                                            autoSkip: true,
+                                                            maxTicksLimit: 12,
+                                                              fontSize: 15,
+                                                              fontColor: "black",
+                                                          }
+                                                      }]
+                                                  }
+                                              }
+                                          });
+                    </script>
+                  </div>
+
+                  <div class="second_graph">
+                    <div class="graph_nav">Current RBY</div>
+                    <canvas id="cur_rby"></canvas>
+                    <script>
+                      var cur_rby = document.getElementById('cur_rby').getContext('2d');
+                                          var chart9 = new Chart(cur_rby, {
+                                              type: 'line',
+                                              data: {
+                                                  labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                                  datasets: [{
+                                                      label: 'CurrentPhaseR',
+                                                      data: [{% for v in CR %} {{v}}, {% endfor %}],
+
+                                                      backgroundColor: [
+                                                          'rgba(207, 0, 15, 0.2)'
+
+                                                      ],
+                                                      borderColor: [
+                                                          'rgba(207, 0, 15, 1)'
+
+                                                      ],
+                                                      borderWidth: 1
+                                                  },
+                                                  {
+                                                      label: 'CurrentPhaseY',
+                                                      data: [{% for v in CY %} {{v}}, {% endfor %}],
+
+                                                      backgroundColor: [
+                                                          'rgba(247, 202, 24, 0.2)'
+
+                                                      ],
+                                                      borderColor: [
+                                                          'rgba(247, 202, 24, 1)'
+
+                                                      ],
+                                                      borderWidth: 1
+                                                  },
+                                                  {
+                                                      label: 'CurrentPhaseB',
+                                                      data: [{% for v in CB %} {{v}}, {% endfor %}],
+
+                                                      backgroundColor: [
+                                                          'rgba(44, 130, 201, 0.2)'
+
+                                                      ],
+                                                      borderColor: [
+                                                          'rgba(44, 130, 201, 1)'
+
+                                                      ],
+                                                      borderWidth: 1
+                                                  }
+                                              ]
+                                              },
+                                              options: {
+                                                legend: {
+
+                                                  display:true
+
+                                                },
+
+                                                  scales: {
+                                                      yAxes: [{
+                                                          ticks: {
+                                                              fontColor: "black",
+                                                              fontSize: 15,
+                                                              beginAtZero: true
+                                                          }
+                                                      }],
+
+                                                      xAxes: [{
+                                                          ticks: {
+                                                            autoSkip: true,
+                                                            maxTicksLimit: 12,
+                                                              fontSize: 15,
+                                                              fontColor: "black",
+                                                          }
+                                                      }]
+                                                  }
+                                              }
+                                          });
+                    </script>
+                  </div>
+                </div>
+              </div>
+
+              <div class="two-graph">
+                <div class="row">
+                  <div class="first_graph">
+                    <div class="graph_nav">Frequency</div>
+                    <canvas id="freq"></canvas>
+                    <script>
+                      var cfreq = document.getElementById('freq').getContext('2d');
+                                          var chart10 = new Chart(freq, {
+                                              type: 'line',
+                                              data: {
+                                                  labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                                  datasets: [{
+                                                      label: 'Frequency',
+                                                      data: [{% for v in FREQ %} {{v}}, {% endfor %}],
+
+                                                      backgroundColor: [
+                                                          'rgba(247, 202, 24, 0.2)'
+
+                                                      ],
+                                                      borderColor: [
+                                                          'rgba(247, 202, 24, 1)'
+
+                                                      ],
+                                                      borderWidth: 1
+                                                  }]
+                                              },
+                                              options: {
+                                                legend: {
+
+                                                  display:false
+
+                                                },
+
+                                                  scales: {
+                                                      yAxes: [{
+                                                          ticks: {
+                                                              fontColor: "black",
+                                                              fontSize: 15,
+                                                              beginAtZero: true
+                                                          }
+                                                      }],
+
+                                                      xAxes: [{
+                                                          ticks: {
+                                                            autoSkip: true,
+                                                            maxTicksLimit: 12,
+                                                              fontSize: 15,
+                                                              fontColor: "black",
+                                                          }
+                                                      }]
+                                                  }
+                                              }
+                                          });
+                    </script>
+                  </div>
+
+                  <div class="second_graph">
+                    <div class="graph_nav">RPM</div>
+                    <canvas id="rpm"></canvas>
+                    <script>
+                      var rpm = document.getElementById('rpm').getContext('2d');
+                                          var chart11 = new Chart(rpm, {
+                                              type: 'line',
+                                              data: {
+                                                  labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                                  datasets: [{
+                                                      label: 'Frequency',
+                                                      data: [{% for v in RPM  %} {{v}}, {% endfor %}],
+
+                                                      backgroundColor: [
+                                                          'rgba(207, 0, 15, 0.2)'
+
+                                                      ],
+                                                      borderColor: [
+                                                          'rgba(207, 0, 15, 1)'
+
+                                                      ],
+                                                      borderWidth: 1
+                                                  }]
+                                              },
+                                              options: {
+                                                legend: {
+
+                                                  display:false
+
+                                                },
+
+                                                  scales: {
+                                                      yAxes: [{
+                                                          ticks: {
+                                                              fontColor: "black",
+                                                              fontSize: 15,
+                                                              beginAtZero: true
+                                                          }
+                                                      }],
+
+                                                      xAxes: [{
+                                                          ticks: {
+                                                            autoSkip: true,
+                                                            maxTicksLimit: 12,
+                                                              fontSize: 15,
+                                                              fontColor: "black",
+                                                          }
+                                                      }]
+                                                  }
+                                              }
+                                          });
+                    </script>
+                  </div>
+                </div>
+              </div>
+
+              <div class="one-graph">
+                <div>
+                  <div class="graph_nav">Run Count</div>
+                  <canvas id="run_count"></canvas>
+                  <script>
+                    var run_count = document.getElementById('run_count').getContext('2d');
+                                      var chart12 = new Chart(run_count, {
+                                          type: 'line',
+                                          data: {
+                                              labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                              datasets: [{
+                                                  label: 'Run count',
+                                                  data: [{% for v in RC %} {{v}}, {% endfor %}],
+
+                                                  backgroundColor: [
+                                                      'rgba(46, 204, 113, 0.2)'
+
+                                                  ],
+                                                  borderColor: [
+                                                      'rgba(46, 204, 113, 1)'
+
+                                                  ],
+                                                  borderWidth: 1
+                                              }]
+                                          },
+                                          options: {
+                                            legend: {
+
+                                              display:false
+
+                                            },
+
+                                              scales: {
+                                                  yAxes: [{
+                                                      ticks: {
+                                                          fontColor: "black",
+                                                          fontSize: 18,
+                                                          beginAtZero: true
+                                                      }
+                                                  }],
+
+                                                  xAxes: [{
+                                                      ticks: {
+                                                        autoSkip: true,
+                                                        maxTicksLimit: 12,
+                                                          fontSize: 18,
+                                                          fontColor: "black",
+                                                      }
+                                                  }]
+                                              }
+                                          }
+                                      });
+                  </script>
+                </div>
+              </div>
+
+              <div class="two-graph">
+                <div class="row">
+                  <div class="first_graph">
+                    <div class="graph_nav">GSM Signal</div>
+                    <canvas id="gsm"></canvas>
+                    <script>
+                      var gsm = document.getElementById('gsm').getContext('2d');
+                                          var chart13 = new Chart(gsm, {
+                                              type: 'line',
+                                              data: {
+                                                  labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                                  datasets: [{
+                                                      label: 'GSM Signal',
+                                                      data: [{% for v in GSM  %} {{v}}, {% endfor %}],
+
+                                                      backgroundColor: [
+                                                          'rgba(0, 230, 64, 0.2)'
+
+                                                      ],
+                                                      borderColor: [
+                                                          'rgba(0, 230, 64, 1)'
+
+                                                      ],
+                                                      borderWidth: 1
+                                                  }]
+                                              },
+                                              options: {
+                                                legend: {
+
+                                                  display:false
+
+                                                },
+
+                                                  scales: {
+                                                      yAxes: [{
+                                                          ticks: {
+                                                              fontColor: "black",
+                                                              fontSize: 15,
+                                                              beginAtZero: true
+                                                          }
+                                                      }],
+
+                                                      xAxes: [{
+                                                          ticks: {
+                                                            autoSkip: true,
+                                                            maxTicksLimit: 12,
+                                                              fontSize: 15,
+                                                              fontColor: "black",
+                                                          }
+                                                      }]
+                                                  }
+                                              }
+                                          });
+                    </script>
+                  </div>
+
+                  <div class="second_graph">
+                    <div class="graph_nav">Gateway Battery</div>
+                    <canvas id="gt_battery"></canvas>
+                    <script>
+                      var gt_battery = document.getElementById('gt_battery').getContext('2d');
+                                          var chart14 = new Chart(gt_battery, {
+                                              type: 'line',
+                                              data: {
+                                                  labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                                  datasets: [{
+                                                      label: 'gateway battery',
+                                                      data: [{% for v in GB %} {{v}}, {% endfor %}],
+
+                                                      backgroundColor: [
+                                                          'rgba(241, 130, 141,0.2)'
+
+                                                      ],
+                                                      borderColor: [
+                                                          'rgba(241, 130, 141,1)'
+
+                                                      ],
+                                                      borderWidth: 1
+                                                  }]
+                                              },
+                                              options: {
+                                                legend: {
+
+                                                  display:false
+
+                                                },
+
+                                                  scales: {
+                                                      yAxes: [{
+                                                          ticks: {
+                                                              fontColor: "black",
+                                                              fontSize: 15,
+                                                              beginAtZero: true
+                                                          }
+                                                      }],
+
+                                                      xAxes: [{
+                                                          ticks: {
+                                                            autoSkip: true,
+                                                            maxTicksLimit: 12,
+                                                              fontSize: 15,
+                                                              fontColor: "black",
+                                                          }
+                                                      }]
+                                                  }
+                                              }
+                                          });
+                    </script>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- class ="kpi-graphs" ends here -->
+            <br />
+          </div>
+          <!-- class ="kpi" ends here -->
+        </div>
+        <!-- class ="cont" ends here -->
+
+        <div class="footer">
+          <div class="footer-content">
+            <div>© 2021 eMoT. All Rights Reserved.</div>
+
+            <div class="web-links">
+              <div>
+                <a href="https://www.emot.co.in/about-us/" target="_blank"
+                  >About us</a
+                >
+              </div>
+              <div>
+                <a href="https://www.emot.co.in/contact/" target="_blank"
+                  >Contact us</a
+                >
+              </div>
+              <div>
+                <a href="https://www.emot.co.in/emot/" target="_blank"
+                  >eMoT IoT</a
+                >
+              </div>
+            </div>
+
+            <div class="social-media">
+              <a href="https://www.facebook.com/emot.co.in/" target="_blank"
+                ><img
+                  src="{% static './images/facebook.png' %}"
+                  alt="facebook"
+                  title="facebook"
+              /></a>
+              <a href="https://twitter.com/Emot86007134" target="_blank"
+                ><img
+                  src="{% static './images/twitter.png' %}"
+                  alt="twitter"
+                  title="twitter"
+              /></a>
+              <a
+                href="https://www.linkedin.com/company/emot-elekron/"
+                target="_blank"
+                ><img
+                  src="{% static './images/linkedin.png' %}"
+                  alt="linkedin"
+                  title="linkedin"
+              /></a>
+              <a href="https://www.instagram.com/elekronemot/" target="_blank"
+                ><img
+                  src="{% static './images/instagram.png' %}"
+                  alt="instagram"
+                  title="instagram"
+              /></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--class="main" ends here-->
+
+    <!-- js -->
+
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+      crossorigin="anonymous"
+    ></script>
+
+    <script type="text/javascript" src="{% static './js/navbar.js' %}"></script>
+  </body>
+</html>
