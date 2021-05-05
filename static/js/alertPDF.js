@@ -5,8 +5,8 @@ function genPDF(){
    
     doc.addImage(imgData, 'jpeg', 270, 10, 62, 72);  
     doc.fromHTML($("#name").get(0), 240, 85, {'width': 250});
-    doc.fromHTML($("#customerName").get(0), 20, 130, {'width': 180});
-    doc.fromHTML($("#date").get(0), 20, 180, {'width': 180});
+    doc.fromHTML($("#customerName").get(0), 220, 130, {'width': 180});
+    doc.fromHTML($("#date").get(0), 233, 200, {'width': 180});
 
      
     var options = {
@@ -23,7 +23,7 @@ function genPDF(){
                 valign: 'middle',
                 // fillColor: [255, 193, 51]
             },       
-        startY: doc.autoTableEndPosY() + 220
+        startY: doc.autoTableEndPosY() + 240
         }; 
         
     doc.autoTable(res.columns, res.data, options);

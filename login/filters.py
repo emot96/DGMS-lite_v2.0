@@ -1,3 +1,5 @@
+from urllib import request
+import requests
 from .models import *
 import django_filters
 from django_filters import DateFilter
@@ -80,14 +82,14 @@ class CustomerFilter(django_filters.FilterSet):
 
 
 class FuelFilledReportFilter(django_filters.FilterSet):
-    start_date = django_filters.DateFilter(label='Start Date', field_name='device_time', lookup_expr='gt',
+    start_date = django_filters.DateFilter(label='Start Date', field_name='device_time', lookup_expr='date__gte',
                                            widget=DateInput(
                                                attrs={
                                                    'class': 'datepicker'
                                                }
                                            )
                                            )
-    end_date = django_filters.DateFilter(label='End Date', field_name='device_time', lookup_expr='lt',
+    end_date = django_filters.DateFilter(label='End Date', field_name='device_time', lookup_expr='date__lte',
                                          widget=DateInput(
                                              attrs={
                                                  'class': 'datepicker'
@@ -103,14 +105,14 @@ class FuelFilledReportFilter(django_filters.FilterSet):
 
 
 class OperationalReportFilter(django_filters.FilterSet):
-    start_date = django_filters.DateFilter(label='Start Date', field_name='start_time', lookup_expr='gt',
+    start_date = django_filters.DateFilter(label='Start Date', field_name='start_time', lookup_expr='date__gte',
                                            widget=DateInput(
                                                attrs={
                                                    'class': 'datepicker'
                                                }
                                            )
                                            )
-    end_date = django_filters.DateFilter(label='End Date', field_name='end_time', lookup_expr='lt',
+    end_date = django_filters.DateFilter(label='End Date', field_name='end_time', lookup_expr='date__lte',
                                          widget=DateInput(
                                              attrs={
                                                  'class': 'datepicker'
@@ -126,14 +128,14 @@ class OperationalReportFilter(django_filters.FilterSet):
 
 
 class PerformanceReportFilter(django_filters.FilterSet):
-    start_date = django_filters.DateFilter(label='Start Date', field_name='start_time', lookup_expr='gt',
+    start_date = django_filters.DateFilter(label='Start Date', field_name='start_time', lookup_expr='date__gte',
                                            widget=DateInput(
                                                attrs={
                                                    'class': 'datepicker'
                                                }
                                            )
                                            )
-    end_date = django_filters.DateFilter(label='End Date', field_name='end_time', lookup_expr='lt',
+    end_date = django_filters.DateFilter(label='End Date', field_name='end_time', lookup_expr='date__lte',
                                          widget=DateInput(
                                              attrs={
                                                  'class': 'datepicker'
@@ -149,14 +151,14 @@ class PerformanceReportFilter(django_filters.FilterSet):
 
 
 class KPIFilter(django_filters.FilterSet):
-    start_date = django_filters.DateFilter(label='Start Date', field_name='device_time', lookup_expr='gt',
+    start_date = django_filters.DateFilter(label='Start Date', field_name='device_time', lookup_expr='date__gte',
                                            widget=DateInput(
                                                attrs={
                                                    'class': 'datepicker'
                                                }
                                            )
                                            )
-    end_date = django_filters.DateFilter(label='End Date', field_name='device_time', lookup_expr='lt',
+    end_date = django_filters.DateFilter(label='End Date', field_name='device_time', lookup_expr='date__lte',
                                          widget=DateInput(
                                              attrs={
                                                  'class': 'datepicker'
@@ -205,14 +207,14 @@ class KPIFilter(django_filters.FilterSet):
 
 
 class DeviceOperationalFilter(django_filters.FilterSet):
-    start_date = django_filters.DateFilter(label='Start Date', field_name='start_time', lookup_expr='gt',
+    start_date = django_filters.DateFilter(label='Start Date', field_name='start_time', lookup_expr='date__gte',
                                            widget=DateInput(
                                                attrs={
                                                    'class': 'datepicker'
                                                }
                                            )
                                            )
-    end_date = django_filters.DateFilter(label='End Date', field_name='end_time', lookup_expr='lt',
+    end_date = django_filters.DateFilter(label='End Date', field_name='end_time', lookup_expr='date__lte',
                                          widget=DateInput(
                                              attrs={
                                                  'class': 'datepicker'
@@ -234,13 +236,13 @@ class AlertFilter(django_filters.FilterSet):
     # alert_open = django_filters.ChoiceFilter(
     #     choices=ALTERSTATUS_CHOICES, label='', field_name='alert_open',   lookup_expr='iexact')
 
-    device_id = django_filters.ChoiceFilter(choices=[[u.Device_ID,  u.Device_ID] for u in User_Detail.objects.all(
-    )], field_name='device_id', lookup_expr='icontains', label='')
+    device_id = django_filters.ChoiceFilter(
+        choices=[[u.Device_ID,  u.Device_ID] for u in User_Detail.objects.all()], field_name='device_id', lookup_expr='icontains', label='')
 
     alert_type_name = django_filters.ChoiceFilter(
         choices=FILTER_CHOICES, label='', field_name='alert_type_name',   lookup_expr='iexact')
 
-    created_at = django_filters.DateFilter(label='Start Date', field_name='created_at', lookup_expr='gt',
+    created_at = django_filters.DateFilter(label='Start Date', field_name='created_at', lookup_expr='date__gte',
                                            widget=DateInput(
                                                attrs={
                                                    'class': 'datepicker'
@@ -248,7 +250,7 @@ class AlertFilter(django_filters.FilterSet):
                                            )
                                            )
 
-    updated_at = django_filters.DateFilter(label='End Date', field_name='updated_at', lookup_expr='lt',
+    updated_at = django_filters.DateFilter(label='End Date', field_name='updated_at', lookup_expr='date__lte',
                                            widget=DateInput(
                                                attrs={
                                                  'class': 'datepicker'
@@ -261,6 +263,16 @@ class AlertFilter(django_filters.FilterSet):
         fields = "__all__"
         exclude = ['alert_id', 'alert_type_name', 'device_id', 'alert_open', 'alert_level', 'param_value',
                    'param_threshold_value', 'created_at', 'updated_at', ]
+
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+
+    #     request = kwargs['request']
+    #     if request.user.is_authenticated:
+    #         username = request.user.username
+    #         my_choices = [[u.Device_ID,  u.Device_ID]
+    #                       for u in User_Detail.objects.filter(Customer_Name=username)]
+    #         self.filters['device_id'].extra.update({'choices': my_choices})
 
 
 class DeviceAlertFilter(django_filters.FilterSet):

@@ -63,7 +63,8 @@ def dashboard(request):
         username = request.user.username
         email = request.user.email
         if request.user.is_user:
-            device_id = User_Detail.objects.get(User_Name=username).Device_ID
+            device_id = User_Detail.objects.get(
+                User_Name=username).Device_ID
             Customer_Name = User_Detail.objects.get(
                 Device_ID=device_id).Customer_Name
             Cit = User_Detail.objects.get(Device_ID=device_id).City
@@ -73,7 +74,8 @@ def dashboard(request):
             Date = datetime.datetime.now()
             Fuel2 = round(DevicesInfo.objects.filter(
                 device_id=device_id).exclude(fuel_level_litre=0).last().fuel_level_litre, 2)
-            Tank_Size = Asset.objects.get(Device_ID=device_id).Diesel_Tank_Size
+            Tank_Size = Asset.objects.get(
+                Device_ID=device_id).Diesel_Tank_Size
             Fuel_Per = round((Fuel2/Tank_Size)*100, 2)
             Run = DevicesInfo.objects.filter(device_id=device_id).exclude(
                 dg_runtime_seconds=0).last()
@@ -141,7 +143,8 @@ def dashboard(request):
             DeviceC = DeviceCounterView.objects.filter(
                 device_id=device_id)[0].counter
 
-            DOI = Asset.objects.get(Device_ID=device_id).Date_Of_Installation
+            DOI = Asset.objects.get(
+                Device_ID=device_id).Date_Of_Installation
 
             WS = Asset.objects.get(Device_ID=device_id).Warranty_Status
 
@@ -159,7 +162,8 @@ def dashboard(request):
                 now = datetime.datetime.now()
                 current_time = now.strftime('%Y-%m-%d %H:%M:%S')
                 format = '%Y-%m-%d %H:%M:%S'
-                Current_T = datetime.datetime.strptime(current_time, format)
+                Current_T = datetime.datetime.strptime(
+                    current_time, format)
                 Start_time = DeviceOperational.objects.filter(
                     device_id=device_id).last().start_time
                 diff = Current_T - Start_time
@@ -167,7 +171,8 @@ def dashboard(request):
                 now = datetime.datetime.now()
                 current_time = now.strftime('%Y-%m-%d %H:%M:%S')
                 format = '%Y-%m-%d %H:%M:%S'
-                Current_T = datetime.datetime.strptime(current_time, format)
+                Current_T = datetime.datetime.strptime(
+                    current_time, format)
                 Start_time = DeviceOperational.objects.filter(
                     device_id=device_id).last().start_time
                 End_time = DeviceOperational.objects.filter(
@@ -184,7 +189,8 @@ def dashboard(request):
             Level = []
             for Fuel in Fuel_Level:
                 Fuel1.append(Fuel.fuel_level_litre)
-                Time2.append(Fuel.device_time.strftime('%Y-%m-%d %H:%M:%S'))
+                Time2.append(Fuel.device_time.strftime(
+                    '%Y-%m-%d %H:%M:%S'))
 
             UTC = '0000-00-00 05:30:00'
             y = UTC[:4]
@@ -232,6 +238,177 @@ def dashboard(request):
             icon = r['weather'][0]['icon']
 
             return render(request, 'dgmsDashboard.html', {'temperature': temperature, 'description': description, 'icon': icon, 'Fuel2': Fuel2, 'DDOI': DDOI, 'alert_count': alert_count, 'Fuel1': Fuel1, 'Time': Time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Fuel2': Fuel2, 'Tank_Size': Tank_Size, 'Fuel_Per': Fuel_Per, 'hh': hh, 'UG': UG, 'Carbon_Foot_Print': Carbon_Foot_Print, 'BV': BV, 'AvgFC': AvgFC, 'Energy_OA': Energy_OA, 'MaxDLoad': MaxDLoad, 'DeviceC': DeviceC, 'DOI': DOI, 'WS': WS, 'LSD': LSD, 'NSD': NSD, 'SP': SP, 'Star': Star, 'RT': RT, 'diff': diff, 'Level': Level, 'Fuel1': Fuel1, 'Time': Time})
+
+        elif request.user.is_manager:
+            Customer_Name = Manager.objects.get(
+                Manager_Name=username).Customer_Name
+            managername = Manager.objects.get(
+                Manager_Name=username).Manager_Name
+            User_details = User_Detail.objects.all()
+            DeviceID = []
+
+            for det in User_details:
+                if str(det.Manager_Name) == managername:
+                    DeviceID.append(det.Device_ID)
+
+            Total = 0
+            Live = 0
+            Offline = 0
+            InUse = 0
+            Capacity = 0
+
+            Total = Device.objects.filter(device_id__in=DeviceID).count()
+            Live = Device.objects.filter(
+                device_id__in=DeviceID, device_status='ON').count()
+            Offline = Device.objects.filter(
+                device_id__in=DeviceID, device_status='OFF').count()
+            Capacity = Device.objects.filter(
+                device_id__in=DeviceID).aggregate(Sum('device_rating'))
+            Capacity = Capacity['device_rating__sum']
+            InUse = Device.objects.filter(
+                device_id__in=DeviceID, device_status='ON').aggregate(Sum('device_rating'))
+            InUse = InUse['device_rating__sum']
+            if InUse == None:
+                InUse = 0
+
+            Fuel__Consumed = 0
+            Fuel__Cost = 0
+            Carbon_Foot__Print = 0
+            Location = []
+            State = []
+            City = []
+            Status = []
+            Rating = []
+            PreRH = []
+            RunHour = []
+            UnitGen = []
+            FuelCon = []
+            CarbonFP = []
+            FuelC = []
+            CPU = []
+            EnergyOA = []
+            MaxDemLoad = []
+            Star = []
+            Diesel = []
+            Energy = []
+            for j in DeviceID:
+                FuelConsumed = DeviceOperational.objects.filter(
+                    device_id=j).aggregate(Sum('fuel_consumed'))
+                FuelCost = DeviceOperational.objects.filter(
+                    device_id=j).aggregate(Sum('fuel_cost'))
+                CarbonFootPrint = DeviceOperational.objects.filter(
+                    device_id=j).aggregate(Sum('carbon_footprint'))
+                PreFuelCon = Before_DGMA_INSTALLATION.objects.get(
+                    Device_ID=j).Previous_Fuel_Consumed
+                Fuel_Consumed = float(
+                    FuelConsumed['fuel_consumed__sum']) + float(PreFuelCon)
+                FuelCon.append(round(Fuel_Consumed, 2))
+                Fuel__Consumed = Fuel_Consumed + Fuel__Consumed
+                Fuel_Cost = float(FuelCost['fuel_cost__sum'])
+                FuelC.append(round(Fuel_Cost))
+                Fuel__Cost = Fuel_Cost + Fuel__Cost
+                Carbon_Foot_Print = float(
+                    CarbonFootPrint['carbon_footprint__sum'])
+                CarbonFP.append(round(Carbon_Foot_Print, 2))
+                Carbon_Foot__Print = Carbon_Foot_Print + Carbon_Foot__Print
+                Fuel__Consumed = round(Fuel__Consumed, 2)
+                Fuel__Cost = round(Fuel__Cost, 2)
+                Carbon_Foot__Print = round(Carbon_Foot__Print, 2)
+                Sta = User_Detail.objects.filter(
+                    Device_ID=j)[0].State
+                Cit = User_Detail.objects.filter(
+                    Device_ID=j)[0].City
+                Loc = User_Detail.objects.filter(
+                    Device_ID=j)[0].Location
+                Stat = Device.objects.filter(device_id=j)[0].device_status
+                Rat = Device.objects.filter(device_id=j)[0].device_rating
+                Run = DevicesInfo.objects.filter(device_id=j).exclude(
+                    dg_runtime_seconds=0).last()
+                RunHour1 = []
+                if Run != None:
+                    Run = Run.dg_runtime_seconds
+                    RunHour1.append(Run)
+                RunH = DevicesInfo.objects.filter(device_id=j).exclude(
+                    runtime_second_ctrl=0).last()
+                if RunH != None:
+                    RunH = RunH.runtime_second_ctrl
+                    RunHour1.append(RunH)
+
+                # PreRH.append(Before_DGMA_INSTALLATION.objects.get(
+                    # Device_ID=j).Previous_Run_Hour)
+                # RunHour2 = zip(RunHour1, PreRH)
+                for rh in RunHour1:
+                    seconds = rh
+                    # seconds = seconds % (24 * 3600)
+                    hour = seconds // 3600
+                    seconds %= 3600
+                    minutes = seconds // 60
+                    seconds %= 60
+                    hh = "%d:%02d:%02d" % (hour, minutes, seconds)
+                    RunHour.append(hh)
+
+                UG = DevicesInfo.objects.filter(device_id=j).exclude(
+                    unit_generated_kwh=0).last()
+                PreUG = Before_DGMA_INSTALLATION.objects.get(
+                    Device_ID=j).Units_Generated
+                UG = round(UG.unit_generated_kwh, 2) + float(PreUG)
+                UnitGen.append(UG)
+                Cost_Per_Unit = DeviceOperational.objects.filter(
+                    device_id=j).aggregate(Avg('per_unit_cost'))
+                Cost_Per_U = float(Cost_Per_Unit['per_unit_cost__avg'])
+                Cost_Per_U = round(Cost_Per_U, 2)
+                CPU.append(Cost_Per_U)
+                # Energy_output_avg = DevicesInfo.objects.filter(
+                #     device_id=j).exclude(energy_output_kva=0).aggregate(Avg('energy_output_kva'))
+                # Energy_output = round(float(
+                #     Energy_output_avg['energy_output_kva__avg']), 2)
+                # RatingD = Device.objects.get(
+                #     device_id=j).device_rating
+                # Energy_OA = round((Energy_output/RatingD)*100, 2)
+                Efficency = DeviceOperational.objects.filter(
+                    device_id=j).aggregate(Avg('efficiency'))
+                Energy_OA = round(float(Efficency['efficiency__avg']), 2)
+                EnergyOA.append(Energy_OA)
+                MaxDL = DeviceOperational.objects.filter(
+                    device_id=j).aggregate(Max('maximum_demand_load'))
+                MaxDLoad = round(float(
+                    MaxDL['maximum_demand_load__max']), 2)
+                MaxDemLoad.append(MaxDLoad)
+                for e in EnergyOA:
+                    if e < 25:
+                        Star.append(1)
+                    elif 25 < e < 40:
+                        Star.append(2)
+                    elif 40 < e < 50:
+                        Star.append(3)
+                    elif 50 < e < 60:
+                        Star.append(4)
+                    else:
+                        Star.append(5)
+                Rating.append(Rat)
+                State.append(Sta)
+                City.append(Cit)
+                Location.append(Loc)
+                Status.append(Stat)
+
+                for c in City:
+                    EnergyPrice = Price.objects.get(
+                        Location=c).Energy_Price
+                    DieselPrice = Price.objects.get(
+                        Location=c).Diesel_Price
+                    Diesel.append(DieselPrice)
+                    Energy.append(EnergyPrice)
+
+            UserDetail = zip(State, City, Location, Status, Rating, UnitGen, FuelCon, CarbonFP,
+                             FuelC, CPU, EnergyOA, MaxDemLoad, Star, Diesel, Energy, RunHour, DeviceID)
+
+            status = ['power_factor']
+
+            alert = Alerts.objects.filter(
+                device_id__in=DeviceID, alert_open=True).exclude(alert_type_name__in=status).order_by('-created_at')
+            alert_count = len(alert)
+
+            return render(request, 'dgms/dashboard.html', {'alert_count': alert_count, 'username': username, 'Customer_Name': Customer_Name, 'Total': Total, 'Live': Live, 'Offline': Offline, 'Capacity': Capacity, 'InUse': InUse, 'Fuel__Consumed': Fuel__Consumed, 'Fuel__Cost': Fuel__Cost, 'Carbon_Foot__Print': Carbon_Foot__Print, 'UserDetail': UserDetail})
 
         elif request.user.is_superuser:
             Customer_Name = 'Admin'
@@ -401,6 +578,7 @@ def dashboard(request):
             return render(request, 'dashboard1.html', {'alert_count': alert_count, 'username': username, 'Customer_Name': Customer_Name, 'Total': Total, 'Live': Live, 'Offline': Offline, 'Capacity': Capacity, 'InUse': InUse, 'Fuel__Consumed': Fuel__Consumed, 'Fuel__Cost': Fuel__Cost, 'Carbon_Foot__Print': Carbon_Foot__Print, 'UserDetail': UserDetail})
 
         elif request.user.is_customer:
+
             Customer_Name = Customer.objects.get(
                 Customer_Name=username).Customer_Name
             Customer_ID = Customer.objects.get(
@@ -545,8 +723,10 @@ def dashboard(request):
                 Status.append(Stat)
 
                 for c in City:
-                    EnergyPrice = Price.objects.get(Location=c).Energy_Price
-                    DieselPrice = Price.objects.get(Location=c).Diesel_Price
+                    EnergyPrice = Price.objects.get(
+                        Location=c).Energy_Price
+                    DieselPrice = Price.objects.get(
+                        Location=c).Diesel_Price
                     Diesel.append(DieselPrice)
                     Energy.append(EnergyPrice)
 
@@ -559,7 +739,7 @@ def dashboard(request):
                 device_id__in=Device_ID, alert_open=True).exclude(alert_type_name__in=status).order_by('-created_at')
             alert_count = len(alert)
 
-        return render(request, 'dashboard.html', {'alert_count': alert_count, 'username': username, 'Customer_Name': Customer_Name, 'Total': Total, 'Live': Live, 'Offline': Offline, 'Capacity': Capacity, 'InUse': InUse, 'Fuel__Consumed': Fuel__Consumed, 'Fuel__Cost': Fuel__Cost, 'Carbon_Foot__Print': Carbon_Foot__Print, 'UserDetail': UserDetail})
+        return render(request, 'dgms/dashboard.html', {'alert_count': alert_count, 'username': username, 'Customer_Name': Customer_Name, 'Total': Total, 'Live': Live, 'Offline': Offline, 'Capacity': Capacity, 'InUse': InUse, 'Fuel__Consumed': Fuel__Consumed, 'Fuel__Cost': Fuel__Cost, 'Carbon_Foot__Print': Carbon_Foot__Print, 'UserDetail': UserDetail})
 
 
 @ login_required(login_url='login')
@@ -746,7 +926,7 @@ def alert(request):
 
             if request.method == 'GET' and 'date' in request.GET:
                 alerts = Alerts.objects.filter(
-                    device_id__in=Device_ID).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                    device_id__in=Device_ID).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                 myFilter = AlertFilter(request.GET, queryset=alerts)
                 alerts = myFilter.qs
@@ -758,7 +938,7 @@ def alert(request):
 
                 if request.GET['time_range'] == 'Last 30 mins':
                     alerts = Alerts.objects.filter(
-                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(minutes=30)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(minutes=30)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
                         request.GET, queryset=alerts)
@@ -772,7 +952,7 @@ def alert(request):
                 elif request.GET['time_range'] == 'Last 1 hour':
 
                     alerts = Alerts.objects.filter(
-                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=1)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=1)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
                         request.GET, queryset=alerts)
@@ -786,7 +966,7 @@ def alert(request):
                 elif request.GET['time_range'] == 'Last 2 hours':
 
                     alerts = Alerts.objects.filter(
-                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=2)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=2)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
                         request.GET, queryset=alerts)
@@ -800,7 +980,7 @@ def alert(request):
                 elif request.GET['time_range'] == 'Last 7 hours':
 
                     alerts = Alerts.objects.filter(
-                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=7)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=7)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
                         request.GET, queryset=alerts)
@@ -814,7 +994,7 @@ def alert(request):
                 elif request.GET['time_range'] == 'Last 12 hours':
 
                     alerts = Alerts.objects.filter(
-                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=12)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=12)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
                         request.GET, queryset=alerts)
@@ -828,7 +1008,7 @@ def alert(request):
                 elif request.GET['time_range'] == 'Last 24 hours':
 
                     alerts = Alerts.objects.filter(
-                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=24)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=24)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
                         request.GET, queryset=alerts)
@@ -841,7 +1021,7 @@ def alert(request):
 
                 elif request.GET['time_range'] == 'Last 2 days':
                     alerts = Alerts.objects.filter(
-                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=2)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=2)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
                         request.GET, queryset=alerts)
@@ -855,7 +1035,7 @@ def alert(request):
                 elif request.GET['time_range'] == 'Last 5 days':
 
                     alerts = Alerts.objects.filter(
-                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=5)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=5)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
                         request.GET, queryset=alerts)
@@ -869,7 +1049,7 @@ def alert(request):
                 elif request.GET['time_range'] == 'Last 1 week':
 
                     alerts = Alerts.objects.filter(
-                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(weeks=1)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(weeks=1)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
                         request.GET, queryset=alerts)
@@ -883,7 +1063,7 @@ def alert(request):
                 elif request.GET['time_range'] == 'Last 2 weeks':
 
                     alerts = Alerts.objects.filter(
-                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(weeks=2)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(weeks=2)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
                         request.GET, queryset=alerts)
@@ -896,7 +1076,7 @@ def alert(request):
 
                 elif request.GET['time_range'] == 'Last 1 month':
                     alerts = Alerts.objects.filter(
-                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=30)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=30)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
                         request.GET, queryset=alerts)
@@ -909,7 +1089,7 @@ def alert(request):
 
                 elif request.GET['time_range'] == 'Last 2 months':
                     alerts = Alerts.objects.filter(
-                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=60)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=60)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
                         request.GET, queryset=alerts)
@@ -923,7 +1103,7 @@ def alert(request):
                 elif request.GET['time_range'] == 'Last 6 months':
 
                     alerts = Alerts.objects.filter(
-                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=183)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=183)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
                         request.GET, queryset=alerts)
@@ -937,7 +1117,7 @@ def alert(request):
                 elif request.GET['time_range'] == 'Last 1 year':
 
                     alerts = Alerts.objects.filter(
-                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=365)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=365)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
                         request.GET, queryset=alerts)
@@ -951,7 +1131,7 @@ def alert(request):
                 elif request.GET['time_range'] == 'Last 2 years':
 
                     alerts = Alerts.objects.filter(
-                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=365*2)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=365*2)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
                         request.GET, queryset=alerts)
@@ -966,13 +1146,13 @@ def alert(request):
 
             else:
 
-                alerts = Alerts.objects.filter(device_id__in=Device_ID).exclude(
-                    alert_level="V").order_by('-alert_open', '-created_at')
+                alerts = Alerts.objects.filter(device_id__in=Device_ID).exclude(alert_level="V").exclude(
+                    alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                 enddate = (Alerts.objects.filter(
-                    device_id__in=Device_ID).order_by('-created_at').last().created_at).strftime('%d-%m-%Y')
+                    device_id__in=Device_ID).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-created_at').last().created_at).strftime('%d-%m-%Y')
                 startdate = (Alerts.objects.filter(
-                    device_id__in=Device_ID).order_by('-created_at').first().updated_at).strftime('%d-%m-%Y')
+                    device_id__in=Device_ID).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-created_at').first().updated_at).strftime('%d-%m-%Y')
 
                 myFilter = AlertFilter(
                     request.GET, queryset=alerts)
@@ -981,246 +1161,512 @@ def alert(request):
             status = ['power_factor']
 
             alert = Alerts.objects.filter(
-                device_id__in=Device_ID, alert_open=True).exclude(alert_type_name__in=status)
+                device_id__in=Device_ID, alert_open=True).exclude(alert_level="V").exclude(
+                    alert_type_name__in=status)
 
             Count = len(alert)
 
-        return render(request, 'alert.html', {'alerts': alerts, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
+            return render(request, 'alert.html', {'alerts': alerts, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
 
-    if request.user.is_superuser:
-        Customer_Name = 'Admin'
-        TR = None
-        Count = None
-        alerts = None
-        myFilter = None
-        status = ['power_factor']
-
-        if request.method == 'GET' and 'date' in request.GET:
-            alerts = Alerts.objects.filter().exclude(
-                alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
-
-            myFilter = AlertFilter(request.GET, queryset=alerts)
-            alerts = myFilter.qs
-
-            enddate = (request.GET['start_date']).strftime('%d-%m-%Y')
-            startdate = (request.GET['end_date']).strftime('%d-%m-%Y')
-
-        elif request.method == 'GET' and 'range' in request.GET:
-
-            if request.GET['time_range'] == 'Last 30 mins':
-                alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
-                ) - datetime.timedelta(minutes=30)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
-
-                myFilter = AlertFilter(
-                    request.GET, queryset=alerts)
-                alerts = myFilter.qs
-
-                startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
-                enddate = (datetime.datetime.now() -
-                           datetime.timedelta(minutes=30)).strftime('%d-%m-%Y')
-
-            elif request.GET['time_range'] == 'Last 1 hour':
-
-                alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
-                ) - datetime.timedelta(hours=1)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
-
-                myFilter = AlertFilter(
-                    request.GET, queryset=alerts)
-                alerts = myFilter.qs
-
-                startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
-                enddate = (datetime.datetime.now() -
-                           datetime.timedelta(hours=1)).strftime('%d-%m-%Y')
-
-            elif request.GET['time_range'] == 'Last 2 hours':
-
-                alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
-                ) - datetime.timedelta(hours=2)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
-
-                myFilter = AlertFilter(
-                    request.GET, queryset=alerts)
-                alerts = myFilter.qs
-
-                startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
-                enddate = (datetime.datetime.now() -
-                           datetime.timedelta(hours=2)).strftime('%d-%m-%Y')
-
-            elif request.GET['time_range'] == 'Last 7 hours':
-
-                alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
-                ) - datetime.timedelta(hours=7)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
-
-                myFilter = AlertFilter(
-                    request.GET, queryset=alerts)
-                alerts = myFilter.qs
-
-                startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
-                enddate = (datetime.datetime.now() -
-                           datetime.timedelta(hours=7)).strftime('%d-%m-%Y')
-
-            elif request.GET['time_range'] == 'Last 12 hours':
-
-                alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
-                ) - datetime.timedelta(hours=12)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
-
-                myFilter = AlertFilter(
-                    request.GET, queryset=alerts)
-                alerts = myFilter.qs
-
-                startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
-                enddate = (datetime.datetime.now() -
-                           datetime.timedelta(hours=12)).strftime('%d-%m-%Y')
-
-            elif request.GET['time_range'] == 'Last 24 hours':
-
-                alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
-                ) - datetime.timedelta(hours=24)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
-
-                myFilter = AlertFilter(
-                    request.GET, queryset=alerts)
-                alerts = myFilter.qs
-
-                startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
-                enddate = (datetime.datetime.now() -
-                           datetime.timedelta(hours=24)).strftime('%d-%m-%Y')
-
-            elif request.GET['time_range'] == 'Last 2 days':
-                alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
-                ) - datetime.timedelta(days=2)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
-
-                myFilter = AlertFilter(
-                    request.GET, queryset=alerts)
-                alerts = myFilter.qs
-
-                startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
-                enddate = (datetime.datetime.now() -
-                           datetime.timedelta(days=2)).strftime('%d-%m-%Y')
-
-            elif request.GET['time_range'] == 'Last 5 days':
-
-                alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
-                ) - datetime.timedelta(days=5)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
-
-                myFilter = AlertFilter(
-                    request.GET, queryset=alerts)
-                alerts = myFilter.qs
-
-                startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
-                enddate = (datetime.datetime.now() -
-                           datetime.timedelta(days=5)).strftime('%d-%m-%Y')
-
-            elif request.GET['time_range'] == 'Last 1 week':
-
-                alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
-                ) - datetime.timedelta(weeks=1)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
-
-                myFilter = AlertFilter(
-                    request.GET, queryset=alerts)
-                alerts = myFilter.qs
-
-                startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
-                enddate = (datetime.datetime.now() -
-                           datetime.timedelta(weeks=1)).strftime('%d-%m-%Y')
-
-            elif request.GET['time_range'] == 'Last 2 weeks':
-
-                alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
-                ) - datetime.timedelta(weeks=2)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
-
-                myFilter = AlertFilter(
-                    request.GET, queryset=alerts)
-                alerts = myFilter.qs
-
-                startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
-                enddate = (datetime.datetime.now() -
-                           datetime.timedelta(weeks=2)).strftime('%d-%m-%Y')
-
-            elif request.GET['time_range'] == 'Last 1 month':
-                alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
-                ) - datetime.timedelta(days=30)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
-
-                myFilter = AlertFilter(
-                    request.GET, queryset=alerts)
-                alerts = myFilter.qs
-
-                startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
-                enddate = (datetime.datetime.now() -
-                           datetime.timedelta(days=30)).strftime('%d-%m-%Y')
-
-            elif request.GET['time_range'] == 'Last 2 months':
-                alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
-                ) - datetime.timedelta(days=60)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
-
-                myFilter = AlertFilter(
-                    request.GET, queryset=alerts)
-                alerts = myFilter.qs
-
-                startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
-                enddate = (datetime.datetime.now() -
-                           datetime.timedelta(days=60)).strftime('%d-%m-%Y')
-
-            elif request.GET['time_range'] == 'Last 6 months':
-
-                alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
-                ) - datetime.timedelta(days=183)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
-
-                myFilter = AlertFilter(
-                    request.GET, queryset=alerts)
-                alerts = myFilter.qs
-
-                startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
-                enddate = (datetime.datetime.now() -
-                           datetime.timedelta(days=183)).strftime('%d-%m-%Y')
-
-            elif request.GET['time_range'] == 'Last 1 year':
-
-                alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
-                ) - datetime.timedelta(days=365)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
-
-                myFilter = AlertFilter(
-                    request.GET, queryset=alerts)
-                alerts = myFilter.qs
-
-                startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
-                enddate = (datetime.datetime.now() -
-                           datetime.timedelta(days=365)).strftime('%d-%m-%Y')
-
-            elif request.GET['time_range'] == 'Last 2 years':
-
-                alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
-                ) - datetime.timedelta(days=365*2)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
-
-                myFilter = AlertFilter(
-                    request.GET, queryset=alerts)
-                alerts = myFilter.qs
-
-                startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
-                enddate = (datetime.datetime.now() -
-                           datetime.timedelta(days=2*365)).strftime('%d-%m-%Y')
-
-            TR = request.GET['time_range']
-
-        else:
+        elif request.user.is_superuser:
+            Customer_Name = 'Admin'
+            TR = None
+            Count = None
+            alerts = None
+            myFilter = None
             status = ['power_factor']
 
-            alerts = Alerts.objects.filter().exclude(
-                alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+            if request.method == 'GET' and 'date' in request.GET:
+                alerts = Alerts.objects.filter().exclude(alert_level="V").exclude(
+                    alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
-            enddate = Alerts.objects.filter().order_by(
-                '-created_at').exclude(alert_type_name__in=status, alert_level="V").last().created_at
-            startdate = Alerts.objects.filter().order_by(
-                '-created_at').exclude(alert_type_name__in=status, alert_level="V").first().updated_at
+                myFilter = AlertFilter(request.GET, queryset=alerts)
+                alerts = myFilter.qs
 
-        myFilter = AlertFilter(
-            request.GET, queryset=alerts)
-        alerts = myFilter.qs
+                enddate = (request.GET['start_date']).strftime('%d-%m-%Y')
+                startdate = (request.GET['end_date']).strftime('%d-%m-%Y')
 
-        alert = Alerts.objects.filter(
-            alert_open=True).exclude(alert_type_name__in=status)
+            elif request.method == 'GET' and 'range' in request.GET:
 
-        Count = len(alert)
+                if request.GET['time_range'] == 'Last 30 mins':
+                    alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
+                    ) - datetime.timedelta(minutes=30)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
-    return render(request, 'alert.html', {'alerts': alerts, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(minutes=30)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 1 hour':
+
+                    alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
+                    ) - datetime.timedelta(hours=1)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(hours=1)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 2 hours':
+
+                    alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
+                    ) - datetime.timedelta(hours=2)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(hours=2)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 7 hours':
+
+                    alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
+                    ) - datetime.timedelta(hours=7)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(hours=7)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 12 hours':
+
+                    alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
+                    ) - datetime.timedelta(hours=12)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(hours=12)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 24 hours':
+
+                    alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
+                    ) - datetime.timedelta(hours=24)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(hours=24)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 2 days':
+                    alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
+                    ) - datetime.timedelta(days=2)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(days=2)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 5 days':
+
+                    alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
+                    ) - datetime.timedelta(days=5)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(days=5)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 1 week':
+
+                    alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
+                    ) - datetime.timedelta(weeks=1)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(weeks=1)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 2 weeks':
+
+                    alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
+                    ) - datetime.timedelta(weeks=2)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(weeks=2)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 1 month':
+                    alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
+                    ) - datetime.timedelta(days=30)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(days=30)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 2 months':
+                    alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
+                    ) - datetime.timedelta(days=60)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(days=60)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 6 months':
+
+                    alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
+                    ) - datetime.timedelta(days=183)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(days=183)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 1 year':
+
+                    alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
+                    ) - datetime.timedelta(days=365)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(days=365)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 2 years':
+
+                    alerts = Alerts.objects.filter(created_at__gte=datetime.datetime.now(
+                    ) - datetime.timedelta(days=365*2)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(days=2*365)).strftime('%d-%m-%Y')
+
+                TR = request.GET['time_range']
+
+            else:
+                status = ['power_factor']
+
+                alerts = Alerts.objects.filter().exclude(alert_level="V").exclude(
+                    alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                enddate = Alerts.objects.filter().order_by(
+                    '-created_at').exclude(alert_level="V").exclude(alert_type_name__in=status).last().created_at
+                startdate = Alerts.objects.filter().order_by(
+                    '-created_at').exclude(alert_level="V").exclude(alert_type_name__in=status).first().updated_at
+
+            myFilter = AlertFilter(
+                request.GET, queryset=alerts)
+            alerts = myFilter.qs
+
+            alert = Alerts.objects.filter(
+                alert_open=True).exclude(alert_level="V").exclude(alert_type_name__in=status)
+
+            Count = len(alert)
+
+            return render(request, 'alert.html', {'alerts': alerts, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
+
+        if request.user.is_manager:
+            Customer_Name = Manager.objects.get(
+                Manager_Name=username).Customer_Name
+            managername = Manager.objects.get(
+                Manager_Name=username).Manager_Name
+            User_details = User_Detail.objects.all()
+            Device_ID = []
+
+            for det in User_details:
+                if str(det.Manager_Name) == managername:
+                    Device_ID.append(det.Device_ID)
+
+            TR = None
+            Count = None
+            alerts = None
+            myFilter = None
+            startdate = None
+            enddate = None
+
+            status = ['power_factor']
+
+            if request.method == 'GET' and 'date' in request.GET:
+                alerts = Alerts.objects.filter(
+                    device_id__in=Device_ID).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                myFilter = AlertFilter(request.GET, queryset=alerts)
+                alerts = myFilter.qs
+
+                enddate = (request.GET['start_date']).strftime('%d-%m-%Y')
+                startdate = (request.GET['end_date']).strftime('%d-%m-%Y')
+
+            elif request.method == 'GET' and 'range' in request.GET:
+
+                if request.GET['time_range'] == 'Last 30 mins':
+                    alerts = Alerts.objects.filter(
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(minutes=30)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()
+                                 ).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(minutes=30)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 1 hour':
+
+                    alerts = Alerts.objects.filter(
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=1)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()
+                                 ).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(hours=1)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 2 hours':
+
+                    alerts = Alerts.objects.filter(
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=2)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()
+                                 ).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(hours=2)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 7 hours':
+
+                    alerts = Alerts.objects.filter(
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=7)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()
+                                 ).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(hours=7)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 12 hours':
+
+                    alerts = Alerts.objects.filter(
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=12)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()
+                                 ).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(hours=12)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 24 hours':
+
+                    alerts = Alerts.objects.filter(
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=24)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()
+                                 ).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(hours=24)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 2 days':
+                    alerts = Alerts.objects.filter(
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=2)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()
+                                 ).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(days=2)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 5 days':
+
+                    alerts = Alerts.objects.filter(
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=5)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()
+                                 ).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(days=5)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 1 week':
+
+                    alerts = Alerts.objects.filter(
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(weeks=1)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()
+                                 ).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(weeks=1)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 2 weeks':
+
+                    alerts = Alerts.objects.filter(
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(weeks=2)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()
+                                 ).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(weeks=2)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 1 month':
+                    alerts = Alerts.objects.filter(
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=30)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()
+                                 ).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(days=30)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 2 months':
+                    alerts = Alerts.objects.filter(
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=60)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()
+                                 ).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(days=60)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 6 months':
+
+                    alerts = Alerts.objects.filter(
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=183)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()
+                                 ).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(days=183)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 1 year':
+
+                    alerts = Alerts.objects.filter(
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=365)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()
+                                 ).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(days=365)).strftime('%d-%m-%Y')
+
+                elif request.GET['time_range'] == 'Last 2 years':
+
+                    alerts = Alerts.objects.filter(
+                        device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=365*2)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
+                    startdate = (datetime.datetime.now()
+                                 ).strftime('%d-%m-%Y')
+                    enddate = (datetime.datetime.now() -
+                               datetime.timedelta(days=2*365)).strftime('%d-%m-%Y')
+
+                TR = request.GET['time_range']
+
+            else:
+
+                alerts = Alerts.objects.filter(device_id__in=Device_ID).exclude(alert_level="V").exclude(
+                    alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                enddate = (Alerts.objects.filter(
+                    device_id__in=Device_ID).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-created_at').last().created_at).strftime('%d-%m-%Y')
+                startdate = (Alerts.objects.filter(
+                    device_id__in=Device_ID).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-created_at').first().updated_at).strftime('%d-%m-%Y')
+
+                myFilter = AlertFilter(
+                    request.GET, queryset=alerts)
+                alerts = myFilter.qs
+
+            status = ['power_factor']
+
+            alert = Alerts.objects.filter(
+                device_id__in=Device_ID, alert_open=True).exclude(alert_level="V").exclude(
+                    alert_type_name__in=status)
+
+            Count = len(alert)
+
+            return render(request, 'alert.html', {'alerts': alerts, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
 
 
 @ login_required(login_url='login')
@@ -1322,6 +1768,9 @@ def dgmsDashboard(request, device_id):
         if request.user.is_customer:
             Customer_Name = Customer.objects.get(
                 Customer_Name=username).Customer_Name
+
+        LTOD = DevicesInfo.objects.filter(
+            device_id=device_id).last().device_time
         Cit = User_Detail.objects.get(Device_ID=device_id).City
         Loc = User_Detail.objects.get(Device_ID=device_id).Location
         Rat = Device.objects.get(device_id=device_id).device_rating
@@ -1473,8 +1922,10 @@ def dgmsDashboard(request, device_id):
         Fuel1.reverse()
         Time.reverse()
 
+        status = ['power_factor']
+
         alerts = Alerts.objects.filter(
-            device_id=device_id, alert_open=True).order_by('-created_at')
+            device_id=device_id, alert_open=True).exclude(alert_type_name__in=status).order_by('-created_at')
 
         alert_count = len(alerts)
 
@@ -1487,7 +1938,7 @@ def dgmsDashboard(request, device_id):
         description = r['weather'][0]['description']
         icon = r['weather'][0]['icon']
 
-    return render(request, 'dgmsDashboard.html', {'temperature': temperature, 'description': description, 'icon': icon, 'Fuel2': Fuel2, 'DDOI': DDOI, 'alert_count': alert_count, 'Fuel1': Fuel1, 'Time': Time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Fuel2': Fuel2, 'Tank_Size': Tank_Size, 'Fuel_Per': Fuel_Per, 'hh': hh, 'UG': UG, 'Carbon_Foot_Print': Carbon_Foot_Print, 'BV': BV, 'AvgFC': AvgFC, 'Energy_OA': Energy_OA, 'MaxDLoad': MaxDLoad, 'DeviceC': DeviceC, 'DOI': DOI, 'WS': WS, 'LSD': LSD, 'NSD': NSD, 'SP': SP, 'Star': Star, 'RT': RT, 'diff': diff, 'Level': Level, 'Fuel1': Fuel1, 'Time': Time})
+    return render(request, 'dgmsDashboard.html', {'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'Fuel2': Fuel2, 'DDOI': DDOI, 'alert_count': alert_count, 'Fuel1': Fuel1, 'Time': Time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Fuel2': Fuel2, 'Tank_Size': Tank_Size, 'Fuel_Per': Fuel_Per, 'hh': hh, 'UG': UG, 'Carbon_Foot_Print': Carbon_Foot_Print, 'BV': BV, 'AvgFC': AvgFC, 'Energy_OA': Energy_OA, 'MaxDLoad': MaxDLoad, 'DeviceC': DeviceC, 'DOI': DOI, 'WS': WS, 'LSD': LSD, 'NSD': NSD, 'SP': SP, 'Star': Star, 'RT': RT, 'diff': diff, 'Level': Level, 'Fuel1': Fuel1, 'Time': Time})
 
 
 @ login_required(login_url='login')
@@ -2890,9 +3341,9 @@ def performanceKPI(request, device_id):
         FCO.reverse()
         UG.reverse()
 
-        Total_FC = sum(FC)
-        Total_FCO = sum(FCO)
-        Total_RH1 = (sum(RH)*3600)
+        Total_FC = round(sum(FC), 2)
+        Total_FCO = round(sum(FCO), 2)
+        Total_RH1 = round((sum(RH)*3600), 2)
 
         seconds = Total_RH1
         # seconds = seconds % (24 * 3600)
@@ -3940,6 +4391,10 @@ def operational_report(request, device_id):
             diff = Current_T - End_time
 
         Count = OPR.count()
+        Total_RHour = []
+        Total_Fuel = []
+        Total_FuelCon = []
+        Total_energy = []
         Total_RH = 0
         Total_F = 0
         Total_FC = 0
@@ -3964,12 +4419,26 @@ def operational_report(request, device_id):
             if o.run_hours == None:
                 Total_RH = 0 + Total_RH
                 Run1.append(0)
+                Total_RHour.append(0)
+                Total_Fuel.append(0)
+                Total_FuelCon.append(0)
+                Total_energy.append(0)
             else:
                 Run1.append(float(o.run_hours*3600))
-                Total_RH1 = o.run_hours + Total_RH1
-                Total_F = abs(o.fuel_consumed + Total_F)
-                Total_FC = abs(o.fuel_cost + Total_FC)
-                Total_EG = o.energy_generated_kwh + Total_EG
+                Total_RHour.append(o.run_hours)
+                Total_Fuel.append(abs(o.fuel_consumed))
+                Total_FuelCon.append(abs(o.fuel_cost))
+                Total_energy.append(abs(o.energy_generated_kwh))
+
+                # Total_RH1 = o.run_hours + Total_RH1
+                # Total_F = abs(o.fuel_consumed + Total_F)
+                # Total_FC = abs(o.fuel_cost + Total_FC)
+                # Total_EG = o.energy_generated_kwh + Total_EG
+
+        Total_RH1 = sum(Total_RHour)
+        Total_F = sum(Total_Fuel)
+        Total_FC = sum(Total_FuelCon)
+        Total_EG = sum(Total_energy)
 
         for rh in Run1:
             seconds = rh
@@ -4306,6 +4775,10 @@ def performance_report(request, device_id):
             if p.run_hours == None:
                 Total_RH = 0 + Total_RH
                 Run1.append(0)
+                FC.append(0)
+                RH.append(0)
+                Total_PL.append(0)
+                Total_AL.append(0)
             else:
                 Total_RH1 = p.run_hours + Total_RH1
                 Run1.append(float(p.run_hours*3600))
@@ -4625,7 +5098,7 @@ def device_alert(request, device_id):
 
         if request.method == 'GET' and 'date' in request.GET:
             alerts = Alerts.objects.filter(
-                device_id=device_id).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                device_id=device_id).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
             myFilter = DeviceAlertFilter(request.GET, queryset=alerts)
             alerts = myFilter.qs
@@ -4639,7 +5112,7 @@ def device_alert(request, device_id):
 
             if request.GET['time_range'] == 'Last 30 mins':
                 alerts = Alerts.objects.filter(
-                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(minutes=30)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(minutes=30)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                 myFilter = DeviceAlertFilter(
                     request.GET, queryset=alerts)
@@ -4652,7 +5125,7 @@ def device_alert(request, device_id):
             elif request.GET['time_range'] == 'Last 1 hour':
 
                 alerts = Alerts.objects.filter(
-                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=1)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=1)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                 myFilter = DeviceAlertFilter(
                     request.GET, queryset=alerts)
@@ -4665,7 +5138,7 @@ def device_alert(request, device_id):
             elif request.GET['time_range'] == 'Last 2 hours':
 
                 alerts = Alerts.objects.filter(
-                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=2)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=2)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                 myFilter = DeviceAlertFilter(
                     request.GET, queryset=alerts)
@@ -4678,7 +5151,7 @@ def device_alert(request, device_id):
             elif request.GET['time_range'] == 'Last 7 hours':
 
                 alerts = Alerts.objects.filter(
-                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=7)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=7)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                 myFilter = DeviceAlertFilter(
                     request.GET, queryset=alerts)
@@ -4691,7 +5164,7 @@ def device_alert(request, device_id):
             elif request.GET['time_range'] == 'Last 12 hours':
 
                 alerts = Alerts.objects.filter(
-                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=12)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=12)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                 myFilter = DeviceAlertFilter(
                     request.GET, queryset=alerts)
@@ -4704,7 +5177,7 @@ def device_alert(request, device_id):
             elif request.GET['time_range'] == 'Last 24 hours':
 
                 alerts = Alerts.objects.filter(
-                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=24)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=24)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                 myFilter = DeviceAlertFilter(
                     request.GET, queryset=alerts)
@@ -4716,7 +5189,7 @@ def device_alert(request, device_id):
 
             elif request.GET['time_range'] == 'Last 2 days':
                 alerts = Alerts.objects.filter(
-                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=2)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=2)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                 myFilter = DeviceAlertFilter(
                     request.GET, queryset=alerts)
@@ -4729,7 +5202,7 @@ def device_alert(request, device_id):
             elif request.GET['time_range'] == 'Last 5 days':
 
                 alerts = Alerts.objects.filter(
-                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=5)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=5)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                 myFilter = DeviceAlertFilter(
                     request.GET, queryset=alerts)
@@ -4742,7 +5215,7 @@ def device_alert(request, device_id):
             elif request.GET['time_range'] == 'Last 1 week':
 
                 alerts = Alerts.objects.filter(
-                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(weeks=1)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(weeks=1)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                 myFilter = DeviceAlertFilter(
                     request.GET, queryset=alerts)
@@ -4755,7 +5228,7 @@ def device_alert(request, device_id):
             elif request.GET['time_range'] == 'Last 2 weeks':
 
                 alerts = Alerts.objects.filter(
-                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(weeks=2)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(weeks=2)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                 myFilter = DeviceAlertFilter(
                     request.GET, queryset=alerts)
@@ -4767,7 +5240,7 @@ def device_alert(request, device_id):
 
             elif request.GET['time_range'] == 'Last 1 month':
                 alerts = Alerts.objects.filter(
-                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=30)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=30)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                 myFilter = DeviceAlertFilter(
                     request.GET, queryset=alerts)
@@ -4779,7 +5252,7 @@ def device_alert(request, device_id):
 
             elif request.GET['time_range'] == 'Last 2 months':
                 alerts = Alerts.objects.filter(
-                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=60)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=60)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                 myFilter = DeviceAlertFilter(
                     request.GET, queryset=alerts)
@@ -4793,7 +5266,7 @@ def device_alert(request, device_id):
             elif request.GET['time_range'] == 'Last 6 months':
 
                 alerts = Alerts.objects.filter(
-                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=183)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=183)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                 myFilter = DeviceAlertFilter(
                     request.GET, queryset=alerts)
@@ -4807,7 +5280,7 @@ def device_alert(request, device_id):
             elif request.GET['time_range'] == 'Last 1 year':
 
                 alerts = Alerts.objects.filter(
-                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=365)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=365)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                 myFilter = DeviceAlertFilter(
                     request.GET, queryset=alerts)
@@ -4820,7 +5293,7 @@ def device_alert(request, device_id):
             elif request.GET['time_range'] == 'Last 2 years':
 
                 alerts = Alerts.objects.filter(
-                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=365*2)).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                    device_id=device_id, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=365*2)).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                 myFilter = DeviceAlertFilter(
                     request.GET, queryset=alerts)
@@ -4836,19 +5309,19 @@ def device_alert(request, device_id):
             status = ['power_factor']
 
             alerts = Alerts.objects.filter(
-                device_id=device_id).exclude(alert_type_name__in=status, alert_level="V").order_by('-alert_open', '-created_at')
+                device_id=device_id).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
             startdate = (Alerts.objects.filter(
-                device_id=device_id).order_by('-created_at').exclude(alert_type_name__in=status, alert_level="V").first().updated_at).strftime('%d-%m-%Y')
+                device_id=device_id).order_by('-created_at').exclude(alert_level="V").exclude(alert_type_name__in=status).first().updated_at).strftime('%d-%m-%Y')
             enddate = (Alerts.objects.filter(
-                device_id=device_id).order_by('-created_at').exclude(alert_type_name__in=status, alert_level="V").last().created_at).strftime('%d-%m-%Y')
+                device_id=device_id).order_by('-created_at').exclude(alert_level="V").exclude(alert_type_name__in=status).last().created_at).strftime('%d-%m-%Y')
 
             myFilter = DeviceAlertFilter(
                 request.GET, queryset=alerts)
             alerts = myFilter.qs
 
         alert = Alerts.objects.filter(
-            device_id=device_id, alert_open=True).exclude(alert_type_name__in=status).order_by('-created_at')
+            device_id=device_id, alert_open=True).exclude(alert_level="V").exclude(alert_type_name__in=status).order_by('-created_at')
 
         Count = len(alert)
 

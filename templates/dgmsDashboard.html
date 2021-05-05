@@ -136,13 +136,15 @@
       <div class="dg_info">
         <div class="b"></div>
         <div class="row">
+
+          <div class="on-left">
           <div class="dg_info_dev">
-            <div class="flex_cont">
               <div class="asset_name">{{Cit}}-{{Loc}}</div>
-              <div class="weather-img">
-                <img src="http://openweathermap.org/img/w/{{icon}}.png" />
-              </div>
-              <div class="weather">{{temperature}} &deg; C</div>
+              <div class="inst_dgms">DGMS Installation Date: {{DDOI}}</div>
+            </div>
+            
+              
+            <div class="star-kva">
               <div class="kva">{{Rat}} kVA</div>
               {% if Star == 1 %}
               <div class="star">
@@ -166,9 +168,25 @@
               </div>
               {% endif %}
             </div>
-            <!-- </div> -->
-            <div class="inst_dgms">DGMS Installation Date: {{DDOI}}</div>
+
+          <div class="weather">
+            <div class="weather-img"><img src="http://openweathermap.org/img/wn/{{icon}}@2x.png" /></div>
+            <div class="weather-text">
+              <div>{{temperature}} &deg; C</div>
+              <div class="weather-type">{{description}}</div>
+            </div>
           </div>
+          <div class="last-data">
+            <div class="last-data-time">
+              {{LTOD}}
+            </div>
+            <div class="last-data-text">
+              Last Data Recieved
+            </div>
+          </div>
+      </div>
+
+          <!-- </div> -->
 
           <div class="dg_info_status">
             {% if Stat == 'ON' %}
@@ -342,7 +360,7 @@
                       src="{% static './images/thermometer.png' %}"
                       alt="run"
                     />
-                    <div class="value">{{RT}}</div>
+                    <div class="value">{{RT}} &deg; C</div>
                   </div>
 
                   <div class="container">

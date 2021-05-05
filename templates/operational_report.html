@@ -113,49 +113,60 @@
   <div class="dg_info">
     <div class="b"></div>
     <div class="row">
-     <div class="dg_info_dev">
-     <div class="flex_cont">
-      <div class="asset_name">{{Cit}}-{{Loc}}</div>
-      <div class="weather-img">
-        <img src="http://openweathermap.org/img/w/{{icon}}.png" />
+
+      <div class="on-left">
+      <div class="dg_info_dev">
+          <div class="asset_name">{{Cit}}-{{Loc}}</div>
+          <div class="inst_dgms">DGMS Installation Date: {{DDOI}}</div>
+        </div>
+        
+          
+        <div class="star-kva">
+          <div class="kva">{{Rat}} kVA</div>
+          {% if Star == 1 %}
+          <div class="star">
+            <img src="{% static './images/star1.png' %}" />
+          </div>
+          {% elif Star == 2 %}
+          <div class="star">
+            <img src="{% static './images/star2.png' %}" />
+          </div>
+          {% elif Star == 3 %}
+          <div class="star">
+            <img src="{% static './images/star3.png' %}" />
+          </div>
+          {% elif Star == 4 %}
+          <div class="star">
+            <img src="{% static './images/star4.png' %}" />
+          </div>
+          {% else %}
+          <div class="star">
+            <img src="{% static './images/star5.png' %}" />
+          </div>
+          {% endif %}
+        </div>
+
+      <div class="weather">
+        <div class="weather-img"><img src="http://openweathermap.org/img/wn/{{icon}}@2x.png" /></div>
+        <div class="weather-text">
+          <div>{{temperature}} &deg; C</div>
+          <div class="weather-type">{{description}}</div>
+        </div>
       </div>
-      <div class="weather">{{temperature}} &deg; C</div>
-      <div class="kva">{{Rat}} kVA</div>
-      {% if Star == 1 %}
-      <div class="star">
-        <img src="{% static './images/star1.png' %}" />
-      </div>
-      {% elif Star == 2 %}
-      <div class="star">
-        <img src="{% static './images/star2.png' %}" />
-      </div>
-      {% elif Star == 3 %}
-      <div class="star">
-        <img src="{% static './images/star3.png' %}" />
-      </div>
-      {% elif Star == 4 %}
-      <div class="star">
-        <img src="{% static './images/star4.png' %}" />
-      </div>
-      {% else %}
-      <div class="star">
-        <img src="{% static './images/star5.png' %}" />
-      </div>
-      {% endif %}
     </div>
-      <div class="inst_dgms">DGMS Installation Date: {{DDOI}} </div>
-     </div>
-  
-     <div class="dg_info_status">
-      {% if Stat == 'ON' %}
-      <div class="status" id="dg_on">ON</div>
-      {% else %}
-      <div class="status" id="dg_off">OFF</div>
-      {% endif %}
-      <div>{{diff}}</div>
-     </div>
-     </div>
-  </div> 
+
+      <!-- </div> -->
+
+      <div class="dg_info_status">
+        {% if Stat == 'ON' %}
+        <div class="status" id="dg_on">ON</div>
+        {% else %}
+        <div class="status" id="dg_off">OFF</div>
+        {% endif %}
+        <div>{{diff}}</div>
+      </div>
+    </div>
+  </div>
 
 <div class="cont">
 
@@ -314,12 +325,20 @@
         <td>{{ forloop.counter }}.</td>
         <td>{{ R }}</td>
         <td>{{O.start_time}}</td>
+        {% if O.end_time == None %}
+        <td>Running</td>
+        <td>Running</td>
+        <td>Running</td>
+        <td>Running</td>
+        <td>Running</td>
+        {% else %}
         <td>{{O.end_time}}</td>
         <td>{{run}}</td>
         <td>{{O.fuel_consumed}}</td>
         <td>{{O.fuel_cost}}</td>
         <td>{{O.energy_generated_kwh}}</td>
       </tr>
+      {% endif %}
       {% endfor %}
     </tbody>
 
@@ -382,12 +401,20 @@
         <td>{{ forloop.counter }}.</td>
         <td>{{ r }}</td>
         <td>{{o.start_time}}</td>
+        {% if o.end_time == None %}
+        <td>Running</td>
+        <td>Running</td>
+        <td>Running</td>
+        <td>Running</td>
+        <td>Running</td>
+        {% else %}
         <td>{{o.end_time}}</td>
         <td>{{Run}}</td>
         <td>{{o.fuel_consumed}}</td>
         <td>{{o.fuel_cost}}</td>
         <td>{{o.energy_generated_kwh}}</td>
       </tr>
+      {% endif %}
       {% endfor %}
 
  <!-- -------------------------Footer of table-------------------- -->          

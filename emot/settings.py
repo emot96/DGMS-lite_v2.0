@@ -26,9 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'e+3c*e&$_4=#eb@v=9hoe&yd7v64b5@i3u*ia1v25%dxt-^=+j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'dgms-emot-v2.herokuapp.com']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 

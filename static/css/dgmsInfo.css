@@ -2,7 +2,7 @@
   background-color: #ffffff;
   /* width: 50%; */
   margin: 0px 0px 0px 0px;
-  min-height: 10vh;
+  min-height: 9vh;
   /* border-radius: 5px; */
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
   position: -webkit-sticky;
@@ -15,6 +15,10 @@
 .b {
   padding-top: 3px;
   border-bottom: 1px solid rgb(255, 255, 255);
+}
+
+.on-left {
+  display: flex;
 }
 
 .dg_info hr {
@@ -43,36 +47,62 @@
 
 .asset_name {
   margin-top: 3px;
-  margin-right: 10px;
+  margin-right: 5px;
+}
+
+.star-kva {
+  margin-top: 10px;
 }
 
 .weather {
-  margin-top: 3px;
-  margin-right: 10px;
+  margin-top: 10px;
+  margin-left: 20px;
+  display: flex;
 }
 
 .weather-img img {
-  width: 35px;
-  height: 35px;
+  width: 45px;
+  height: 45px;
   margin-left: 10px;
   margin-right: 3px;
   margin-top: 0px;
+}
+
+.weather-text {
+  margin-left: 10px;
+}
+
+.weather-type {
+  font-size: 14px;
+  /* text-align: center; */
+  color: rgb(56, 56, 56);
+  margin-top: 4px;
+}
+
+.last-data {
+  margin-top: 10px;
+  margin-left: 40px;
+}
+
+.last-data-text {
+  margin-top: 4px;
+  font-size: 14px;
+  color: rgb(56, 56, 56);
 }
 
 .inst_dgms {
   text-transform: capitalize;
   font-size: 14px;
   color: rgb(84, 84, 84);
-  margin-top: 3px;
+  margin-top: 5px;
 }
-
-.dg_info_dev .kva {
+.kva {
   /* font-size: 14px; */
-  font-weight: bold;
+  /* font-weight: bold; */
   color: #6c0284;
-  margin-left: 10px;
+  margin-left: 30px;
   text-transform: none;
-  margin-top: 3px;
+  margin-top: 0px;
   margin-right: 10px;
 }
 
@@ -88,7 +118,7 @@
   font-size: 17px;
   color: white;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   border-radius: 3px;
 }
 
@@ -101,9 +131,10 @@
 }
 
 .star img {
-  height: 21px;
-  width: 105px;
-  margin-left: 10px;
+  height: 17px;
+  width: 84px;
+  margin-left: 30px;
+  /* margin-top: 20px; */
 }
 
 @media screen and (max-width: 3000px) {

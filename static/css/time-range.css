@@ -116,6 +116,6 @@ select:hover {
 
 @media screen and (max-width: 3000px) {
   .select-time-bar {
-    top: 74px;
+    top: 67px;
   }
 }
