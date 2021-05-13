@@ -1,0 +1,375 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="refresh" content="60" />
+    <!-- <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
+    <title>Admin Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+      integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+      crossorigin="anonymous"
+    />
+
+    <link rel="stylesheet" href="{% static './css/navbar.css' %}" />
+    <link rel="stylesheet" href="{% static './css/dashboard.css' %}" />
+    <link rel="stylesheet" href="{% static './css/footer.css' %}" />
+
+    <style>
+      .head3 td {
+        width: 10%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Side Vertical Navigation bar-->
+    <nav>
+      <!-- Toogle for responsive nav bar-->
+      <div class="hamburger">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+      </div>
+
+      <!-- side nav -->
+      <div class="sidenav">
+        <div class="img">
+          <img
+            src="{% static './images/emot.png' %}"
+            class="logo"
+            alt="logo_emot"
+          />
+        </div>
+
+        <div class="dropdown-btn">
+          <a href="dashboard"
+            ><img
+              src="{% static './images/Dashboard.png' %}"
+              alt="dashboard"
+            />Dashboards</a
+          >
+          <button id="a">+</button>
+        </div>
+
+        <div class="dropdown-container">
+          <div class="sub-link">
+            <a href="dashboard">DGMS Dashboard</a>
+          </div>
+          <div class="sub-link"><a href="#">Coming soon</a></div>
+          <div class="sub-link"><a href="#">Coming soon</a></div>
+        </div>
+
+        <div class="active">
+          <a href="customerInfo"
+            ><img
+              src="{% static './images/customer.png' %}"
+              alt="customer"
+            />Customer Info</a
+          >
+        </div>
+        <div>
+          <a href="update"
+            ><img
+              src="{% static './images/update.png' %}"
+              alt="update"
+            />Update</a
+          >
+        </div>
+      </div>
+    </nav>
+    <!--end side nav-->
+
+    <div class="main">
+      <!-- Upper horizontal nav bar -->
+
+      <nav class="hor_nav">
+        <div class="left">
+          <div class="user_img">
+            <img src="{% static './images/emot.png' %}" alt="user_img" />
+          </div>
+          <div class="name">Admin</div>
+        </div>
+
+        <div class="right">
+          <a href="alert" target="_blank"
+            ><div class="notify">
+              <div>
+                <img
+                  src="{% static './images/notification.png' %}"
+                  alt="notifications"
+                />
+              </div>
+              <div class="not-txt">
+                <div class="not-no">{{alert_count }}</div>
+              </div>
+            </div></a
+          >
+          <div class="type">DGMS</div>
+
+          <div onclick="dropFunction()" class="user_name">
+            {{username}} &ensp;
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-caret-down-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
+              />
+            </svg>
+          </div>
+
+          <div id="user-dropdown" class="drop-cont">
+            <div><a href="{% url 'password_change' %}">Change Password</a></div>
+            <hr />
+            <div><a href="{% url 'logoutUser' %}" id="logout">Logout</a></div>
+          </div>
+        </div>
+      </nav>
+      <!-- end horizontal nav -->
+
+      <div class="cont">
+        <!--  Three blocks (assets, customer and users) -->
+        <div class="row">
+          <!-- class from bootstrap for displaying divs in rows -->
+
+          <!-- Assets -->
+          <div id="background">
+            <ul class="top">
+              <li class="head">Assets</li>
+              <li>
+                <img
+                  src="{% static './images/control-panel.png' %}"
+                  alt="assets"
+                />
+              </li>
+            </ul>
+
+            <hr class="devider" />
+
+            <table class="head1">
+              <tr class="head2">
+                <th>Total</th>
+                <th>Live</th>
+                <th>Locations</th>
+                <th>Offline</th>
+              </tr>
+
+              <tr class="head3">
+                <td>{{Total}}</td>
+                <td style="color: #5ce914">{{Live}}</td>
+                <td>{{Total}}</td>
+                <td style="color: #555ed6">{{Offline}}</td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Customers -->
+          <div id="background">
+            <ul class="top">
+              <li class="head">Customers</li>
+              <li>
+                <img src="{% static './images/users.png' %}" alt="customer" />
+              </li>
+            </ul>
+
+            <hr class="devider" />
+
+            <table class="head1">
+              <tr class="head2">
+                <th>Total</th>
+                <th>Loaction</th>
+              </tr>
+
+              <tr class="head3">
+                <td>{{Total_Customer}}</td>
+                <td>{{Location1}}</td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Fuel -->
+          <div id="background">
+            <ul class="top">
+              <li class="head">Users</li>
+              <li><img src="{% static './images/user.png' %}" alt="user" /></li>
+            </ul>
+
+            <hr class="devider" />
+
+            <table class="head1">
+              <tr class="head2">
+                <th>Total</th>
+                <th>Location</th>
+              </tr>
+
+              <tr class="head3">
+                <td>{{Total}}</td>
+                <td>{{Location1}}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <!-- class ="row" ends here -->
+
+        <div class="asset_info">
+          <ul class="top">
+            <li class="head">Customer Information</li>
+            <li>
+              <form class="drop_downs">
+                <select name="current_status">
+                  <option value="" selected disabled hidden>
+                    Current Status
+                  </option>
+                  <option value="on" class="on">ON</option>
+                  <option value="off" class="off">OFF</option>
+                </select>
+
+                <select name="state">
+                  <option value="" selected disabled hidden>state</option>
+                  <option value="Bangalore">Karnataka</option>
+                  <option value="Hyderabad">Uttar Pradesh</option>
+                </select>
+
+                <select name="location">
+                  <option value="" selected disabled hidden>City</option>
+                  <option value="Bangalore">Bangalore</option>
+                  <option value="Hyderabad">Hyderabad</option>
+                </select>
+
+                <select name="attribute">
+                  <option value="" selected disabled hidden>Customer</option>
+                  <option>Cafe Coffee day</option>
+                  <option>Bank</option>
+                </select>
+
+                <button class="go">GO</button>
+              </form>
+            </li>
+          </ul>
+
+          <hr class="devider" />
+
+          <div class="asset_info_table">
+            <table class="asset_table">
+              <tr>
+                <th>S.NO</th>
+                <th>STATE</th>
+                <th>CITY</th>
+                <th>LOCATION</th>
+                <th>CURRENT STATUS</th>
+                <th>RATING (kVA)</th>
+                <th>CUSTOMER</th>
+                <th>CUSTOMER EMAIL</th>
+                <th>CONTACT PERSON</th>
+                <th>EMAIL</th>
+                <th>CONTACT 1</th>
+                <th>CONTACT 2</th>
+              </tr>
+
+              {% for s,c,l,st,rt,cn,i,ce,cp,ue,uc1,uc2 in UserDetail %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{s}}</td>
+                <td>{{c}}</td>
+                <td><a href="{% url 'dgmsDashboard' i %}">{{l}}</a></td>
+                {% if st == 'ON' %}
+                <td align="center"><div class="on">ON</div></td>
+                {% else %}
+                <td align="center"><div class="off">OFF</div></td>
+                {% endif %}
+                <td>{{rt}}</td>
+                <td><a href="{% url 'customer' i %}">{{cn}}</a></td>
+                <td>{{ce}}</td>
+                <td>{{cp}}</td>
+                <td>{{ue}}</td>
+                <td>{{uc1}}</td>
+                <td>{{uc2}}</td>
+              </tr>
+              {% endfor %}
+            </table>
+          </div>
+          <!-- class ="asset_info_table" ends here -->
+        </div>
+        <!-- class ="asset_info" ends here -->
+      </div>
+      <!-- class ="cont" ends here -->
+
+      <div class="footer">
+        <div class="footer-content">
+          <div>© 2021 eMoT. All Rights Reserved.</div>
+
+          <div class="web-links">
+            <div>
+              <a href="https://www.emot.co.in/about-us/" target="_blank"
+                >About us</a
+              >
+            </div>
+            <div>
+              <a href="https://www.emot.co.in/contact/" target="_blank"
+                >Contact us</a
+              >
+            </div>
+            <div>
+              <a href="https://www.emot.co.in/emot/" target="_blank"
+                >eMoT IoT</a
+              >
+            </div>
+          </div>
+
+          <div class="social-media">
+            <a href="https://www.facebook.com/emot.co.in/" target="_blank"
+              ><img
+                src="{% static './images/facebook.png' %}"
+                alt="facebook"
+                title="facebook"
+            /></a>
+            <a href="https://twitter.com/Emot86007134" target="_blank"
+              ><img
+                src="{% static './images/twitter.png' %}"
+                alt="twitter"
+                title="twitter"
+            /></a>
+            <a
+              href="https://www.linkedin.com/company/emot-elekron/"
+              target="_blank"
+              ><img
+                src="{% static './images/linkedin.png' %}"
+                alt="linkedin"
+                title="linkedin"
+            /></a>
+            <a href="https://www.instagram.com/elekronemot/" target="_blank"
+              ><img
+                src="{% static './images/instagram.png' %}"
+                alt="instagram"
+                title="instagram"
+            /></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--class="main" ends here-->
+
+    <!-- js -->
+
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+      crossorigin="anonymous"
+    ></script>
+
+    <script type="text/javascript" src="{% static './js/navbar.js' %}"></script>
+  </body>
+</html>

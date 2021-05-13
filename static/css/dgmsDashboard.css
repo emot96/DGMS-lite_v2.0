@@ -1,10 +1,8 @@
 @import url("fonts.css");
 
-.dashboard .row{
-    margin: 0px 20px 15px 20px;
-    /* background-color: rebeccapurple; */
-    justify-content: space-between;
-    
+.dashboard .row-dashboard{
+    margin: 10px;
+   display: flex;
     }
 
 .left_side{
@@ -16,7 +14,6 @@
 .right_side{
     /* background-color: yellow; */
     width: 25%;
-
 }
 
 .left_side .row{
@@ -45,7 +42,7 @@
  }
 
 .three .row .container{
-    min-height: 18vh;
+    /* min-height: 18vh; */
     width: 31%;
     text-align: center;
     box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
@@ -53,8 +50,6 @@
     background-color: white;
     font-size: 17px;
     border:2px solid #3fbd09;
-    /* border-top:2px solid #3fbd09;
-    border-bottom:2px solid #3fbd09; */
 }
 
 .three .row .heading{
@@ -69,19 +64,19 @@
   }
 
 
-/*--------------------------------------CSS for Fuel info, Asset info, Alerts-------------------------------*/
+/*--------------------------------------CSS for Fuel info, Asset info-------------------------------*/
 
 .right_side .asset_info, .fuel_info{
     min-width: 90%;
     margin: 10px 20px 20px 20px;
     font-size: 17px;
-    /* border: 2px solid #3fbd09; */
+   
 }
 
 .right_side .asset_info, .fuel_info{
     border-radius: 5px;
 }
-.right_side .asset_info, .alert_foot,.fuel_info{
+.right_side .asset_info,.fuel_info{
   
     box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 }
@@ -89,13 +84,14 @@
 
 /*--------------------------------------CSS for Fuel info-------------------------------*/
 .right_side .fuel_info{
-    min-height: 22vh;
+    height: 30%;
     background-color: #ffffff;
+    overflow-y: auto;
+    overflow-x: auto;
 }
 
 .right_side .fuel_info .fuel_nav{ 
     text-transform: uppercase;
-    min-height: 5vh;
     border-bottom: 3px solid rgb(150, 131, 8);
     display: flex;
 
@@ -117,9 +113,10 @@
 
 /*--------------------------------------CSS for Asset info-------------------------------*/
 .right_side .asset_info{
-    min-height: 39.5vh !important;
-    max-height: 39.5vh !important;
+    height: 58%;
     background-color: #ffffff;
+     overflow-y: auto;
+    overflow-x: auto;
 }
 
 .right_side .asset_info .asset_nav{ 
@@ -139,104 +136,12 @@
     margin-right: 5px;
 }
 
-/*--------------------------------------CSS for Alerts-------------------------------*/
-
-.right_side .alerts{
-    background-color: white;
-    min-height: 30vh;
-    max-height: 30vh;
-    overflow: auto;
-    margin-bottom: 0px;
-    box-shadow: 4px 0 4px -4px rgb(184, 184, 184);
-    border-radius: 5px 5px 0px 0px; 
-    min-width: 90%;
-    margin: 10px 20px 0px 20px;
-}
-
-.right_side .alerts .alert_nav{ 
-    background-color: #09c9d0;
-    text-transform: uppercase;
-    min-height: 5vh;
-    position: sticky;
-    top: 0;
-    display: flex;
-    justify-content: space-between;
-}
-
-
-.downloadAlert img{
-    width: 15px;
-    height: 15px;
-    margin: 15px 10px 10px 10px;
-    cursor: pointer;
-
-}
-
-
-.right_side .alerts .alert_body{ 
-    margin: 10px 10px 0px 10px;
-     display: flex;
-     border-bottom: 1px solid rgb(228, 228, 228);
-}
-
-.circle{
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin-top: 5px;
-    flex-shrink: 0;
-}
-
-.alert_body .alert_msg{
-    margin-left: 10px;
-    
-}
-
-.alert_msg .alert_time{
-    font-size: 13px;
-    color: rgb(140, 140, 140);
-}
-
-.alert_msg .msg_text{
-    font-size: 14px;
-    
-}
-
-#critical{
-    background-color: #F53F3F;
-}
-
-#warning{
-    background-color: #E2EE38;
-}
-
-.alert_foot{
-    border-top: 1px solid rgb(228, 228, 228);;
-    margin-top: 0px;
-    background-color: white;
-    min-height: 3.3vh;
-    border-radius: 0px 0px 5px 5px; 
-    min-width: 90%;
-    margin: 0px 20px 0px 20px;
-}
-
-.foot_cont{
-    display: flex;
-}
-
-.foot_cont div{
-    margin-left: 10px;
-}
-
-.foot_text{
-    font-size: 13px;
-    color: rgb(121, 121, 121);
-}
+/*--------------------------------------CSS for grpahs-------------------------------*/
 
 
 .graphs-dg{
     /* background-color: white; */
-    margin: 10px 32px 0px 32px;
+    margin: 10px 22px 0px 22px;
     
 }
 
@@ -245,15 +150,6 @@
     /* background-color: rgb(255, 255, 255); */
     min-height: 64vh;
 }
-
-/* .graphs-dg .graph_nav{
-    min-height: 4vh;
-    background-color: rgb(21, 49, 69);
-    color: white;
-    text-align: center;
-    text-transform: capitalize;
-} */
-
 
 /**************************** Media Queries **********************************/
 

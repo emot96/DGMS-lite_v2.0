@@ -84,6 +84,7 @@ hr.devider{
 	min-height: 60vh;
 	box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 	border: 1px solid rgb(171, 171, 171);
+	/* width: 70%; */
 }
 
 
@@ -154,6 +155,7 @@ opacity: 0.9;
 	overflow-y:auto;
 	min-height: 49vh;
 	max-height: 49vh;
+	
 }
 
 .asset_table{
@@ -208,7 +210,6 @@ opacity: 0.9;
 	position: sticky;
     top: 0; /* Don't forget this, required for the stickiness */
     /*text-transform: uppercase;*/
-
   
 }
 

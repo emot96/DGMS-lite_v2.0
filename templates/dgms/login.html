@@ -1,0 +1,60 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Login</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link rel="stylesheet" href="{% static './css/login.css' %}" />
+  </head>
+
+  <body>
+    <div id="content">
+      <div id="login">
+        <div align="center">
+          <img
+            align="center"
+            src="{% static './images/emot.png' %}"
+            class="logo"
+            alt="eMoT logo"
+          />
+          <br />
+          <p id="text1">
+            <span style="color: red">e</span
+            ><span style="color: #094b91">MoT</span> - Elekron
+          </p>
+          <br />
+          <p id="text2">LOG IN</p>
+          <br />
+
+          <!-- Login form field and submit button  -->
+
+          <form name="login" onsubmit="return validation()"  method="POST" action="./login1">
+            {% csrf_token %}
+            <input type="username" placeholder="Email Id" name ="username" required>
+            <br>
+            <input type="password" placeholder="Password" name="password" required>
+           
+     
+            <button name="login"> Login </button></a>
+           </form>
+
+            <div>
+              {% for message in messages %}
+              <h3> {{message}}  </h3>
+              {% endfor %}
+            </div>
+          
+          <!-- Login Form End  -->
+           
+           <p> Forgot password? <a href="reset_password"> Click here</a></p
+           </div>
+      </div>
+    </div>
+  </body>
+</html>
+

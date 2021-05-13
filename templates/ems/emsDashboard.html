@@ -1,0 +1,465 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="refresh" content="60" />
+    <!-- <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
+    <title>{{Loc}}</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+      integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+    <link rel="stylesheet" href="{% static './css/navbar.css' %}" />
+    <link rel="stylesheet" href="{% static './css/dgmsInfo.css' %}" />
+    <link rel="stylesheet" href="{% static './css/internal_nav.css' %}" />
+    <link rel="stylesheet" href="{% static './css/emsDashboard.css' %}" />
+    <link rel="stylesheet" href="{% static './css/chart.css' %}" />
+    <link rel="stylesheet" href="{% static './css/footer.css' %}" />
+  </head>
+
+  <body>
+    <!-- Side Vertical Navigation bar-->
+    <nav>
+      <!-- Toogle for responsive nav bar-->
+      <div class="hamburger">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+      </div>
+
+      <!-- side nav -->
+      <div class="sidenav">
+        <div class="img">
+          <img
+            src="{% static './images/emot.png' %}"
+            class="logo"
+            alt="logo_emot"
+          />
+        </div>
+
+        <div class="dropdown-btn active">
+          <a href="{% url 'ems' %}"
+            ><img
+              src="{% static './images/Dashboard.png' %}"
+              alt="dashboard"
+            />Dashboards</a
+          >
+          <button id="a">+</button>
+        </div>
+
+        <div class="dropdown-container">
+          <div class="sub-link">
+            <a href="{% url 'dashboard' %}">DGMS Dashboard</a>
+          </div>
+          <div class="sub-link active">
+            <a href="{% url 'ems' %}">EMS Dashboard</a>
+          </div>
+          <div class="sub-link"><a href="#">Coming soon</a></div>
+        </div>
+      </div>
+    </nav>
+    <!--end side nav-->
+
+    <div class="main">
+      <!-- Upper horizontal nav bar -->
+
+      <nav class="hor_nav">
+        <div class="left">
+          <div class="user_img">
+            <img src="{% static './images/ccd.png' %}" alt="user_img" />
+          </div>
+          <div class="name">{{Customer_Name}}</div>
+        </div>
+
+        <div class="right">
+          <a href="alert.html" target="_blank"
+            ><div class="notify">
+              <div>
+                <img
+                  src="{% static './images/notification.png' %}"
+                  alt="notifications"
+                />
+              </div>
+              <div class="not-txt"><div class="not-no">0</div></div>
+            </div></a
+          >
+          <div class="type"><a href="{% url 'ems' %}"> EMS </a></div>
+
+          <div onclick="dropFunction()" class="user_name">
+            {{username}} &ensp;
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-caret-down-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
+              />
+            </svg>
+          </div>
+
+          <div id="user-dropdown" class="drop-cont">
+            <div><a href="{% url 'password_change' %}">Change Password</a></div>
+            <hr />
+            <div><a href="{% url 'logoutUser' %}" id="logout">Logout</a></div>
+          </div>
+        </div>
+      </nav>
+      <!-- end horizontal nav -->
+
+      <div class="dg_info">
+        <div class="b"></div>
+        <div class="row">
+          <div class="on-left">
+            <div class="dg_info_dev">
+              <div class="asset_name">{{Cit}}-{{Loc}}</div>
+              <div class="inst_dgms">EMS Installation Date: 19/04/2020</div>
+            </div>
+
+            <div class="star-kva">
+              <div class="kva">{{Rat}} kVA</div>
+              {% if Star == 1 %}
+              <div class="star">
+                <img src="{% static './images/star1.png' %}" />
+              </div>
+              {% elif Star == 2 %}
+              <div class="star">
+                <img src="{% static './images/star2.png' %}" />
+              </div>
+              {% elif Star == 3 %}
+              <div class="star">
+                <img src="{% static './images/star3.png' %}" />
+              </div>
+              {% elif Star == 4 %}
+              <div class="star">
+                <img src="{% static './images/star4.png' %}" />
+              </div>
+              {% else %}
+              <div class="star">
+                <img src="{% static './images/star5.png' %}" />
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="weather">
+              <div class="weather-img">
+                <img src="http://openweathermap.org/img/wn/{{icon}}@2x.png" />
+              </div>
+              <div class="weather-text">
+                <div>{{temperature}} &deg; C</div>
+                <div class="weather-type">{{description}}</div>
+              </div>
+            </div>
+            <div class="last-data">
+              <div class="last-data-time">{{LTOD}}</div>
+              <div class="last-data-text">Last Data Recieved</div>
+            </div>
+          </div>
+
+          <div class="dg_info_status">
+            {% if Stat == 'ON' %}
+            <div class="status" id="dg_on">ON</div>
+            {% else %}
+            <div class="status" id="dg_off">OFF</div>
+            {% endif %}
+            <div>{{diff}}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cont">
+        <div class="internal_nav">
+          <div class="row">
+            <div class="active_link">
+              <p><a href="{% url 'emsDashboard' device_id %}">Dashboard</a></p>
+            </div>
+
+            <div class="drop_asset">
+              <p>KPI</p>
+
+              <div class="drop-down">
+                <div><a href="energyPara.html">Energy Parameters</a></div>
+                <hr />
+                <div><a href="deviceInfoKPI.html">EMS Device Info</a></div>
+              </div>
+            </div>
+
+            <div class="drop_asset">
+              <p>Asset Information</p>
+
+              <div class="drop-down">
+                <div><a href="asset_detail.html">Asset Detail</a></div>
+                <hr />
+                <div><a href="service_history.html">Service History</a></div>
+              </div>
+            </div>
+
+            <div>
+              <p><a href="device_alert.html">Alerts</a></p>
+            </div>
+          </div>
+        </div>
+        <!-- class ="internal_nav" ends here -->
+
+        <div class="emsDashboard">
+          <div class="left-side">
+            <table class="infoTable">
+              <thead>
+                <tr class="t_body">
+                  <th></th>
+                  <th>Input Voltage</th>
+                  <th>Output Voltage</th>
+                  <th>Load (kva)</th>
+                  <th>Power Factor</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr class="t_body">
+                  <td>RY</td>
+                  <td>{{ Details.vry_phase_voltage}}</td>
+                  <td>{{Details.vry_phase_voltage}}</td>
+                  <td rowspan="3">{{Details.energy_output_kva}}</td>
+                  <td rowspan="3">{{Details.power_factor}}</td>
+                </tr>
+
+                <tr class="t_body">
+                  <td>YB</td>
+                  <td>{{Details.vyb_phase_voltage}}</td>
+                  <td>{{Details.vyb_phase_voltage}}</td>
+                </tr>
+
+                <tr class="t_body">
+                  <td>BR</td>
+                  <td>{{Details.vbr_phase_voltage}}</td>
+                  <td>{{Details.vbr_phase_voltage}}</td>
+                </tr>
+
+                <tr class="t_body">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+
+                <tr class="t_body">
+                  <td>RN</td>
+                  <td>{{Details.vr_phase_voltage}}</td>
+                  <td>{{Details.vr_phase_voltage}}</td>
+                  <td>{{Details.energy_output_kva}}</td>
+                  <td>{{Details.power_factor}}</td>
+                </tr>
+
+                <tr class="t_body">
+                  <td>YN</td>
+                  <td>{{Details.vy_phase_voltage}}</td>
+                  <td>{{Details.vy_phase_voltage}}</td>
+                  <td>{{Details.energy_output_kva}}</td>
+                  <td>{{Details.power_factor}}</td>
+                </tr>
+
+                <tr class="t_body">
+                  <td>BN</td>
+                  <td>{{Details.vb_phase_voltage}}</td>
+                  <td>{{Details.vb_phase_voltage}}</td>
+                  <td>{{Details.energy_output_kva}}</td>
+                  <td>{{Details.power_factor}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="right-side">
+            <div class="right_nav">
+              <div class="nav_text">ASSET INFO</div>
+            </div>
+
+            <div class="right_body">
+              <span class="bold">Date of Installation:</span> 19/02/2020
+            </div>
+            <div class="right_body">
+              <span class="bold">Warranty Status:</span> YES
+            </div>
+            <div class="right_body">
+              <span class="bold">Last Service Date:</span> 18/02/21
+            </div>
+            <div class="right_body">
+              <span class="bold">Next Service Date:</span> 18/02/22
+            </div>
+            <div class="right_body">
+              <span class="bold">Service Provider:</span> eMoT Elekron
+            </div>
+          </div>
+        </div>
+
+        <div class="graphs-ems">
+          <div class="one-graph">
+            <canvas id="cur_rby"></canvas>
+            <script>
+              var cur_rby = document.getElementById("cur_rby").getContext("2d");
+              var chart1 = new Chart(cur_rby, {
+                type: "line",
+                data: {
+                  labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                  datasets: [
+                    {
+                      label: "CurrentPhaseR",
+                      fill: false,
+                      data: [{% for f in CR %} {{f}}, {% endfor %}],
+                      borderColor: "rgba(207, 0, 15, 1)",
+                      borderWidth: 2,
+                    },
+                    {
+                      label: "CurrentPhaseY",
+                      fill: false,
+                      data: [{% for f in CY %} {{f}}, {% endfor %}],
+                      borderColor: "rgba(247, 202, 24, 1)",
+                      borderWidth: 2,
+                    },
+                    {
+                      label: "CurrentPhaseB",
+                      fill: false,
+                      data: [{% for f in CB %} {{f}}, {% endfor %}],
+                      borderColor: "rgba(44, 130, 201, 1)",
+                      borderWidth: 2,
+                    },
+                  ],
+                },
+                options: {
+                  legend: {
+                    labels: {
+                      fontColor: "black",
+                      fontSize: 13,
+                    },
+                  },
+
+                  scales: {
+                    yAxes: [
+                      {
+                        gridLines: {
+                          color: "rgba(0,0,0,0.1)",
+                        },
+                        ticks: {
+                          fontColor: "black",
+                          beginAtZero: true,
+                          fontSize: 17,
+                        },
+                      },
+                    ],
+
+                    xAxes: [
+                      {
+                        gridLines: {
+                          color: "rgba(0,0,0,0.1)",
+                        },
+                        ticks: {
+                          autoSkip: true,
+                          maxTicksLimit: 12,
+                          fontColor: "black",
+                          fontSize: 17,
+                          maxRotation: 0,
+                        },
+                      },
+                    ],
+                  },
+
+                  title: {
+                    display: true,
+                    text: "Phasewise Current",
+                    fontSize: 17,
+                    fontColor: "balck",
+                    fontFamily: "Helvetica",
+                  },
+                },
+              });
+            </script>
+          </div>
+        </div>
+      </div>
+      <!-- class ="cont" ends here -->
+
+      <div class="footer">
+        <div class="footer-content">
+          <div>© 2021 eMoT. All Rights Reserved.</div>
+
+          <div class="web-links">
+            <div>
+              <a href="https://www.emot.co.in/about-us/" target="_blank"
+                >About us</a
+              >
+            </div>
+            <div>
+              <a href="https://www.emot.co.in/contact/" target="_blank"
+                >Contact us</a
+              >
+            </div>
+            <div>
+              <a href="https://www.emot.co.in/emot/" target="_blank"
+                >eMoT IoT</a
+              >
+            </div>
+          </div>
+
+          <div class="social-media">
+            <a href="https://www.facebook.com/emot.co.in/" target="_blank"
+              ><img
+                src="{% static './images/facebook.png' %}"
+                alt="facebook"
+                title="facebook"
+            /></a>
+            <a href="https://twitter.com/Emot86007134" target="_blank"
+              ><img
+                src="{% static './images/twitter.png' %}"
+                alt="twitter"
+                title="twitter"
+            /></a>
+            <a
+              href="https://www.linkedin.com/company/emot-elekron/"
+              target="_blank"
+              ><img
+                src="{% static './images/linkedin.png' %}"
+                alt="linkedin"
+                title="linkedin"
+            /></a>
+            <a href="https://www.instagram.com/elekronemot/" target="_blank"
+              ><img
+                src="{% static './images/instagram.png' %}"
+                alt="instagram"
+                title="instagram"
+            /></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--class="main" ends here-->
+
+    <!-- js -->
+
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+      crossorigin="anonymous"
+    ></script>
+
+    <script type="text/javascript" src="{% static './js/navbar.js' %}"></script>
+    <!-- <script
+      type="text/javascript"
+      src="{% static './js/emsDashboard.js' %}"
+    ></script> -->
+  </body>
+</html>
