@@ -103,9 +103,9 @@
 
 }
 
-.report_table tfoot,
-.report_table tfoot th,
-.report_table tfoot td {
+.report_table .tfoot,
+.report_table .tfoot th,
+.report_table .tfoot td {
   font-weight: bold;
   position: -webkit-sticky;
   position: sticky;

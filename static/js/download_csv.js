@@ -1,5 +1,5 @@
 
-function download_table_as_csv(table_id, separator = ',') {
+function download_table_as_csv(table_id, name, separator = ',') {
     // Select rows from table_id
     var rows = document.querySelectorAll('table#' + table_id + ' tr');
     // Construct csv
@@ -18,7 +18,7 @@ function download_table_as_csv(table_id, separator = ',') {
     }
     var csv_string = csv.join('\n');
     // Download it
-    var filename =  table_id + '.csv';
+    var filename =  name + '.csv';
     var link = document.createElement('a');
     link.style.display = 'none';
     link.setAttribute('target', '_blank');

@@ -38,8 +38,8 @@
   <div class="dropdown-btn active" ><a href="{% url 'dashboard' %}" ><img src="{% static './images/Dashboard.png' %}" alt="dashboard">Dashboards</a> <button id="a" > + </button> </div>
 
   <div class="dropdown-container">
-    <div class="sub-link active"><a href="{% url 'dashboard' %}">DGMS Dashboard</a></div>
-    <div class="sub-link"><a href="#">Coming soon</a> </div>
+    <div class="sub-link active"><a href="{% url 'dashboard' %}">Diesel Generator</a></div>
+    <div class="sub-link"><a href="{% url 'ems' %}">Servo Voltage Stabilizer</a></div>
     <div class="sub-link"><a href="#">Coming soon</a></div>
   </div>
 
@@ -309,14 +309,14 @@
 <div id="report-dropdown" class="report-dropdown-content">
   <div onclick="genPDF()">pdf</div>
   <hr>
-  <div onclick="download_table_as_csv('performance_report')">csv</div>
+  <div onclick="download_table_as_csv( 'report','performance_report')">csv</div>
 </div>
 
 </div>
 
 <div class="report">
   <div class="report_table">
-    <table id="performance_report">
+    <table id="report">
       <thead >
       <tr id="per"> 
           <th>S.NO</th>
@@ -347,29 +347,26 @@
         {% else %}
         <td>{{x.end_time}}</td>
         <td>{{run}}</td>
-        <td>{{x.fuel_consumed}}</td>
-        <td>{{x.maximum_demand_load}}</td>
-        <td>{{x.efficiency}}</td>
-        <td>{{y}}</td>
+        <td>{{x.fuel_consumed|floatformat:2}}</td>
+        <td>{{x.maximum_demand_load|floatformat:2}}</td>
+        <td>{{x.efficiency|floatformat:2}}</td>
+        <td>{{y|floatformat:2}}</td>
       </tr>
       {% endif %}
       {% endfor %}
      </tbody>
 
-     <tfoot>
-      <tr>
+      <tr class="tfoot">
         <td>Total:</td>
         <td></td>
         <td></td>
         <td></td>
         <td>{{Total_RH}}</td>
-        <td>{{Total_F}}</td>
-        <td>{{Avg_PL}}</td>
-        <td>{{Avg_AL}}</td>
-        <td>{{Avg_FC}}</td>
+        <td>{{Total_F|floatformat:2}}</td>
+        <td>{{Avg_PL|floatformat:2}}</td>
+        <td>{{Avg_AL|floatformat:2}}</td>
+        <td>{{Avg_FC|floatformat:2}}</td>
       </tr>
-      
-     </tfoot>
 
   </table>
   </div> <!-- class ="report_table" ends here -->
@@ -399,71 +396,7 @@
   </div>
   <div id="dateRange" >{{enddate}} TO {{startdate}}</div>
   <div id="fuelCon"><span style="font-weight: bold;">Total Fuel Consumed:</span> {{Total_F}} L</div>
-  <table id="reportTable">
-    <thead >
-    <tr > 
-      <th>S.NO</th>
-      <th>RUN COUNT</th>
-      <th>START TIME</th>
-      <th>END TIME</th>
-      <th>RUN HOUR</th>
-      <th>FUEL CONSUMED (L)</th>
-      <th>PEAK LOAD(Kva)</th>
-      <th>AVERAGE LOAD (%)</th>
-      <th>AVG. CONSUMPTION (per hour)</th>
-    </tr>
-   </thead>
-
-   <tbody>
-    {% for O,P,R,Run in context2 %}
-        <tr>
-          <td>{{ forloop.counter }}.</td>
-          <td>{{ R }}</td>
-          <td>{{O.start_time}}</td>
-          {% if O.end_time == None %}
-          <td>Running</td>
-          <td>Running</td>
-          <td>Running</td>
-          <td>Running</td>
-          <td>Running</td>
-          <td>Running</td>
-          {% else %}
-          <td>{{O.end_time}}</td>
-          <td>{{Run}}</td>
-          <td>{{O.fuel_consumed}}</td>
-          <td>{{O.maximum_demand_load}}</td>
-          <td>{{O.efficiency}}</td>
-          <td>{{P}}</td>
-        </tr>
-        {% endif %}
-  {% endfor %}
-
- <!-- -------------------------Footer of table-------------------- -->          
-  <tr>
-    <td>Total:</td>
-    <td></td>
-    <td></td>
-    <td>{{Total_RH}}</td>
-    <td>{{Total_F}}</td>
-    <td>{{Avg_PL}}</td>
-    <td>{{Avg_AL}}</td>
-    <td>{{Avg_FC}}</td>
-    
- </tr>
-
-<tr>
-  <td >Total Record Fetched:</td>
-  <td> {{Count}}</td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
-</tr>
-
-   </tbody>
-</table>
+  
 </div>
 
 <!--Footer-->

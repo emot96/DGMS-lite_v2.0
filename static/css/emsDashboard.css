@@ -55,6 +55,9 @@
 
 
 
+
+
+
 .emsDashboard .right-side{
     width: 25%;
     background-color: rgb(255, 255, 255);
@@ -63,11 +66,18 @@
 }
 
 .emsDashboard .right-side .right_nav{
-    /* text-align: center; */
-    /* margin: 10px; */
     border-bottom: 3px solid rgb(25, 5, 78);
 }
 
+.emsDashboard .right-side .bal{
+    padding: 10px;
+    /* border-bottom: 1px solid black; */
+}
+.emsDashboard .right-side hr{
+    padding:0;
+    margin: 0;
+    margin-bottom: 10px;
+}
 .emsDashboard .right-side .nav_text{
     margin: 10px;
 }
@@ -80,6 +90,11 @@
     color: rgb(44, 92, 140);
     margin-right: 5px;
 }
+
+
+
+
+
 
 
 .graphs-ems{

@@ -2,10 +2,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta http-equiv="refresh" content="60" />
     <!-- <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
-    <meta http-equiv="refresh" content="30" />
+    <meta http-equiv="refresh" content="60" />
     <title>Dashboard</title>
     <!-- Bootstrap CSS -->
     <link
@@ -51,8 +50,12 @@
         </div>
 
         <div class="dropdown-container">
-          <div class="sub-link"><a href="dashboard">DGMS Dashboard</a></div>
-          <div class="sub-link active"><a href="ems">EMS Dashboard</a></div>
+          <div class="sub-link">
+            <a href="dashboard">Diesel Generator</a>
+          </div>
+          <div class="sub-link active">
+            <a href="ems">Servo Voltage Stabilizer</a>
+          </div>
           <div class="sub-link"><a href="#">Coming soon</a></div>
         </div>
       </div>
@@ -70,7 +73,7 @@
         </div>
 
         <div class="right">
-          <a href="alert.html" target="_blank"
+          <a href="{% url 'emsalert'  %}" target="_blank"
             ><div class="notify">
               <div>
                 <img
@@ -78,7 +81,9 @@
                   alt="notifications"
                 />
               </div>
-              <div class="not-txt"><div class="not-no">0</div></div>
+              <div class="not-txt">
+                <div class="not-no">{{ alert_count}}</div>
+              </div>
             </div></a
           >
           <div class="type">EMS</div>
@@ -116,7 +121,7 @@
                 <span
                   ><img
                     src="{% static './images/renewable-energy.png' %}" /></span
-                >EMS - Asset Information - Servo Stabiliser
+                >Servo Voltage Stabilizer
               </div>
               <div class="drop_downs">
                 <form>
@@ -154,6 +159,7 @@
                     <th>Address</th>
                     <th>Current Status</th>
                     <th>Rating (kva)</th>
+                    <th>Cooling</th>
                     <th>Average Load (%)</th>
                     <th>Peak Load (kva)</th>
                     <th>Average Power Factor</th>
@@ -162,18 +168,19 @@
                 </thead>
 
                 <tbody>
-                  {% for s,c,l,st,rt,eo,md,r,i,p in UserDetail %}
+                  {% for s,c,l,st,rt,eo,md,r,i,p,co in UserDetail %}
                   <tr class="t_body">
                     <td>{{forloop.counter}}</td>
                     <td>{{s}}</td>
                     <td>{{c}}</td>
-                    <td><a href="{% url 'emsDashboard' i %} " >{{l}}</a></td>
+                    <td><a href="{% url 'emsDashboard' i %} ">{{l}}</a></td>
                     {% if st == 'ON' %}
                     <td align="center"><div class="on">ON</div></td>
                     {% else %}
                     <td align="center"><div class="off">OFF</div></td>
                     {% endif %}
                     <td>{{rt}}</td>
+                    <td>{{co}}</td>
                     <td>{{eo}}</td>
                     <td>{{md}}</td>
                     <td>{{p}}</td>
@@ -202,7 +209,7 @@
                     <td>{{e}}</td>
                   </tr>
                   {% endfor %}
-                  </tr>
+                  <!-- </tr> -->
                 </tbody>
               </table>
             </div>
@@ -211,8 +218,8 @@
           <div class="right-side">
             <div class="servoinfo-back">
               <div class="servoinfo-name">
-                <img src="{% static './images/stabilizer.png' %}" />Asset
-                Summary - Servo Stabiliser
+                <img src="{% static './images/stabilizer.png' %}" />Servo
+                Voltage Stabiliser-Summary
               </div>
               <table class="ems-assetinfo-table">
                 <thead>
@@ -228,8 +235,8 @@
                       <img src="{% static './images/sigma.png' %}" />
                       <div class="row-name">Total</div>
                     </td>
-                    <td>20</td>
-                    <td>555</td>
+                    <td>{{Total}}</td>
+                    <td>{{Capacity}}</td>
                   </tr>
 
                   <tr class="t_body">
@@ -237,8 +244,8 @@
                       <img src="{% static './images/fan.png' %}" />
                       <div class="row-name">Air Cooled</div>
                     </td>
-                    <td>19</td>
-                    <td>154</td>
+                    <td>{{Air_total}}</td>
+                    <td>{{Air_Capacity}}</td>
                   </tr>
 
                   <tr>
@@ -246,8 +253,8 @@
                       <img src="{% static './images/oil-bottle.png' %}" />
                       <div class="row-name">Oil Cooled</div>
                     </td>
-                    <td>1</td>
-                    <td>65</td>
+                    <td>{{Oil_total}}</td>
+                    <td>{{Oil_Capacity}}</td>
                   </tr>
                 </tbody>
               </table>

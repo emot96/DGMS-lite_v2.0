@@ -51,9 +51,11 @@
 
         <div class="dropdown-container">
           <div class="sub-link">
-            <a href="{% url 'dashboard' %}">DGMS Dashboard</a>
+            <a href="{% url 'dashboard' %}">Diesel Generator</a>
           </div>
-          <div class="sub-link"><a href="#">Coming soon</a></div>
+          <div class="sub-link">
+            <a href="{% url 'ems' %}">Servo Voltage Stabilizer</a>
+          </div>
           <div class="sub-link"><a href="#">Coming soon</a></div>
         </div>
       </div>
@@ -71,7 +73,7 @@
         </div>
 
         <div class="right">
-          <a href="{% url 'alert'  %}" target="_blank"
+          <a href="{% url 'emsalert'  %}" target="_blank"
             ><div class="notify">
               <div>
                 <img
@@ -84,7 +86,7 @@
               </div>
             </div></a
           >
-          <div class="type">DGMS</div>
+          <div class="type">EMS</div>
 
           <div onclick="dropFunction()" class="user_name">
             {{username}} &ensp;
@@ -114,7 +116,7 @@
       <div class="cont">
         <div class="alerts">
           <div class="alert-top">
-            <div class="alert-left">ALERTS</div>
+            <div class="alert-left">EMS-ALERTS</div>
 
             <!-- <div class="alert-mid">
               <form class="drop_downs">
@@ -206,7 +208,8 @@
                 </tr>
               </thead>
               <tbody>
-                {% for a in alerts %} {% if a.alert_level == "R" and a.alert_open == True %}
+                {% for a in alerts %} {% if a.alert_level == "R" and
+                a.alert_open == True %}
                 <tr class="t_body">
                   <td>{{ forloop.counter }}</td>
                   <td>{{a.created_at}}</td>

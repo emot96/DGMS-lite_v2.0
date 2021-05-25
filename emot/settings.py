@@ -90,7 +90,7 @@ DATABASES = {
         'NAME':  'emotprod',
         'USER': 'alpha',
         'PASSWORD': 'cCdYpfuyebcufCr9q3yPJQd',
-        'HOST': 'ec2-3-7-255-213.ap-south-1.compute.amazonaws.com',
+        'HOST': 'ec2-65-1-13-251.ap-south-1.compute.amazonaws.com',
         'PORT': 5432
 
     }

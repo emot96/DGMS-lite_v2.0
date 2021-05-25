@@ -23,6 +23,12 @@ STATUS = (
     ("NO", "NO"),
 )
 
+COOLING = (
+    ("AIR COOLED", "AIR COOLED"),
+    ("OIL COOLED", "OIL COOLED"),
+)
+
+
 OPERATION_STATUS = (
     ("MANUAL", "MANUAL"),
     ("AUTO", "AUTO"),
@@ -216,6 +222,31 @@ class Asset(models.Model):
     Battery_Charger_Other_Info = models.CharField(max_length=500)
 
 
+class EMS_Asset(models.Model):
+    Customer_Name = models.ForeignKey(
+        Customer, on_delete=models.CASCADE, max_length=50)
+    Device_ID = models.OneToOneField(
+        User_Detail, on_delete=models.CASCADE, max_length=50, unique=True, primary_key=True)
+    Rating_In_KVA = models.BigIntegerField()
+    Input_Voltage_Range = models.CharField(max_length=50)
+    S_No = models.CharField(max_length=50)
+    Cooling = models.CharField(
+        max_length=20, choices=COOLING, default='AIR COOLED')
+    Oil_Tank_Size = models.BigIntegerField()
+    Other_Info = models.CharField(max_length=100)
+    OEM = models.CharField(max_length=50)
+    Seller_Name = models.CharField(max_length=50)
+    Service_Provider = models.CharField(max_length=100)
+    Date_Of_Installation = models.DateField()
+    Warranty_Start_Date = models.DateField()
+    Warranty_End_Date = models.DateField()
+    Warranty_Period = models.CharField(max_length=50)
+    Warranty_Status = models.CharField(
+        max_length=20, choices=STATUS, default='YES')
+    EMS_Date_Of_Installation = models.DateField()
+    Other_Info_new = models.CharField(max_length=50)
+
+
 class Service_History(models.Model):
     Customer_Name = models.ForeignKey(
         Customer, on_delete=models.CASCADE, max_length=50)
@@ -232,6 +263,24 @@ class Service_History(models.Model):
     Activity1 = models.CharField(max_length=300, default="NULL")
     Remark1 = models.CharField(max_length=300, default="NULL")
     Next_Service_Date = models.DateField(max_length=50)
+
+
+class EMS_Service_History(models.Model):
+    Customer_Name = models.ForeignKey(
+        Customer, on_delete=models.CASCADE, max_length=50)
+    Device_ID = models.OneToOneField(
+        User_Detail, on_delete=models.CASCADE, max_length=50, primary_key=True, unique=True)
+    Service_Contract = models.CharField(
+        max_length=20, choices=CONTRACT, default='AMC')
+    Service_Provider = models.CharField(max_length=100)
+    Address = models.CharField(max_length=100)
+    Contact = models.CharField(max_length=20)
+    Last_Service_Date = models.DateField()
+    Activity = models.CharField(max_length=300)
+    Remark = models.CharField(max_length=300)
+    Activity1 = models.CharField(max_length=300, default="NULL")
+    Remark1 = models.CharField(max_length=300, default="NULL")
+    Next_Service_Date = models.DateField()
 
 
 class DGMS_Device_Info(models.Model):
@@ -381,6 +430,7 @@ class DeviceOperational(models.Model):
     efficiency = models.FloatField(blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
+    run_count = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False

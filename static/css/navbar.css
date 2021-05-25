@@ -38,7 +38,7 @@ body{
 
 
 .sidenav a:hover{
-  color: #00bad6;
+  color: #f0f0f0;
 }
 
 .sidenav a img {
@@ -49,10 +49,8 @@ body{
 }
 
 .sidenav div.img{
-  /*box-shadow: 0 4px 4px -1px rgba(0,0,0,.4);*/
   background-color: #6f6f6f;
   height: 12vh;
-  /* border-bottom: 5px solid rgb(6, 41, 56); */
 
 }
 

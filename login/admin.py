@@ -110,6 +110,16 @@ class PriceAdmin(admin.ModelAdmin):
     ordering = ['Location', 'Energy_Price', 'Diesel_Price']
 
 
+class EMS_AssetAdmin(admin.ModelAdmin):
+    list_display = ('Customer_Name', 'Device_ID', 'Rating_In_KVA')
+    ordering = ['Customer_Name', 'Device_ID', 'Rating_In_KVA']
+
+
+class EMS_Service_HistoryAdmin(admin.ModelAdmin):
+    list_display = ('Customer_Name', 'Device_ID', 'Service_Provider')
+    ordering = ['Customer_Name', 'Device_ID', 'Service_Provider']
+
+
 # # # Register your models here.
 admin.site.register(User, UserAdmin)
 admin.site.register(Customer, CustomerAdmin)
@@ -124,3 +134,5 @@ admin.site.register(Accounts, AccountsAdmin)
 admin.site.register(Device, DeviceAdmin)
 admin.site.register(DevicesInfo, DevicesInfoAdmin)
 admin.site.register(Price, PriceAdmin)
+admin.site.register(EMS_Asset, EMS_AssetAdmin)
+admin.site.register(EMS_Service_History, EMS_Service_HistoryAdmin)

@@ -2,7 +2,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta http-equiv="refresh" content="60" />
     <!-- <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
     <title>{{Loc}}</title>
@@ -18,7 +17,8 @@
     <link rel="stylesheet" href="{% static './css/navbar.css' %}" />
     <link rel="stylesheet" href="{% static './css/dgmsInfo.css' %}" />
     <link rel="stylesheet" href="{% static './css/internal_nav.css' %}" />
-    <link rel="stylesheet" href="{% static './css/emsDashboard.css' %}" />
+    <link rel="stylesheet" href="{% static './css/time-range.css' %}" />
+    <link rel="stylesheet" href="{% static './css//kpi.css' %}" />
     <link rel="stylesheet" href="{% static './css/chart.css' %}" />
     <link rel="stylesheet" href="{% static './css/footer.css' %}" />
   </head>
@@ -124,10 +124,7 @@
           <div class="on-left">
             <div class="dg_info_dev">
               <div class="asset_name">{{Cit}}-{{Loc}}</div>
-              <div class="inst_dgms">
-                EMS Installation Date:
-                {{asset_details.ems_date_of_installation}}
-              </div>
+              <div class="inst_dgms">EMS Installation Date: {{EDOI}}</div>
             </div>
 
             <div class="star-kva">
@@ -184,11 +181,11 @@
       <div class="cont">
         <div class="internal_nav">
           <div class="row">
-            <div class="active_link">
+            <div>
               <p><a href="{% url 'emsDashboard' device_id %}">Dashboard</a></p>
             </div>
 
-            <div class="drop_asset">
+            <div class="drop_asset active_link">
               <p>KPI</p>
 
               <div class="drop-down">
@@ -235,183 +232,229 @@
         </div>
         <!-- class ="internal_nav" ends here -->
 
-        <div class="emsDashboard">
-          <div class="left-side">
-            <table class="infoTable">
-              <thead>
-                <tr class="t_body">
-                  <th></th>
-                  <th>Input Voltage</th>
-                  <th>Output Voltage</th>
-                  <th>Load (kva)</th>
-                  <th>Power Factor</th>
-                </tr>
-              </thead>
+        <div class="select-time-bar">
+          <div class="page-info">EMS-Servo Device Info KPI</div>
+          <hr />
 
-              <tbody>
-                <tr class="t_body">
-                  <td>RY</td>
-                  <td>{{ Details.vry_phase_voltage|floatformat:2}}</td>
-                  <td>{{Details.vry_phase_voltage|floatformat:2}}</td>
-                  <td rowspan="3">
-                    {{Details.energy_output_kva|floatformat:2}}
-                  </td>
-                  <td rowspan="3">{{Details.power_factor|floatformat:2}}</td>
-                </tr>
-
-                <tr class="t_body">
-                  <td>YB</td>
-                  <td>{{Details.vyb_phase_voltage|floatformat:2}}</td>
-                  <td>{{Details.vyb_phase_voltage|floatformat:2}}</td>
-                </tr>
-
-                <tr class="t_body">
-                  <td>BR</td>
-                  <td>{{Details.vbr_phase_voltage|floatformat:2}}</td>
-                  <td>{{Details.vbr_phase_voltage|floatformat:2}}</td>
-                </tr>
-
-                <tr class="t_body">
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-
-                <tr class="t_body">
-                  <td>RN</td>
-                  <td>{{Details.vr_phase_voltage|floatformat:2}}</td>
-                  <td>{{Details.vr_phase_voltage|floatformat:2}}</td>
-                  <td>{{Details.energy_output_kva|floatformat:2}}</td>
-                  <td>{{Details.power_factor|floatformat:2}}</td>
-                </tr>
-
-                <tr class="t_body">
-                  <td>YN</td>
-                  <td>{{Details.vy_phase_voltage|floatformat:2}}</td>
-                  <td>{{Details.vy_phase_voltage|floatformat:2}}</td>
-                  <td>{{Details.energy_output_kva|floatformat:2}}</td>
-                  <td>{{Details.power_factor|floatformat:2}}</td>
-                </tr>
-
-                <tr class="t_body">
-                  <td>BN</td>
-                  <td>{{Details.vb_phase_voltage|floatformat:2}}</td>
-                  <td>{{Details.vb_phase_voltage|floatformat:2}}</td>
-                  <td>{{Details.energy_output_kva|floatformat:2}}</td>
-                  <td>{{Details.power_factor|floatformat:2}}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="right-side">
-            <div class="right_nav">
-              <div class="nav_text">ASSET INFO</div>
+          <div class="time-select">
+            <div class="time-range">
+              <form class="row" method="get">
+                {{myFilter.form.as_ul}}
+                <div class="go">
+                  <button type="submit" name="date">Go</button>
+                </div>
+              </form>
             </div>
-            <div class="right_body">
-              <span class="bold">Input Voltage:</span>
-              {{asset_details.input_voltage_range}}
-            </div>
-            <div class="right_body">
-              <span class="bold">Cooling:</span>
-              {{asset_details.cooling}}
-            </div>
-            <div class="right_body">
-              <span class="bold">Date of Installation:</span>
-              {{asset_details.date_of_installation}}
-            </div>
-            <div class="right_body">
-              <span class="bold">Warranty Status:</span>
-              {{asset_details.warranty_status}}
-            </div>
-            <div class="right_body">
-              <span class="bold">Last Service Date:</span>
-              {{service_details.last_service_date}}
-            </div>
-            <div class="right_body">
-              <span class="bold">Next Service Date:</span>
-              {{service_details.next_service_date}}
-            </div>
-            <div class="right_body">
-              <span class="bold">Service Provider:</span>
-              {{service_details.service_provider}}
+
+            <div class="row">
+              <div class="time-right">
+                <form class="row" method="get">
+                  <select name="time_range">
+                    {% if TR == None %}
+                    <option value="" selected disabled hidden>
+                      Last 2 hours
+                    </option>
+                    {% else %}
+                    <option value="" selected disabled hidden>{{TR}}</option>
+                    {% endif %}
+                    <!-- <option>{{TR}}</option> -->
+                    <option>Last 30 mins</option>
+                    <option>Last 1 hour</option>
+                    <option>Last 2 hours</option>
+                    <option>Last 7 hours</option>
+                    <option>Last 12 hours</option>
+                    <option>Last 24 hours</option>
+                    <option>Last 2 days</option>
+                    <option>Last 5 days</option>
+                    <option>Last 1 week</option>
+                    <option>Last 2 weeks</option>
+                    <option>Last 1 month</option>
+                    <option>Last 2 months</option>
+                    <option>Last 6 months</option>
+                    <option>Last 1 year</option>
+                    <option>Last 2 years</option>
+                  </select>
+
+                  <div class="go">
+                    <button class="go" type="submit" name="range">GO</button>
+                  </div>
+                </form>
+              </div>
+
+              <div class="print">
+                <img src="{% static './images/printing.png" alt="user_img" />
+              </div>
             </div>
           </div>
         </div>
+        <!-- class ="select-time-bar" ends here  -->
 
-        <div class="graphs-ems">
-          <div class="one-graph">
-            <canvas id="peak_ld"></canvas>
-            <script>
-              var peak_ld = document
-                .getElementById("peak_ld")
-                .getContext("2d");
-              var myChart1 = new Chart(peak_ld, {
-                type: "line",
-                data: {
-                  labels: [{% for t in Time %} '{{t}}', {% endfor %}],
-                  datasets: [
-                    {
-                      label: "Peak Load",
-                      fill: false,
-                      data: [{% for f in PL %} {{f}}, {% endfor %}],
-                      borderColor: "rgba(0, 230, 64, 1)",
-                      borderWidth: 2,
-                    },
-                  ],
-                },
-                options: {
-                  legend: {
-                    labels: {
-                      fontColor: "black",
-                      fontSize: 13,
-                    },
-                  },
+        <div class="kpi">
+          <div class="kpi-info">
+            <div class="info">
+              <div class="heading">Power Supply</div>
+              <img src="{% static './images/lightning.png' %}" alt="power" />
+              <div class="value">{{PowerStatus}}</div>
+            </div>
 
-                  scales: {
-                    yAxes: [
-                      {
-                        gridLines: {
-                          color: "rgba(0,0,0,0.3)",
-                        },
-                        ticks: {
-                          fontColor: "black",
-                          beginAtZero: true,
-                          fontSize: 17,
-                        },
-                      },
-                    ],
+            <div class="info">
+              <div class="heading">Battery Volts</div>
+              <img
+                src="{% static './images/low-battery.png' %}"
+                alt="battery"
+              />
+              <div class="value">{{BatteryVoltage}} VDC</div>
+            </div>
 
-                    xAxes: [
-                      {
-                        gridLines: {
-                          color: "rgba(0,0,0,0)",
-                        },
-                        ticks: {
-                          autoSkip: true,
-                          maxTicksLimit: 12,
-                          fontColor: "black",
-                          fontSize: 17,
-                          maxRotation: 0,
-                        },
-                      },
-                    ],
-                  },
-
-                  title: {
-                    display: true,
-                    text: "Peak Load",
-                    fontSize: 17,
-                    fontColor: "balck",
-                    fontFamily: "Helvetica",
-                  },
-                },
-              });
-            </script>
+            <div class="info">
+              <div class="heading">GSM Signal</div>
+              <img src="{% static './images/gsm.png' %}" alt="gsm" />
+              <div class="value">{{GSMSignal}}</div>
+            </div>
           </div>
+
+          <div class="graphs-kpi">
+            <div class="one-graph">
+              <canvas id="gsm"></canvas>
+              <script>
+                var gsm = document.getElementById("gsm").getContext("2d");
+                var myChart = new Chart(gsm, {
+                  type: "line",
+                  data: {
+                    labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                    datasets: [
+                      {
+                        label: "GSM",
+                        fill: false,
+                        data: [{% for v in GSM %} {{v}}, {% endfor %}],
+                        borderColor: "rgba(0, 230, 64, 1)",
+                        borderWidth: 2,
+                      },
+                    ],
+                  },
+                  options: {
+                    legend: {
+                      labels: {
+                        fontColor: "black",
+                        fontSize: 13,
+                      },
+                    },
+
+                    scales: {
+                      yAxes: [
+                        {
+                          gridLines: {
+                            color: "rgba(0,0,0,0.3)",
+                          },
+                          ticks: {
+                            fontColor: "black",
+                            beginAtZero: true,
+                            fontSize: 17,
+                          },
+                        },
+                      ],
+
+                      xAxes: [
+                        {
+                          gridLines: {
+                            color: "rgba(0,0,0,0)",
+                          },
+                          ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: 12,
+                            fontColor: "black",
+                            fontSize: 17,
+                            maxRotation: 0,
+                          },
+                        },
+                      ],
+                    },
+
+                    title: {
+                      display: true,
+                      text: "GSM",
+                      fontSize: 17,
+                      fontColor: "balck",
+                      fontFamily: "Helvetica",
+                    },
+                  },
+                });
+              </script>
+            </div>
+
+            <div class="one-graph">
+              <canvas id="gt_battery"></canvas>
+              <script>
+                var gt_battery = document
+                  .getElementById("gt_battery")
+                  .getContext("2d");
+                var myChart1 = new Chart(gt_battery, {
+                  type: "line",
+                  data: {
+                    labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                    datasets: [
+                      {
+                        label: "Gateway Battery",
+                        fill: false,
+                        data: [{% for v in GB %} {{v}}, {% endfor %}],
+                        borderColor: "rgba(219, 10, 91, 1)",
+                        borderWidth: 2,
+                      },
+                    ],
+                  },
+                  options: {
+                    legend: {
+                      labels: {
+                        fontColor: "black",
+                        fontSize: 13,
+                      },
+                    },
+
+                    scales: {
+                      yAxes: [
+                        {
+                          gridLines: {
+                            color: "rgba(0,0,0,0.3)",
+                          },
+                          ticks: {
+                            fontColor: "black",
+                            beginAtZero: true,
+                            fontSize: 17,
+                          },
+                        },
+                      ],
+
+                      xAxes: [
+                        {
+                          gridLines: {
+                            color: "rgba(0,0,0,0)",
+                          },
+                          ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: 12,
+                            fontColor: "black",
+                            fontSize: 17,
+                            maxRotation: 0,
+                          },
+                        },
+                      ],
+                    },
+
+                    title: {
+                      display: true,
+                      text: "Gateway Battery",
+                      fontSize: 17,
+                      fontColor: "balck",
+                      fontFamily: "Helvetica",
+                    },
+                  },
+                });
+              </script>
+            </div>
+          </div>
+          <!-- class ="kpi-graphs" ends here -->
         </div>
+        <!--KPI Ends here-->
       </div>
       <!-- class ="cont" ends here -->
 
@@ -484,9 +527,5 @@
     ></script>
 
     <script type="text/javascript" src="{% static './js/navbar.js' %}"></script>
-    <!-- <script
-      type="text/javascript"
-      src="{% static './js/emsDashboard.js' %}"
-    ></script> -->
   </body>
 </html>

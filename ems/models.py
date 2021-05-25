@@ -229,3 +229,118 @@ class DevicesInfo(models.Model):
     class Meta:
         managed = False
         db_table = 'devices_info'
+
+
+class AlertType(models.Model):
+    alert_type_id = models.AutoField(primary_key=True)
+    alert_type_name = models.CharField(max_length=50, blank=True, null=True)
+    alert_type_desc = models.CharField(max_length=100, blank=True, null=True)
+    alert_cat = models.CharField(max_length=50, blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'alert_type'
+
+
+class Alerts(models.Model):
+    alert_id = models.AutoField(primary_key=True)
+    alert_type_name = models.CharField(max_length=50, blank=True, null=True)
+    device_id = models.CharField(max_length=50, blank=True, null=True)
+    alert_open = models.BooleanField(blank=True, null=True)
+    alert_level = models.CharField(max_length=1, blank=True, null=True)
+    param_value = models.FloatField(blank=True, null=True)
+    param_threshold_value = models.FloatField(blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'alerts'
+
+
+class LoginEmsAsset(models.Model):
+    # Field name made lowercase.
+    device_id = models.OneToOneField(
+        'LoginUserDetail', models.DO_NOTHING, db_column='Device_ID_id', primary_key=True)
+    # Field name made lowercase.
+    rating_in_kva = models.CharField(db_column='Rating_In_KVA', max_length=50)
+    # Field name made lowercase.
+    input_voltage_range = models.CharField(
+        db_column='Input_Voltage_Range', max_length=50)
+    # Field name made lowercase.
+    s_no = models.CharField(db_column='S_No', max_length=50)
+    # Field name made lowercase.
+    cooling = models.CharField(db_column='Cooling', max_length=20)
+    # Field name made lowercase.
+    oil_tank_size = models.BigIntegerField(db_column='Oil_Tank_Size')
+    # Field name made lowercase.
+    other_info = models.CharField(db_column='Other_Info', max_length=100)
+    # Field name made lowercase.
+    oem = models.CharField(db_column='OEM', max_length=50)
+    # Field name made lowercase.
+    seller_name = models.CharField(db_column='Seller_Name', max_length=50)
+    # Field name made lowercase.
+    service_provider = models.CharField(
+        db_column='Service_Provider', max_length=100)
+    # Field name made lowercase.
+    date_of_installation = models.DateField(db_column='Date_Of_Installation')
+    # Field name made lowercase.
+    warranty_start_date = models.DateField(db_column='Warranty_Start_Date')
+    # Field name made lowercase.
+    warranty_end_date = models.DateField(db_column='Warranty_End_Date')
+    # Field name made lowercase.
+    warranty_period = models.CharField(
+        db_column='Warranty_Period', max_length=50)
+    # Field name made lowercase.
+    warranty_status = models.CharField(
+        db_column='Warranty_Status', max_length=20)
+    # Field name made lowercase.
+    ems_date_of_installation = models.DateField(
+        db_column='EMS_Date_Of_Installation')
+    # Field name made lowercase.
+    other_info_new = models.CharField(
+        db_column='Other_Info_new', max_length=50)
+    # Field name made lowercase.
+    customer_name = models.ForeignKey(
+        LoginCustomer, models.DO_NOTHING, db_column='Customer_Name_id')
+
+    class Meta:
+        managed = False
+        db_table = 'login_ems_asset'
+
+
+class LoginEmsServiceHistory(models.Model):
+    # Field name made lowercase.
+    device_id = models.OneToOneField(
+        'LoginUserDetail', models.DO_NOTHING, db_column='Device_ID_id', primary_key=True)
+    # Field name made lowercase.
+    service_contract = models.CharField(
+        db_column='Service_Contract', max_length=20)
+    # Field name made lowercase.
+    service_provider = models.CharField(
+        db_column='Service_Provider', max_length=100)
+    # Field name made lowercase.
+    address = models.CharField(db_column='Address', max_length=100)
+    # Field name made lowercase.
+    contact = models.CharField(db_column='Contact', max_length=20)
+    # Field name made lowercase.
+    last_service_date = models.DateField(db_column='Last_Service_Date')
+    # Field name made lowercase.
+    activity = models.CharField(db_column='Activity', max_length=300)
+    # Field name made lowercase.
+    remark = models.CharField(db_column='Remark', max_length=300)
+    # Field name made lowercase.
+    activity1 = models.CharField(db_column='Activity1', max_length=300)
+    # Field name made lowercase.
+    remark1 = models.CharField(db_column='Remark1', max_length=300)
+    # Field name made lowercase.
+    next_service_date = models.DateField(db_column='Next_Service_Date')
+    # Field name made lowercase.
+    customer_name = models.ForeignKey(
+        LoginCustomer, models.DO_NOTHING, db_column='Customer_Name_id')
+
+    class Meta:
+        managed = False
+        db_table = 'login_ems_service_history'

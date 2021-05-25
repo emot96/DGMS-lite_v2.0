@@ -52,9 +52,11 @@
 
         <div class="dropdown-container">
           <div class="sub-link active">
-            <a href="dashboard">DGMS Dashboard</a>
+            <a href="dashboard">Diesel Generator</a>
           </div>
-          <div class="sub-link"><a href="ems">EMS Dashboard</a></div>
+          <div class="sub-link">
+            <a href="{% url 'ems' %}">Servo Voltage Stabilizer</a>
+          </div>
           <div class="sub-link"><a href="#">Coming soon</a></div>
         </div>
       </div>
@@ -120,7 +122,7 @@
           <!-- Assets -->
           <div id="background">
             <ul class="top">
-              <li class="head">Assets</li>
+              <li class="head">Diesel Generator</li>
               <li>
                 <img
                   src="{% static './images/control-panel.png' %}"
@@ -205,7 +207,7 @@
 
         <div class="asset_info">
           <ul class="top">
-            <li class="head">Asset Information</li>
+            <li class="head">Diesel Generator Information</li>
             <li>
               <form class="drop_downs">
                 <select name="current_status">

@@ -39,8 +39,8 @@
   <div class="dropdown-btn active" ><a href="{% url 'dashboard' %}" ><img src="{% static './images/Dashboard.png' %}" alt="dashboard">Dashboards</a> <button id="a" > + </button> </div>
 
   <div class="dropdown-container">
-    <div class="sub-link active"><a href="{% url 'dashboard' %}">DGMS Dashboard</a></div>
-    <div class="sub-link"><a href="#">Coming soon</a> </div>
+    <div class="sub-link active"><a href="{% url 'dashboard' %}">Diesel Generator</a></div>
+    <div class="sub-link"><a href="{% url 'ems' %}">Servo Voltage Stabilizer</a></div>
     <div class="sub-link"><a href="#">Coming soon</a></div>
   </div>
 
@@ -303,14 +303,14 @@
 <div id="report-dropdown" class="report-dropdown-content">
   <div onclick="genPDF()">pdf</div>
   <hr>
-  <div onclick="download_table_as_csv('fuel_report')">csv</div>
+  <div onclick="download_table_as_csv('report','fuel_report')">csv</div>
 </div>
 
 </div>
 
 <div class="report">
   <div class="report_table">
-    <table id="fuel_report">
+    <table id="report">
       <thead >
       <tr id="fuel"> 
           <th>S.NO</th>
@@ -333,15 +333,15 @@
                 {% endfor %}
      </tbody>
 
-     <tfoot>
-      <tr>
+     
+      <tr class="tfoot">
           <td>Total:</td>
           <td></td>
           <td></td>
           <td>{{Total}} L</td>
           <td></td>
       </tr>
-     </tfoot>
+    
 
   </table>
   </div> <!-- class ="report_table" ends here -->
@@ -369,47 +369,7 @@
   </div>
   <div id="dateRange" >{{enddate}} TO {{startdate}}</div>
   <div id="fuelCon"><span style="font-weight: bold;">Total Added:</span> {{Total}} L</div>
-  <table id="reportTable">
-    <thead >
-    <tr > 
-        <th>S.NO</th>
-        <th>DATE AND TIME</th>
-        <th>FUEL LEVEL (L)</th>
-        <th>FUEL ADDED (L)</th>
-        <th>NEW FUEL LEVEL (L)</th>
-    </tr>
-   </thead>
-
-   <tbody>   
-    {% for f in Fuel %}
-    <tr>
-    <td>{{ forloop.counter }}.</td>
-    <td>{{f.device_time}}</td>
-    <td>{{f.fuel_level}}</td>
-    <td>{{f.fuel_added}}</td>
-    <td>{{f.new_fuel_level}}</td>
-    {% endfor %}
-    </tr>
-
- <!-- -------------------------Footer of table-------------------- -->          
-  <tr>
-    <td >Total:</td>
-    <td></td>
-    <td></td>
-    <td>{{Total}} L</td>
-    <td></td>
- </tr>
-
-<tr>
-  <td >Total Record Fetched:</td>
-  <td> {{Count}}</td>
-  <td></td>
-  <td></td>
-  <td></td>
-</tr>
-
-   </tbody>
-</table>
+  
 </div>
 
 

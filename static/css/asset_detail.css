@@ -5,7 +5,8 @@
     background-color: #C2EDFD;
     min-height: 70vh;
     margin: 90px 20px 20px 20px ;
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+	box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+	border-radius: 5px;
 }
 
 .asset_img img{
@@ -34,81 +35,59 @@
 }
 
 
-.inside-asset{
-   margin: 120px 20px 20px 20px;
+.asset-table{
+	margin: 120px 20px 20px 20px;
+	overflow: auto;
+	/* background-color: darkgreen; */
 }
 
-
-.inside_lower{
-	background-color: white;
-	margin-bottom: 15px;
-	box-shadow: 0 5px 6px -6px black;
-	width: 100%;
-	overflow-x:auto;
-	white-space: nowrap;
+.asset-table table{
+	width: 99.9%;
+	text-transform: capitalize;
 }
 
+.asset-table table tr.t_body th{
+    border-bottom: 2px solid rgb(224, 224, 224);
+	padding: 10px 50px 10px 50px;
+	background-color: rgb(21, 1, 66);
+	color: rgb(255, 255, 255);
+}
 
-.inside_div{
-	display: flex;
-	padding : 10px;
+.asset-table table  tr.t_body td{
+    border: 1px solid rgb(186, 186, 186);
+    padding: 10px 50px 10px 50px;
 	
 }
 
-.inside_div1{
-	padding : 10px;
-	
-	
-}
-
-.inside_div2{
-	display: flex;
-	
-}
-
-.attribute, .vertical_line, .info{
-	margin-right: 20px;
-
-}
-
-.attribute{
-	color: #094A8B;
-	font-size: 15px;
-	font-weight: bold;
+.asset-table table tr.t_body td:nth-child(1)
+{
 	text-transform: uppercase;
-}
-
-.attribute1{
-	color: #76760A;
-	font-size: 15px;
 	font-weight: bold;
-	text-transform: uppercase;
 }
 
-
-.vertical_line{
-	height: 22px;
-	width: 0.5px;
-	background-color: #BFBFBF;
+.asset-table table tr:nth-child(n){
+	background-color: rgb(255, 255, 255);
+	color: rgb(0, 0, 66);
 }
 
-.info{
-	font-size: 15px;
-	text-align: center;
+.asset-table #asset-detail tr:nth-child(5),
+.asset-table #asset-detail tr:nth-child(10),
+.asset-table #asset-detail tr:nth-child(14),
+.asset-table #asset-detail tr:nth-child(19),
+.asset-table #asset-detail tr:nth-child(24),
+.asset-table #asset-detail tr:nth-child(29),
+
+
+.asset-table #service-history tr:nth-child(4),
+.asset-table #service-history tr:nth-child(8),
+
+.asset-table #asset-detail-servo tr:nth-child(10),
+.asset-table #asset-detail-servo tr:nth-child(16)
+{
+	background-color: rgb(225, 245, 217);
+	color: rgb(2, 94, 16);
 }
 
-.dev1{
-	margin-top: 5px;
-	margin-bottom: 5px;
-	width: 100%;
-}
-
-
-.dev2{
-	margin-top: 0px;
-	margin-bottom: 5px;
-	width: 100%;
-}  
 
 
 @media screen and (max-width: 600px){

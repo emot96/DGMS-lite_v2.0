@@ -1,4 +1,6 @@
 
+
+
 /*------------------------------------------JS for "GSM Signal" chart ------------------------------------------------*/
 
 var gsm = document.getElementById('gsm').getContext('2d');

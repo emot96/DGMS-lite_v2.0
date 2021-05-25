@@ -56,9 +56,9 @@
 
         <div class="dropdown-container">
           <div class="sub-link active">
-            <a href="{% url 'dashboard' %}">DGMS Dashboard</a>
+            <a href="{% url 'dashboard' %}">Diesel Generator</a>
           </div>
-          <div class="sub-link"><a href="#">Coming soon</a></div>
+          <div class="sub-link"><a href="{% url 'ems' %}">Servo Voltage Stabilizer</a></div>
           <div class="sub-link"><a href="#">Coming soon</a></div>
         </div>
       </div>
@@ -350,68 +350,7 @@
 
         <div class="kpi">
           <div class="graphs-kpi">
-            <div class="one-graph">
-              <canvas id="run_count"></canvas>
-              <script>
-                var run_count = document.getElementById('run_count').getContext('2d');
-                                var myChart2 = new Chart(run_count, {
-                                    type: 'line',
-                                    data: {
-                                        labels: [{% for t in Time %} '{{t}}', {% endfor %}],
-                                        datasets: [{
-                                            label: 'Run Count',
-                                            fill: false,
-                                            data: [{% for v in RC %} {{v}}, {% endfor %}],
-                                            borderColor: 'rgba(242, 120, 75, 1)',
-                                            borderWidth: 2
-                                        }]
-                                    },
-                                    options: {
-
-                                      legend: {
-                                                labels: {
-                                                    fontColor: "black",
-                                                    fontSize: 13
-                                                }
-                                            },
-
-                                        scales: {
-                                            yAxes: [{
-                                                gridLines: {
-                                                    color: "rgba(0,0,0,0.3)",
-                                                },
-                                                ticks: {
-                                                    fontColor: "balck",
-                                                    beginAtZero: true,
-                                                    fontSize: 17
-                                                }
-                                            }],
-
-                                            xAxes: [{
-                                                gridLines: {
-                                                    color: "rgba(0,0,0,0.3)",
-                                                },
-                                                ticks: {
-                                                    autoSkip: true,
-                                                    maxTicksLimit: 12,
-                                                    fontColor: "balck",
-                                                    fontSize: 17,
-                                                    maxRotation: 0,
-                                                }
-                                            }]
-                                        },
-
-                                        title: {
-                                            display: true,
-                                            text: 'Run Count',
-                                            fontSize: 17,
-                                            fontColor: "balck",
-                                            fontFamily: "Helvetica"
-                                        }
-                                    }
-                                });
-              </script>
-            </div>
+            
 
             <div class="one-graph">
               <canvas id="vln_avg"></canvas>
