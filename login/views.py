@@ -2250,100 +2250,6 @@ def energyPara(request, device_id):
         VLL.reverse()
         FREQ.reverse()
 
-        # RunHour1 = []
-        # RunHour2 = []
-        # UG1 = []
-        # PS1 = []
-        # BV1 = []
-        # Time1 = []
-        # Time = []
-        # RC = []
-        # DL = []
-        # GSM = []
-        # GB = []
-
-        # for det in Details:
-        #     if det.dg_runtime_seconds == 0:
-        #         pass
-        #     else:
-        #         RunHour1.append(det.dg_runtime_seconds)
-
-        #     if det.runtime_second_ctrl == 0:
-        #         pass
-        #     else:
-        #         RunHour2.append(det.runtime_second_ctrl)
-
-        #     if det.unit_generated_kwh == 0:
-        #         pass
-        #     else:
-        #     UG1.append(det.unit_generated_kwh)
-
-        #     Time1.append(det.device_time.strftime('%Y-%m-%d %H:%M:%S'))
-        #     DL.append(round(det.fuel_level_litre, 2))
-        #     if det.dg_counter_ctrl == 0:
-        #         pass
-        #     else:
-        #     RC.append(round(det.dg_counter_ctrl, 2))
-        #     GSM.append(round(det.gsm_signal, 2))
-        #     GB.append(round(det.gateway_device_battery, 2))
-        #     PS1.append(det.gateway_power_status)
-        #     BV1.append(det.gateway_device_battery)
-
-        # PS1.reverse()
-        # DL.reverse()
-        # GSM.reverse()
-        # GB.reverse()
-        # BV1.reverse()
-        # RC.reverse()
-
-        # if len(PS1) == 0:
-        #     PS = 'NA'
-        # else:
-        #     PS = PS1[-1]
-
-        # if len(BV1) == 0:
-        #     BatteryVoltage = 0
-        # else:
-        #     BatteryVoltage = BV1[-1]
-
-        # PowerStatus = 0
-        # if PS == 1:
-        #     PowerStatus = 'Healthy'
-        # else:
-        #     PowerStatus = 'Battery'
-
-        # l1 = len(RunHour1)  # [-1]
-        # l2 = len(RunHour2)  # [-1]
-
-        # if (l1 == 0) & (l2 == 0):
-        #     Run = 0
-        # elif l1 == 0:
-        #     Run = abs(RunHour2[0] - RunHour2[-1])
-        # else:
-        #     Run = abs(RunHour1[0] - RunHour1[-1])
-
-        # if len(UG1) == 0:
-        #     UG = 0
-        # else:
-        #     UG = abs(round(UG1[0] - UG1[-1]))
-
-        # if len(RC) == 0:
-        #     DC = 0
-        # else:
-        #     DC = round(RC[0] - RC[-1])
-
-        # if len(GSM) == 0:
-        #     GSMSignal = 0
-        # else:
-        #     GSMSignal = GSM[-1]
-
-        # seconds = Run
-        # hour = seconds // 3600
-        # seconds %= 3600
-        # minutes = seconds // dg
-        # seconds %= 60
-        # hh = "%d:%02d:%02d" % (hour, minutes, seconds)
-
         UTC = '0000-00-00 05:30:00'
         y = UTC[:4]
         mo = UTC[5:7]
@@ -2448,7 +2354,9 @@ def energyPara(request, device_id):
 
         LTOD = d1 + d21
 
-        return render(request, 'dgms/energyPara.html', {'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'DDOI': DDOI, 'VLN': VLN, 'VLL': VLL, 'FREQ': FREQ, 'alert_count': alert_count, 'Time': Time,  'TR': TR, 'myFilter': myFilter, 'UG': UG, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        Name = "Energy Parameters"
+
+        return render(request, 'dgms/energyPara.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'DDOI': DDOI, 'VLN': VLN, 'VLL': VLL, 'FREQ': FREQ, 'alert_count': alert_count, 'Time': Time,  'TR': TR, 'myFilter': myFilter, 'UG': UG, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -2692,61 +2600,6 @@ def loadKPI(request, device_id):
         CY.reverse()
         CB.reverse()
 
-        # WT.reverse()
-        # EO.reverse()
-        # CA.reverse()
-        # CR.reverse()
-        # CY.reverse()
-        # CB.reverse()
-
-        # MDL = []
-        # LE = []
-        # CF = []
-        # FC = []
-        # FCO = []
-        # Time1 = []
-        # Time = []
-        # for det in Details:
-        #     if det.maximum_demand_load == None:
-        #         pass
-        #     else:
-        #         MDL.append(round(det.maximum_demand_load, 2))
-        #     Time1.append(det.start_time.strftime('%Y-%m-%d %H:%M:%S'))
-        #     if det.efficiency == 0 or det.efficiency == None:
-        #         pass
-        #     else:
-        #         LE.append(round(det.efficiency, 2))
-        #     if det.carbon_footprint == None:
-        #         pass
-        #     else:
-        #         CF.append(round(det.carbon_footprint, 2))
-        #     if det.fuel_consumed == None:
-        #         pass
-        #     else:
-        #         FC.append(round(det.fuel_consumed, 2))
-        #     if det.fuel_cost == None:
-        #         pass
-        #     else:
-        #         FCO.append(round(det.fuel_cost, 2))
-
-        # if len(MDL) == 0:
-        #     MDL_avg = 0
-        #     LE_avg = 0
-        #     CF_avg = 0
-        #     FC_avg = 0
-        #     FCO_avg = 0
-
-        # else:
-        #     MDL_avg = abs(round(sum(MDL)/len(MDL), 2))
-        #     LE_avg = abs(round(sum(LE)/len(LE), 2))
-        #     CF_avg = abs(round(sum(CF), 2))
-        #     FC_avg = abs(round(sum(FC)/len(FC), 2))
-        #     FCO_avg = abs(round(sum(FCO)/len(FCO), 2))
-
-        # MDL.reverse()
-        # LE.reverse()
-        # CF.reverse()
-
         UTC = '0000-00-00 05:30:00'
         y = UTC[:4]
         mo = UTC[5:7]
@@ -2805,12 +2658,6 @@ def loadKPI(request, device_id):
 
             Time.reverse()
 
-        # status = ['power_factor', 'gateway_device_battery', 'fuel_level_percentage', 'gsm_signal', 'energy_output_kw_total', 'dg_battery_voltage', 'room_temperature', 'frequency',
-        #           'rpm_ctrl', 'current_b_phase', 'vll_average', 'energy_output_kva', 'current_r_phase', 'rpm', 'current_y_phase', ]
-
-        # alerts = Alerts.objects.filter(
-        #     device_id=device_id).exclude(alert_type_name__in=status).order_by('-created_at')
-
         status = ['power_factor']
 
         alert = Alerts.objects.filter(
@@ -2851,7 +2698,9 @@ def loadKPI(request, device_id):
 
         LTOD = d1 + d21
 
-        return render(request, 'dgms/loadKPI.html', {'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'DDOI': DDOI, 'alert_count': alert_count, 'WT': WT, 'EO': EO, 'Time': Time, 'TR': TR, 'myFilter': myFilter, 'CA': CA, 'CR': CR, 'CY': CY, 'CB': CB, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        Name = "Load Side KPI"
+
+        return render(request, 'dgms/loadKPI.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'DDOI': DDOI, 'alert_count': alert_count, 'WT': WT, 'EO': EO, 'Time': Time, 'TR': TR, 'myFilter': myFilter, 'CA': CA, 'CR': CR, 'CY': CY, 'CB': CB, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -3081,33 +2930,12 @@ def enginePara(request, device_id):
             DL.append(round(det.fuel_level_litre, 2))
             DBV.append(round(det.dg_battery_voltage, 2))
             RPM.append(round(det.rpm, 2))
+            # print(det.device_time.strftime('%Y-%m-%d %H:%M:%S') +
+            #       "Fuel litre:" + str(round(det.fuel_level_litre, 2)) + "Fuel litre Percentage:" + str(round(det.fuel_level_percentage, 2)))
 
         DL.reverse()
         DBV.reverse()
         RPM.reverse()
-
-        # WT = []
-        # EO = []
-        # CA = []
-        # CR = []
-        # CY = []
-        # CB = []
-
-        # for det in Details:
-        #     Time1.append(det.device_time.strftime('%Y-%m-%d %H:%M:%S'))
-        #     WT.append(round(det.energy_output_kw_total, 2))
-        #     EO.append(round(det.energy_output_kva, 2))
-        #     CA.append(round(det.current_average, 2))
-        #     CR.append(round(det.current_r_phase, 2))
-        #     CY.append(round(det.current_y_phase, 2))
-        #     CB.append(round(det.current_b_phase, 2))
-
-        # WT.reverse()
-        # EO.reverse()
-        # CA.reverse()
-        # CR.reverse()
-        # CY.reverse()
-        # CB.reverse()
 
         UTC = '0000-00-00 05:30:00'
         y = UTC[:4]
@@ -3215,7 +3043,9 @@ def enginePara(request, device_id):
 
         LTOD = d1 + d21
 
-        return render(request, 'dgms/enginePara.html', {'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'DDOI': DDOI, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'DL': DL, 'RPM': RPM, 'DBV': DBV, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        Name = "Engine Parameters"
+
+        return render(request, 'dgms/enginePara.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'DDOI': DDOI, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'DL': DL, 'RPM': RPM, 'DBV': DBV, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -3601,7 +3431,9 @@ def performanceKPI(request, device_id):
 
         LTOD = d1 + d21
 
-        return render(request, 'dgms/performanceKPI.html', {'LTOD': LTOD, 'RC': RC, 'temperature': temperature, 'description': description, 'icon': icon, 'Total_RH': Total_RH, 'RunCount': RunCount, 'Total_FC': Total_FC, 'Total_FCO': Total_FCO, 'UG': UG, 'DDOI': DDOI, 'RH': RH, 'MDL': MDL, 'LE': LE, 'CF': CF, 'FC': FC, 'FCO': FCO, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        Name = "PERFORMANCE BASED KPI"
+
+        return render(request, 'dgms/performanceKPI.html', {'Name': Name, 'LTOD': LTOD, 'RC': RC, 'temperature': temperature, 'description': description, 'icon': icon, 'Total_RH': Total_RH, 'RunCount': RunCount, 'Total_FC': Total_FC, 'Total_FCO': Total_FCO, 'UG': UG, 'DDOI': DDOI, 'RH': RH, 'MDL': MDL, 'LE': LE, 'CF': CF, 'FC': FC, 'FCO': FCO, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -3860,61 +3692,6 @@ def deviceInfoKPI(request, device_id):
         else:
             GSMSignal = GSM[-1]
 
-        # WT.reverse()
-        # EO.reverse()
-        # CA.reverse()
-        # CR.reverse()
-        # CY.reverse()
-        # CB.reverse()
-
-        # MDL = []
-        # LE = []
-        # CF = []
-        # FC = []
-        # FCO = []
-        # Time1 = []
-        # Time = []
-        # for det in Details:
-        #     if det.maximum_demand_load == None:
-        #         pass
-        #     else:
-        #         MDL.append(round(det.maximum_demand_load, 2))
-        #     Time1.append(det.start_time.strftime('%Y-%m-%d %H:%M:%S'))
-        #     if det.efficiency == 0 or det.efficiency == None:
-        #         pass
-        #     else:
-        #         LE.append(round(det.efficiency, 2))
-        #     if det.carbon_footprint == None:
-        #         pass
-        #     else:
-        #         CF.append(round(det.carbon_footprint, 2))
-        #     if det.fuel_consumed == None:
-        #         pass
-        #     else:
-        #         FC.append(round(det.fuel_consumed, 2))
-        #     if det.fuel_cost == None:
-        #         pass
-        #     else:
-        #         FCO.append(round(det.fuel_cost, 2))
-
-        # if len(MDL) == 0:
-        #     MDL_avg = 0
-        #     LE_avg = 0s
-        #     CF_avg = 0
-        #     FC_avg = 0
-        #     FCO_avg = 0
-
-        # else:
-        #     MDL_avg = abs(round(sum(MDL)/len(MDL), 2))
-        #     LE_avg = abs(round(sum(LE)/len(LE), 2))
-        #     CF_avg = abs(round(sum(CF), 2))
-        #     FC_avg = abs(round(sum(FC)/len(FC), 2))
-        #     FCO_avg = abs(round(sum(FCO)/len(FCO), 2))
-
-        # MDL.reverse()
-        # LE.reverse()
-        # CF.reverse()
-
         UTC = '0000-00-00 05:30:00'
         y = UTC[:4]
         mo = UTC[5:7]
@@ -4021,7 +3798,9 @@ def deviceInfoKPI(request, device_id):
 
         LTOD = d1 + d21
 
-        return render(request, 'dgms/deviceInfoKPI.html', {'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'GSMSignal': GSMSignal, 'PowerStatus': PowerStatus, 'BatteryVoltage': BatteryVoltage, 'DDOI': DDOI, 'GSM': GSM, 'GB': GB, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        Name = "DGMS DEVICE INFO"
+
+        return render(request, 'dgms/deviceInfoKPI.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'GSMSignal': GSMSignal, 'PowerStatus': PowerStatus, 'BatteryVoltage': BatteryVoltage, 'DDOI': DDOI, 'GSM': GSM, 'GB': GB, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -4339,7 +4118,9 @@ def fuel_report(request, device_id):
 
         LTOD = d1 + d21
 
-    return render(request, 'dgms/fuel_report.html', {'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'DDOI': DDOI, 'alert_count': alert_count, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'TR': TR, 'Address': Address, 'Tank_Size': Tank_Size, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'Fuel': Fuel, 'Total': Total, 'Count': Count, 'myFilter': myFilter})
+        Name = "Fuel filled report"
+
+    return render(request, 'dgms/fuel_report.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'DDOI': DDOI, 'alert_count': alert_count, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'TR': TR, 'Address': Address, 'Tank_Size': Tank_Size, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'Fuel': Fuel, 'Total': Total, 'Count': Count, 'myFilter': myFilter})
 
 
 @ login_required(login_url='login')
@@ -4731,7 +4512,9 @@ def operational_report(request, device_id):
 
         LTOD = d1 + d21
 
-    return render(request, 'dgms/operational_report.html', {'RC': RC, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'DDOI': DDOI, 'alert_count': alert_count, 'RC': RC, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'TR': TR, 'Address': Address, 'Tank_Size': Tank_Size, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'OP1': OP1, 'OP2': OP2, 'Count': Count, 'Total_RH': Total_RH, 'Total_F': Total_F, 'Total_FC': Total_FC, 'Total_EG': Total_EG, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'myFilter': myFilter})
+        Name = "Operational report"
+
+    return render(request, 'dgms/operational_report.html', {'Name': Name, 'RC': RC, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'DDOI': DDOI, 'alert_count': alert_count, 'RC': RC, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'TR': TR, 'Address': Address, 'Tank_Size': Tank_Size, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'OP1': OP1, 'OP2': OP2, 'Count': Count, 'Total_RH': Total_RH, 'Total_F': Total_F, 'Total_FC': Total_FC, 'Total_EG': Total_EG, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'myFilter': myFilter})
 
 
 @ login_required(login_url='login')
@@ -5123,7 +4906,9 @@ def performance_report(request, device_id):
 
         LTOD = d1 + d21
 
-    return render(request, 'dgms/performance_report.html', {'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'DDOI': DDOI, 'alert_count': alert_count, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'Avg_AL': Avg_AL, 'Avg_PL': Avg_PL, 'Avg_FC': Avg_FC, 'TR': TR, 'context2': context2, 'PR': PR, 'Address': Address, 'Tank_Size': Tank_Size, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'context1': context1, 'Count': Count, 'Total_RH': Total_RH, 'Total_F': Total_F, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'myFilter': myFilter})
+        Name = "Performance report"
+
+    return render(request, 'dgms/performance_report.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'DDOI': DDOI, 'alert_count': alert_count, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'Avg_AL': Avg_AL, 'Avg_PL': Avg_PL, 'Avg_FC': Avg_FC, 'TR': TR, 'context2': context2, 'PR': PR, 'Address': Address, 'Tank_Size': Tank_Size, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'context1': context1, 'Count': Count, 'Total_RH': Total_RH, 'Total_F': Total_F, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'myFilter': myFilter})
 
 
 @ login_required(login_url='login')
@@ -5591,7 +5376,7 @@ def device_alert(request, device_id):
         alert = Alerts.objects.filter(
             device_id=device_id, alert_open=True).exclude(alert_type_name__in=status).order_by('-created_at')
 
-        Count = len(alert)
+        alert_count = len(alert)
 
         Tank_Size = Asset.objects.get(Device_ID=device_id).Diesel_Tank_Size
         Address = User_Detail.objects.get(Device_ID=device_id).Address
@@ -5628,7 +5413,7 @@ def device_alert(request, device_id):
 
         # http://openweathermap.org/img/w/{{icon}}.png
 
-        return render(request, 'dgms/device_alert.html', {'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'Tank_Size': Tank_Size, 'Address': Address, 'TR': TR, 'myFilter': myFilter, 'alerts': alerts, 'Count': Count, 'DDOI': DDOI, 'Count': Count,  'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff,  'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, })
+        return render(request, 'dgms/device_alert.html', {'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'Tank_Size': Tank_Size, 'Address': Address, 'TR': TR, 'myFilter': myFilter, 'alerts': alerts, 'alert_count': alert_count, 'DDOI': DDOI, 'Count': Count,  'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff,  'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, })
 
 
 # @ login_required(login_url='login')

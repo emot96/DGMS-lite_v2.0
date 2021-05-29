@@ -1921,7 +1921,9 @@ def emsLoadKPI(request, device_id):
         EDOI = LoginEmsAsset.objects.get(
             device_id=device_id).ems_date_of_installation
 
-        return render(request, 'ems/emsLoadKPI.html', {'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'WT': WT, 'EO': EO, 'Time': Time, 'TR': TR, 'myFilter': myFilter, 'CA': CA, 'CR': CR, 'CY': CY, 'CB': CB, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        Name = "Load Side KPI"
+
+        return render(request, 'ems/emsLoadKPI.html', {'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'WT': WT, 'EO': EO, 'Time': Time, 'TR': TR, 'myFilter': myFilter, 'CA': CA, 'CR': CR, 'CY': CY, 'CB': CB, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -2272,7 +2274,9 @@ def emsEnergyPara(request, device_id):
         EDOI = LoginEmsAsset.objects.get(
             device_id=device_id).ems_date_of_installation
 
-        return render(request, 'ems/emsEnergyPara.html', {'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'PF': PF, 'VLN': VLN, 'VLL': VLL,  'alert_count': alert_count, 'Time': Time,  'TR': TR, 'myFilter': myFilter,  'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        Name = "Energy Parameter KPI"
+
+        return render(request, 'ems/emsEnergyPara.html', {'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'PF': PF, 'VLN': VLN, 'VLL': VLL,  'alert_count': alert_count, 'Time': Time,  'TR': TR, 'myFilter': myFilter,  'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -2647,7 +2651,9 @@ def emsDeviceInfoKPI(request, device_id):
         EDOI = LoginEmsAsset.objects.get(
             device_id=device_id).ems_date_of_installation
 
-        return render(request, 'ems/emsDeviceInfoKPI.html', {'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'GSMSignal': GSMSignal, 'PowerStatus': PowerStatus, 'BatteryVoltage': BatteryVoltage, 'GSM': GSM, 'GB': GB, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        Name = "Device Info KPI"
+
+        return render(request, 'ems/emsDeviceInfoKPI.html', {'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'GSMSignal': GSMSignal, 'PowerStatus': PowerStatus, 'BatteryVoltage': BatteryVoltage, 'GSM': GSM, 'GB': GB, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -2951,7 +2957,7 @@ def emsdevice_alert(request, device_id):
         alert = Alerts.objects.filter(
             device_id=device_id, alert_open=True).exclude(alert_type_name__in=status).order_by('-created_at')
 
-        Count = len(alert)
+        alert_count = len(alert)
 
         url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&appid=6841e5450643e5d4ff59981dbf58944e'
         r = requests.get(url.format(Cit)).json()
@@ -2988,4 +2994,4 @@ def emsdevice_alert(request, device_id):
 
         # http://openweathermap.org/img/w/{{icon}}.png
 
-        return render(request, 'ems/emsDeviceAlerts.html', {'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'alerts': alerts, 'Count': Count, 'Count': Count,  'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff,  'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, })
+        return render(request, 'ems/emsDeviceAlerts.html', {'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'alerts': alerts, 'alert_count': alert_count,  'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff,  'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, })

@@ -1,637 +1,214 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta http-equiv="refresh" content="60" />
-    <!-- <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
-    <title>{{Loc}}</title>
-    <!-- Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
-      integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
-      crossorigin="anonymous"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+{% extends 'dgms/KPI-base.html' %} {% block content %} {% load static %}
+<div class="kpi">
+  <div class="graphs-kpi">
+    <div class="one-graph">
+      <canvas id="diesel_level1"></canvas>
+      <script>
+        var diesel_lev = document.getElementById('diesel_level1').getContext('2d');
+        var myChart = new Chart(diesel_level1, {
+            type: 'bar',
+            data: {
+                labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                datasets: [{
+                    label: 'Diesel Level',
+                    fill: false,
+                    data: [{% for v in DL %} {{v}}, {% endfor %}],
+                    backgroundColor: "rgba(190, 144, 212,0.4)",
+                    borderColor: "rgba(190, 144, 212,0.5)",
+                    borderWidth: 1
+                },{
+                  label: 'Line: Diesel Level',
+                  fill: false,
+                  type: 'line',
+                  data: [{% for v in DL %} {{v}}, {% endfor %}],
+                  borderColor: 'rgba(145, 61, 136, 1)',
+                  borderWidth: 1
+              }]
+            },
+            options: {
 
-    <link rel="stylesheet" href="{% static './css/navbar.css' %}" />
-    <link rel="stylesheet" href="{% static './css/dgmsInfo.css' %}" />
-    <link rel="stylesheet" href="{% static './css/internal_nav.css' %}" />
-    <link rel="stylesheet" href="{% static './css/time-range.css' %}" />
-    <link rel="stylesheet" href="{% static './css/kpi.css' %}" />
-    <link rel="stylesheet" href="{% static './css/chart.css' %}" />
-    <link rel="stylesheet" href="{% static './css/footer.css' %}" />
-  </head>
-
-  <body>
-    <!-- Side Vertical Navigation bar-->
-    <nav>
-      <!-- Toogle for responsive nav bar-->
-      <div class="hamburger">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-      </div>
-
-      <!-- side nav -->
-      <div class="sidenav">
-        <div class="img">
-          <img
-            src="{% static './images/emot.png' %}"
-            class="logo"
-            alt="logo_emot"
-          />
-        </div>
-
-        <div class="dropdown-btn active">
-          <a href="{% url 'dashboard' %}"
-            ><img
-              src="{% static './images/Dashboard.png' %}"
-              alt="dashboard"
-            />Dashboards</a
-          >
-          <button id="a">+</button>
-        </div>
-
-        <div class="dropdown-container">
-          <div class="sub-link active">
-            <a href="{% url 'dashboard' %}">Diesel Generator</a>
-          </div>
-          <div class="sub-link"><a href="{% url 'ems' %}">Servo Voltage Stabilizer</a></div>
-          <div class="sub-link"><a href="#">Coming soon</a></div>
-        </div>
-      </div>
-    </nav>
-    <!--end side nav-->
-
-    <div class="main">
-      <!-- Upper horizontal nav bar -->
-
-      <nav class="hor_nav">
-        <div class="left">
-          <div class="user_img">
-            <img src="{% static './images/ccd.png' %}" alt="user_img" />
-          </div>
-          <div class="name">{{Customer_Name}}</div>
-        </div>
-
-        {% if request.user.is_user == True %}
-        <div class="right">
-          <a href="{% url 'device_alert' device_id  %}" target="_blank"
-            ><div class="notify">
-              <div>
-                <img
-                  src="{% static './images/notification.png' %}"
-                  alt="notifications"
-                />
-              </div>
-              <div class="not-txt">
-                <div class="not-no">{{alert_count}}</div>
-              </div>
-            </div></a
-          >
-          {% else %}
-          <div class="right">
-            <a href="{% url 'alert'  %}" target="_blank"
-              ><div class="notify">
-                <div>
-                  <img
-                    src="{% static './images/notification.png' %}"
-                    alt="notifications"
-                  />
-                </div>
-                <div class="not-txt">
-                  <div class="not-no">{{alert_count}}</div>
-                </div>
-              </div></a
-            >
-            {% endif %}
-          <div class="type"><a href="{% url 'dashboard'  %}">DGMS</a></div>
-
-          <div onclick="dropFunction()" class="user_name">
-            {{username}} &ensp;
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-caret-down-fill"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
-              />
-            </svg>
-          </div>
-
-          <div id="user-dropdown" class="drop-cont">
-            <div><a href="{% url 'password_change' %}">Change Password</a></div>
-            <hr />
-            <div><a href="{% url 'logoutUser' %}" id="logout">Logout</a></div>
-          </div>
-        </div>
-      </nav>
-      <!-- end horizontal nav -->
-
-      <div class="dg_info">
-        <div class="b"></div>
-        <div class="row">
-
-          <div class="on-left">
-          <div class="dg_info_dev">
-              <div class="asset_name">{{Cit}}-{{Loc}}</div>
-              <div class="inst_dgms">DGMS Installation Date: {{DDOI}}</div>
-            </div>
-            
-              
-            <div class="star-kva">
-              <div class="kva">{{Rat}} kVA</div>
-              {% if Star == 1 %}
-              <div class="star">
-                <img src="{% static './images/star1.png' %}" />
-              </div>
-              {% elif Star == 2 %}
-              <div class="star">
-                <img src="{% static './images/star2.png' %}" />
-              </div>
-              {% elif Star == 3 %}
-              <div class="star">
-                <img src="{% static './images/star3.png' %}" />
-              </div>
-              {% elif Star == 4 %}
-              <div class="star">
-                <img src="{% static './images/star4.png' %}" />
-              </div>
-              {% else %}
-              <div class="star">
-                <img src="{% static './images/star5.png' %}" />
-              </div>
-              {% endif %}
-            </div>
-
-          <div class="weather">
-            <div class="weather-img"><img src="http://openweathermap.org/img/wn/{{icon}}@2x.png" /></div>
-            <div class="weather-text">
-              <div>{{temperature}} &deg; C</div>
-              <div class="weather-type">{{description}}</div>
-            </div>
-          </div>
-          <div class="last-data">
-            <div class="last-data-time">
-              {{LTOD}}
-            </div>
-            <div class="last-data-text">
-              Last Data Recieved
-            </div>
-          </div>
-        </div>
-
-          <!-- </div> -->
-
-          <div class="dg_info_status">
-            {% if Stat == 'ON' %}
-            <div class="status" id="dg_on">ON</div>
-            {% else %}
-            <div class="status" id="dg_off">OFF</div>
-            {% endif %}
-            <div>{{diff}}</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="cont">
-        <div class="internal_nav">
-          <div class="row">
-            <div>
-              <p><a href="{% url 'dgmsDashboard' device_id %}">Dashboard</a></p>
-            </div>
-            <!-- <div class="active_link" ><p><a href="kpi.html">KPI</a></p></div> -->
-
-            <div class="drop_asset active_link">
-              <p>KPI</p>
-
-              <div class="drop-down">
-                <div>
-                  <a href="{% url 'energyPara' device_id %}"
-                    >Energy Parameters</a
-                  >
-                </div>
-                <hr />
-                <div>
-                  <a href="{% url 'loadKPI' device_id %}">Load Side KPI</a>
-                </div>
-                <hr />
-                <div>
-                  <a href="{% url 'enginePara' device_id %}"
-                    >Engine Parameters</a
-                  >
-                </div>
-                <hr />
-                <div>
-                  <a href="{% url 'performanceKPI' device_id %}"
-                    >Performance based KPI</a
-                  >
-                </div>
-                <hr />
-                <div>
-                  <a href="{% url 'deviceInfoKPI' device_id %}"
-                    >DGMS Device Info</a
-                  >
-                </div>
-              </div>
-            </div>
-
-            <div class="drop_asset">
-              <p>Asset Information</p>
-
-              <div class="drop-down">
-                <div>
-                  <a href="{% url 'asset' device_id  %}">Asset Detail</a>
-                </div>
-                <hr />
-                <div>
-                  <a href="{% url 'servicehistory' device_id  %}"
-                    >Service History</a
-                  >
-                </div>
-              </div>
-            </div>
-
-            <div class="drop_asset">
-              <p>Reports</p>
-
-              <div class="drop-down">
-                <div>
-                  <a href="{% url 'fuel_report' device_id  %}"
-                    >Fuel filled report</a
-                  >
-                </div>
-                <hr />
-                <div>
-                  <a href="{% url 'operational_report' device_id  %}"
-                    >Operational report</a
-                  >
-                </div>
-                <hr />
-                <div>
-                  <a href="{% url 'performance_report' device_id  %}"
-                    >Performance report</a
-                  >
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <p><a href="{% url 'device_alert' device_id  %}">Alerts</a></p>
-            </div>
-          </div>
-        </div>
-        <!-- class ="internal_nav" ends here -->
-
-        <div class="select-time-bar">
-          <div class="page-info">Engine Parameters</div>
-          <hr />
-
-          <div class="time-select">
-            <div class="time-range">
-              <form class="row" method="get">
-                {{myFilter.form.as_ul}}
-                <div class="go">
-                  <button type="submit" name="date">Go</button>
-                </div>
-              </form>
-            </div>
-
-            <div class="row">
-              <div class="time-right">
-                <form class="row" method="get">
-                  <select name="time_range">
-                    {% if TR == None %}
-                    <option value="" selected disabled hidden>
-                      Last 2 hours
-                    </option>
-                    {% else %}
-                    <option value="" selected disabled hidden>{{TR}}</option>
-                    {% endif %}
-                    <!-- <option>{{TR}}</option> -->
-                    <option>Last 30 mins</option>
-                    <option>Last 1 hour</option>
-                    <option>Last 2 hours</option>
-                    <option>Last 7 hours</option>
-                    <option>Last 12 hours</option>
-                    <option>Last 24 hours</option>
-                    <option>Last 2 days</option>
-                    <option>Last 5 days</option>
-                    <option>Last 1 week</option>
-                    <option>Last 2 weeks</option>
-                    <option>Last 1 month</option>
-                    <option>Last 2 months</option>
-                    <option>Last 6 months</option>
-                    <option>Last 1 year</option>
-                    <option>Last 2 years</option>
-                  </select>
-
-                  <div class="go">
-                    <button class="go" type="submit" name="range">GO</button>
-                  </div>
-                </form>
-              </div>
-
-              <div class="print">
-                <img
-                  src="{% static './images/printing.png' %}"
-                  alt="user_img"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- class ="select-time-bar" ends here  -->
-
-        <div class="kpi">
-          <div class="graphs-kpi">
-            <div class="one-graph">
-              <canvas id="diesel_level1"></canvas>
-              <script>
-                var diesel_lev = document.getElementById('diesel_level1').getContext('2d');
-                var myChart = new Chart(diesel_level1, {
-                    type: 'bar',
-                    data: {
-                        labels: [{% for t in Time %} '{{t}}', {% endfor %}],
-                        datasets: [{
-                            label: 'Diesel Level',
-                            fill: false,
-                            data: [{% for v in DL %} {{v}}, {% endfor %}],
-                            backgroundColor: "rgba(190, 144, 212,0.4)",
-                            borderColor: "rgba(190, 144, 212,0.5)",
-                            borderWidth: 1
-                        },{
-                          label: 'Line: Diesel Level',
-                          fill: false,
-                          type: 'line',
-                          data: [{% for v in DL %} {{v}}, {% endfor %}],
-                          borderColor: 'rgba(145, 61, 136, 1)',
-                          borderWidth: 1
-                      }]
-                    },
-                    options: {
-
-                      legend: {
-                                labels: {
-                                    fontColor: "black",
-                                    fontSize: 13
-                                }
-                            },
-
-                        scales: {
-                            yAxes: [{
-                                gridLines: {
-                                    color: "rgba(0,0,0,0.3)",
-                                },
-                                ticks: {
-                                    fontColor: "black",
-                                    beginAtZero: true,
-                                    fontSize: 17
-                                }
-                            }],
-
-                            xAxes: [{
-                                gridLines: {
-                                    color: "rgba(0,0,0,0.3)",
-                                },
-                                ticks: {
-                                  autoSkip: true,
-                                  maxTicksLimit: 12,
-                                  fontColor: "black",
-                                  fontSize: 17,
-                                  maxRotation: 0,
-                                }
-                            }]
-                        },
-
-                        title: {
-                            display: true,
-                            text: 'Diesel Level',
-                            fontSize: 17,
-                            fontColor: "balck",
-                            fontFamily: "Helvetica"
+              legend: {
+                        labels: {
+                            fontColor: "black",
+                            fontSize: 13
                         }
-                    }
-                });
-              </script>
-            </div>
-
-            <div class="one-graph">
-              <canvas id="dg_battery"></canvas>
-              <script>
-                var dg_battery = document.getElementById('dg_battery').getContext('2d');
-                                  var myChart1 = new Chart(dg_battery, {
-                                      type: 'bar',
-                                      data: {
-                                          labels: [{% for t in Time %} '{{t}}', {% endfor %}],
-                                          datasets: [{
-                                              label: 'DG Battery Voltage',
-                                              fill:false,
-                                              data: [{% for v in DBV %} {{v}}, {% endfor %}],
-                                              backgroundColor: "rgba(242, 121, 53, 0.5)",
-                                              borderColor: 'rgba(242, 121, 53,1)',
-                                              borderWidth: 2
-                                          },{
-                                            label: 'DG Battery Voltage',
-                                            fill:false,
-                                            type: 'line',
-                                            data: [{% for v in DBV %} {{v}}, {% endfor %}],
-                                            borderColor: 'rgba(242, 121, 53,1)',
-                                            borderWidth: 2
-                                        }]
-                                      },
-                                      options: {
-
-                                        legend: {
-                                                  labels: {
-                                                      fontColor: "black",
-                                                      fontSize: 13
-                                                  }
-                                              },
-
-                                          scales: {
-                                              yAxes: [{
-                                                  gridLines: {
-                                                      color: "rgba(0,0,0,0.3)",
-                                                  },
-                                                  ticks: {
-                                                      fontColor: "black",
-                                                      beginAtZero: true,
-                                                      fontSize: 17
-                                                  }
-                                              }],
-
-                                              xAxes: [{
-                                                  gridLines: {
-                                                      color: "rgba(0,0,0,0.3)",
-                                                  },
-                                                  ticks: {
-                                                    autoSkip: true,
-                                                    maxTicksLimit: 12,
-                                                    fontColor: "black",
-                                                    fontSize: 17,
-                                                    maxRotation: 0,
-                                                  }
-                                              }]
-                                          },
-
-                                          title: {
-                                              display: true,
-                                              text: 'DG Battery Voltage',
-                                              fontSize: 17,
-                                              fontColor: "balck",
-                                              fontFamily: "Helvetica"
-                                          }
-                                      }
-                                  });
-              </script>
-            </div>
-
-            <div class="one-graph">
-              <canvas id="rpm"></canvas>
-              <script>
-                            var rpm = document.getElementById('rpm').getContext('2d');
-                var myChart2 = new Chart(rpm, {
-                    type: 'line',
-                    data: {
-                        labels: [{% for t in Time %} '{{t}}', {% endfor %}],
-                        datasets: [{
-                            label: 'RPM',
-                            fill: false,
-                            data: [{% for v in RPM  %} {{v}}, {% endfor %}],
-                            borderColor: [
-                                'rgba(30, 130, 76, 1)'
-
-                            ],
-                            borderWidth: 2
-                        }]
                     },
-                    options: {
 
-                      legend: {
-                                labels: {
-                                    fontColor: "black",
-                                    fontSize: 13
-                                }
-                            },
-
-                        scales: {
-                            yAxes: [{
-                                gridLines: {
-                                    color: "rgba(0,0,0,0.3)",
-                                },
-                                ticks: {
-                                    fontColor: "black",
-                                    beginAtZero: true,
-                                    fontSize: 17
-                                }
-                            }],
-
-                            xAxes: [{
-                                gridLines: {
-                                    color: "rgba(0,0,0,0.3)",
-                                },
-                                ticks: {
-                                  autoSkip: true,
-                                  maxTicksLimit: 12,
-                                  fontColor: "black",
-                                  fontSize: 17,
-                                  maxRotation: 0,
-                                }
-                            }]
+                scales: {
+                    yAxes: [{
+                        gridLines: {
+                            color: "rgba(0,0,0,0.3)",
                         },
-                        title: {
-                            display: true,
-                            text: 'RPM',
-                            fontSize: 17,
-                            fontColor: "balck",
-                            fontFamily: "Helvetica"
+                        ticks: {
+                            fontColor: "black",
+                            beginAtZero: true,
+                            fontSize: 17
                         }
-                    }
-                });
-              </script>
-            </div>
-          </div>
-          <!-- class ="kpi-graphs" ends here -->
-        </div>
-        <!--KPI Ends here-->
-      </div>
-      <!-- class ="cont" ends here -->
+                    }],
 
-      <div class="footer">
-        <div class="footer-content">
-          <div>© 2021 eMoT. All Rights Reserved.</div>
+                    xAxes: [{
+                        gridLines: {
+                            color: "rgba(0,0,0,0.3)",
+                        },
+                        ticks: {
+                          autoSkip: true,
+                          maxTicksLimit: 12,
+                          fontColor: "black",
+                          fontSize: 17,
+                          maxRotation: 0,
+                        }
+                    }]
+                },
 
-          <div class="web-links">
-            <div>
-              <a href="https://www.emot.co.in/about-us/" target="_blank"
-                >About us</a
-              >
-            </div>
-            <div>
-              <a href="https://www.emot.co.in/contact/" target="_blank"
-                >Contact us</a
-              >
-            </div>
-            <div>
-              <a href="https://www.emot.co.in/emot/" target="_blank"
-                >eMoT IoT</a
-              >
-            </div>
-          </div>
-
-          <div class="social-media">
-            <a href="https://www.facebook.com/emot.co.in/" target="_blank"
-              ><img
-                src="{% static './images/facebook.png' %}"
-                alt="facebook"
-                title="facebook"
-            /></a>
-            <a href="https://twitter.com/Emot86007134" target="_blank"
-              ><img
-                src="{% static './images/twitter.png' %}"
-                alt="twitter"
-                title="twitter"
-            /></a>
-            <a
-              href="https://www.linkedin.com/company/emot-elekron/"
-              target="_blank"
-              ><img
-                src="{% static './images/linkedin.png' %}"
-                alt="linkedin"
-                title="linkedin"
-            /></a>
-            <a href="https://www.instagram.com/elekronemot/" target="_blank"
-              ><img
-                src="{% static './images/instagram.png' %}"
-                alt="instagram"
-                title="instagram"
-            /></a>
-          </div>
-        </div>
-      </div>
+                title: {
+                    display: true,
+                    text: 'Diesel Level',
+                    fontSize: 17,
+                    fontColor: "balck",
+                    fontFamily: "Helvetica"
+                }
+            }
+        });
+      </script>
     </div>
-    <!--class="main" ends here-->
 
-    <!-- js -->
+    <div class="one-graph">
+      <canvas id="dg_battery"></canvas>
+      <script>
+        var dg_battery = document.getElementById('dg_battery').getContext('2d');
+                          var myChart1 = new Chart(dg_battery, {
+                              type: 'bar',
+                              data: {
+                                  labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                  datasets: [{
+                                      label: 'DG Battery Voltage',
+                                      fill:false,
+                                      data: [{% for v in DBV %} {{v}}, {% endfor %}],
+                                      backgroundColor: "rgba(242, 121, 53, 0.5)",
+                                      borderColor: 'rgba(242, 121, 53,1)',
+                                      borderWidth: 2
+                                  },{
+                                    label: 'DG Battery Voltage',
+                                    fill:false,
+                                    type: 'line',
+                                    data: [{% for v in DBV %} {{v}}, {% endfor %}],
+                                    borderColor: 'rgba(242, 121, 53,1)',
+                                    borderWidth: 2
+                                }]
+                              },
+                              options: {
 
-    <script
-      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
-      crossorigin="anonymous"
-    ></script>
+                                legend: {
+                                          labels: {
+                                              fontColor: "black",
+                                              fontSize: 13
+                                          }
+                                      },
 
-    <script type="text/javascript" src="{% static './js/navbar.js' %}"></script>
-  </body>
-</html>
+                                  scales: {
+                                      yAxes: [{
+                                          gridLines: {
+                                              color: "rgba(0,0,0,0.3)",
+                                          },
+                                          ticks: {
+                                              fontColor: "black",
+                                              beginAtZero: true,
+                                              fontSize: 17
+                                          }
+                                      }],
+
+                                      xAxes: [{
+                                          gridLines: {
+                                              color: "rgba(0,0,0,0.3)",
+                                          },
+                                          ticks: {
+                                            autoSkip: true,
+                                            maxTicksLimit: 12,
+                                            fontColor: "black",
+                                            fontSize: 17,
+                                            maxRotation: 0,
+                                          }
+                                      }]
+                                  },
+
+                                  title: {
+                                      display: true,
+                                      text: 'DG Battery Voltage',
+                                      fontSize: 17,
+                                      fontColor: "balck",
+                                      fontFamily: "Helvetica"
+                                  }
+                              }
+                          });
+      </script>
+    </div>
+
+    <div class="one-graph">
+      <canvas id="rpm"></canvas>
+      <script>
+                    var rpm = document.getElementById('rpm').getContext('2d');
+        var myChart2 = new Chart(rpm, {
+            type: 'line',
+            data: {
+                labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                datasets: [{
+                    label: 'RPM',
+                    fill: false,
+                    data: [{% for v in RPM  %} {{v}}, {% endfor %}],
+                    borderColor: [
+                        'rgba(30, 130, 76, 1)'
+
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+
+              legend: {
+                        labels: {
+                            fontColor: "black",
+                            fontSize: 13
+                        }
+                    },
+
+                scales: {
+                    yAxes: [{
+                        gridLines: {
+                            color: "rgba(0,0,0,0.3)",
+                        },
+                        ticks: {
+                            fontColor: "black",
+                            beginAtZero: true,
+                            fontSize: 17
+                        }
+                    }],
+
+                    xAxes: [{
+                        gridLines: {
+                            color: "rgba(0,0,0,0.3)",
+                        },
+                        ticks: {
+                          autoSkip: true,
+                          maxTicksLimit: 12,
+                          fontColor: "black",
+                          fontSize: 17,
+                          maxRotation: 0,
+                        }
+                    }]
+                },
+                title: {
+                    display: true,
+                    text: 'RPM',
+                    fontSize: 17,
+                    fontColor: "balck",
+                    fontFamily: "Helvetica"
+                }
+            }
+        });
+      </script>
+    </div>
+  </div>
+  <!-- class ="kpi-graphs" ends here -->
+</div>
+<!--KPI Ends here-->
+{% endblock %}

@@ -16,8 +16,7 @@
     <div id="content">
       <div id="login">
         <div align="center">
-          <img
-            align="center"
+          <img align="center"
             src="{% static './images/emot.png' %}"
             class="logo"
             alt="eMoT logo"
@@ -33,28 +32,35 @@
 
           <!-- Login form field and submit button  -->
 
-          <form name="login" onsubmit="return validation()"  method="POST" action="./login1">
+          <form name="login" onsubmit="return validation()"  method="POST" action="{% url 'login1' %}">
             {% csrf_token %}
             <input type="username" placeholder="Email Id" name ="username" required>
             <br>
             <input type="password" placeholder="Password" name="password" required>
            
      
-            <button name="login"> Login </button></a>
+            <button name="login" type="submit"> Login </button></a>
            </form>
 
-            <div>
+            <!-- <div>
               {% for message in messages %}
               <h3> {{message}}  </h3>
+              
               {% endfor %}
             </div>
-          
+           -->
           <!-- Login Form End  -->
+         
+          {% for message in messages %}
+          <p id="text1">  {{message}} </p>
+          {% endfor %}
+          <p > Forgot password? <a href="reset_password"> Click here</a></p>
            
-           <p> Forgot password? <a href="reset_password"> Click here</a></p
-           </div>
-      </div>
-    </div>
+          
+          
+        </div>/
+      </div>/
+    </div>/
   </body>
 </html>
 
