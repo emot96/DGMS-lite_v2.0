@@ -178,6 +178,7 @@ class DeviceOperational(models.Model):
     efficiency = models.FloatField(blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
+    run_count = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False

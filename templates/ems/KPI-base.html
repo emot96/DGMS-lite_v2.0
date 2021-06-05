@@ -60,7 +60,7 @@
           <div class="sub-link active">
             <a href="{% url 'ems' %}">Servo Voltage Stabilizer</a>
           </div>
-          <div class="sub-link"><a href="#">Coming soon</a></div>
+          <div class="sub-link"><a href="{% url 'ups' %}">UPS</a></div>
         </div>
       </div>
     </nav>
@@ -89,7 +89,7 @@
               <div class="not-txt"><div class="not-no">{{alert_count}}</div></div>
             </div></a
           >
-          <div class="type"><a href="{% url 'ems' %}"> EMS </a></div>
+          <div class="type"><a href="{% url 'ems' %}"> Servo  </a></div>
 
           <div onclick="dropFunction()" class="user_name">
             {{username}} &ensp;
@@ -199,7 +199,7 @@
                 <hr />
                 <div>
                   <a href="{% url 'emsDeviceInfoKPI' device_id %}"
-                    >EMS Device Info</a
+                    >UPS Device Info</a
                   >
                 </div>
               </div>
@@ -222,6 +222,7 @@
                 </div>
               </div>
             </div>
+            
 
             <div>
               <p><a href="{% url 'emsdevice_alert' device_id %}">Alerts</a></p>
@@ -248,12 +249,16 @@
               <div class="time-right">
                 <form class="row">
                   <select name="time_range" method="get">
-                    {% if TR == None %}
-                    <option value="" selected disabled hidden>
+                    {% if TR == None and Name == "Device Info KPI" %}
+                    <option >
+                      Last 30 mins
+                    </option>
+                    {% elif TR == None and Name != "Device Info KPI" %}
+                    <option >
                       Last 1 month
                     </option>
                     {% else %}
-                    <option value="" selected disabled hidden>{{TR}}</option>
+                    <option >{{TR}}</option>
                     {% endif %}
                     <!-- <option>{{TR}}</option> -->
                     <option>Last 30 mins</option>

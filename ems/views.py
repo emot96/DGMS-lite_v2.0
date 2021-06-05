@@ -76,7 +76,7 @@ def ems(request):
 
             Cit = LoginUserDetail.objects.get(device_id=device_id).city
             Loc = LoginUserDetail.objects.get(device_id=device_id).location
-            Rat = Device.objects.get(device_id=device_id).device_rating
+            Rat = LoginEmsAsset.objects.get(device_id=device_id).rating_in_kva
             Stat = Device.objects.get(device_id=device_id).device_status
 
             url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&appid=6841e5450643e5d4ff59981dbf58944e'
@@ -180,7 +180,7 @@ def ems(request):
                 Loc = LoginUserDetail.objects.filter(
                     device_id=j)[0].location
                 Stat = Device.objects.filter(device_id=j)[0].device_status
-                Rat = Device.objects.filter(device_id=j)[0].device_rating
+                Rat = LoginEmsAsset.objects.get(device_id=j).rating_in_kva
                 Efficency = DeviceOperational.objects.filter(
                     device_id=j).aggregate(Avg('efficiency'))
                 Energy_OA = round(float(Efficency['efficiency__avg']), 2)
@@ -268,7 +268,7 @@ def ems(request):
                 Loc = LoginUserDetail.objects.filter(
                     device_id=j)[0].location
                 Stat = Device.objects.filter(device_id=j)[0].device_status
-                Rat = Device.objects.filter(device_id=j)[0].device_rating
+                Rat = LoginEmsAsset.objects.get(device_id=j).rating_in_kva
                 Efficency = DeviceOperational.objects.filter(
                     device_id=j).aggregate(Avg('efficiency'))
                 Energy_OA = round(float(Efficency['efficiency__avg']), 2)
@@ -359,7 +359,7 @@ def ems(request):
                     Loc = LoginUserDetail.objects.filter(
                         device_id=j)[0].location
                     Stat = Device.objects.filter(device_id=j)[0].device_status
-                    Rat = Device.objects.filter(device_id=j)[0].device_rating
+                    Rat = LoginEmsAsset.objects.get(device_id=j).rating_in_kva
                     Efficency = DeviceOperational.objects.filter(
                         device_id=j).aggregate(Avg('efficiency'))
                     Energy_OA = round(float(Efficency['efficiency__avg']), 2)
@@ -448,8 +448,11 @@ def emsDashboard(request, device_id):
         Time = []
 
         for det in Details_graph:
-            Time1.append(det.start_time .strftime('%Y-%m-%d %H:%M:%S'))
-            PL.append(round(det.maximum_demand_load, 2))
+            if det.maximum_demand_load == None:
+                pass
+            else:
+                PL.append(round(det.maximum_demand_load, 2))
+                Time1.append(det.start_time .strftime('%Y-%m-%d %H:%M:%S'))
 
         PL.reverse()
 
@@ -485,7 +488,7 @@ def emsDashboard(request, device_id):
 
         Cit = LoginUserDetail.objects.get(device_id=device_id).city
         Loc = LoginUserDetail.objects.get(device_id=device_id).location
-        Rat = Device.objects.get(device_id=device_id).device_rating
+        Rat = LoginEmsAsset.objects.get(device_id=device_id).rating_in_kva
         Stat = Device.objects.get(device_id=device_id).device_status
 
         url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&appid=6841e5450643e5d4ff59981dbf58944e'
@@ -555,7 +558,10 @@ def emsDashboard(request, device_id):
         service_details = LoginEmsServiceHistory.objects.get(
             device_id=device_id)
 
-    return render(request, 'ems/emsDashboard.html', {'service_details': service_details, 'asset_details': asset_details, 'alert_count': alert_count, 'Star': Star, 'diff': diff, 'LTOD': LTOD, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'temperature': temperature, 'description': description, 'icon': icon, 'Time': Time, 'PL': PL, 'username': username, 'Customer_Name': Customer_Name, 'device_id': device_id, 'Details': Details, 'Details_graph': Details_graph})
+        EDOI = LoginEmsAsset.objects.get(
+            device_id=device_id).ems_date_of_installation
+
+    return render(request, 'ems/emsDashboard.html', {'EDOI': EDOI, 'service_details': service_details, 'asset_details': asset_details, 'alert_count': alert_count, 'Star': Star, 'diff': diff, 'LTOD': LTOD, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'temperature': temperature, 'description': description, 'icon': icon, 'Time': Time, 'PL': PL, 'username': username, 'Customer_Name': Customer_Name, 'device_id': device_id, 'Details': Details, 'Details_graph': Details_graph})
 
 
 @ login_required(login_url='login')
@@ -583,7 +589,7 @@ def emsasset_detail(request, device_id):
 
         Cit = LoginUserDetail.objects.get(device_id=device_id).city
         Loc = LoginUserDetail.objects.get(device_id=device_id).location
-        Rat = Device.objects.get(device_id=device_id).device_rating
+        Rat = LoginEmsAsset.objects.get(device_id=device_id).rating_in_kva
         Stat = Device.objects.get(device_id=device_id).device_status
 
         Efficency = DeviceOperational.objects.filter(
@@ -919,6 +925,19 @@ def emsalert(request):
                                  ).strftime('%d-%m-%Y')
                     enddate = (datetime.datetime.now() -
                                datetime.timedelta(days=2*365)).strftime('%d-%m-%Y')
+                else:
+
+                    alerts = Alerts.objects.filter(device_id__in=Device_ID).exclude(
+                        alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    enddate = (Alerts.objects.filter(
+                        device_id__in=Device_ID).exclude(alert_type_name__in=status).order_by('-created_at').last().created_at).strftime('%d-%m-%Y')
+                    startdate = (Alerts.objects.filter(
+                        device_id__in=Device_ID).exclude(alert_type_name__in=status).order_by('-created_at').first().updated_at).strftime('%d-%m-%Y')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
 
                 TR = request.GET['time_range']
 
@@ -1158,6 +1177,19 @@ def emsalert(request):
                     startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
                     enddate = (datetime.datetime.now() -
                                datetime.timedelta(days=2*365)).strftime('%d-%m-%Y')
+                else:
+
+                    alerts = Alerts.objects.filter().exclude(
+                        alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    enddate = Alerts.objects.filter().order_by(
+                        '-created_at').exclude(alert_type_name__in=status).last().created_at
+                    startdate = Alerts.objects.filter().order_by(
+                        '-created_at').exclude(alert_type_name__in=status).first().updated_at
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
 
                 TR = request.GET['time_range']
 
@@ -1173,9 +1205,9 @@ def emsalert(request):
                 startdate = Alerts.objects.filter().order_by(
                     '-created_at').exclude(alert_type_name__in=status).first().updated_at
 
-            myFilter = AlertFilter(
-                request.GET, queryset=alerts)
-            alerts = myFilter.qs
+                myFilter = AlertFilter(
+                    request.GET, queryset=alerts)
+                alerts = myFilter.qs
 
             alert = Alerts.objects.filter(
                 alert_open=True).exclude(alert_type_name__in=status)
@@ -1424,6 +1456,20 @@ def emsalert(request):
                     enddate = (datetime.datetime.now() -
                                datetime.timedelta(days=2*365)).strftime('%d-%m-%Y')
 
+                else:
+
+                    alerts = Alerts.objects.filter(device_id__in=Device_ID).exclude(
+                        alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                    enddate = (Alerts.objects.filter(
+                        device_id__in=Device_ID).exclude(alert_type_name__in=status).order_by('-created_at').last().created_at).strftime('%d-%m-%Y')
+                    startdate = (Alerts.objects.filter(
+                        device_id__in=Device_ID).exclude(alert_type_name__in=status).order_by('-created_at').first().updated_at).strftime('%d-%m-%Y')
+
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts)
+                    alerts = myFilter.qs
+
                 TR = request.GET['time_range']
 
             else:
@@ -1477,7 +1523,7 @@ def emsservice_history(request, device_id):
 
         Cit = LoginUserDetail.objects.get(device_id=device_id).city
         Loc = LoginUserDetail.objects.get(device_id=device_id).location
-        Rat = Device.objects.get(device_id=device_id).device_rating
+        Rat = LoginEmsAsset.objects.get(device_id=device_id).rating_in_kva
         Stat = Device.objects.get(device_id=device_id).device_status
 
         Efficency = DeviceOperational.objects.filter(
@@ -1561,7 +1607,10 @@ def emsservice_history(request, device_id):
         EDOI = LoginEmsAsset.objects.get(
             device_id=device_id).ems_date_of_installation
 
-    return render(request, 'ems/emsServiceHistory.html', {'EDOI': EDOI, 'Asset_Details': Asset_Details, 'Details': Details, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id})
+        Contract = LoginEmsServiceHistory.objects.get(
+            device_id=device_id).service_contract
+
+    return render(request, 'ems/emsServiceHistory.html', {'Contract': Contract, 'EDOI': EDOI, 'Asset_Details': Asset_Details, 'Details': Details, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id})
 
 
 @ login_required(login_url='login')
@@ -1589,7 +1638,7 @@ def emsLoadKPI(request, device_id):
 
         Cit = LoginUserDetail.objects.get(device_id=device_id).city
         Loc = LoginUserDetail.objects.get(device_id=device_id).location
-        Rat = Device.objects.get(device_id=device_id).device_rating
+        Rat = LoginEmsAsset.objects.get(device_id=device_id).rating_in_kva
         Stat = Device.objects.get(device_id=device_id).device_status
         Date = datetime.datetime.now()
         if Stat == 'ON':
@@ -1951,7 +2000,7 @@ def emsEnergyPara(request, device_id):
 
         Cit = LoginUserDetail.objects.get(device_id=device_id).city
         Loc = LoginUserDetail.objects.get(device_id=device_id).location
-        Rat = Device.objects.get(device_id=device_id).device_rating
+        Rat = LoginEmsAsset.objects.get(device_id=device_id).rating_in_kva
         Stat = Device.objects.get(device_id=device_id).device_status
         Date = datetime.datetime.now()
         if Stat == 'ON':
@@ -2304,7 +2353,7 @@ def emsDeviceInfoKPI(request, device_id):
 
         Cit = LoginUserDetail.objects.get(device_id=device_id).city
         Loc = LoginUserDetail.objects.get(device_id=device_id).location
-        Rat = Device.objects.get(device_id=device_id).device_rating
+        Rat = LoginEmsAsset.objects.get(device_id=device_id).rating_in_kva
         Stat = Device.objects.get(device_id=device_id).device_status
         Date = datetime.datetime.now()
         if Stat == 'ON':
@@ -2681,7 +2730,7 @@ def emsdevice_alert(request, device_id):
 
         Cit = LoginUserDetail.objects.get(device_id=device_id).city
         Loc = LoginUserDetail.objects.get(device_id=device_id).location
-        Rat = Device.objects.get(device_id=device_id).device_rating
+        Rat = LoginEmsAsset.objects.get(device_id=device_id).rating_in_kva
         Stat = Device.objects.get(device_id=device_id).device_status
 
         Efficency = DeviceOperational.objects.filter(
@@ -2935,6 +2984,19 @@ def emsdevice_alert(request, device_id):
                 startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
                 enddate = (datetime.datetime.now() -
                            datetime.timedelta(days=2*365)).strftime('%d-%m-%Y')
+            else:
+
+                alerts = Alerts.objects.filter(
+                    device_id=device_id).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
+
+                startdate = (Alerts.objects.filter(
+                    device_id=device_id).order_by('-created_at').exclude(alert_type_name__in=status).first().updated_at).strftime('%d-%m-%Y')
+                enddate = (Alerts.objects.filter(
+                    device_id=device_id).order_by('-created_at').exclude(alert_type_name__in=status).last().created_at).strftime('%d-%m-%Y')
+
+                myFilter = DeviceAlertFilter(
+                    request.GET, queryset=alerts)
+                alerts = myFilter.qs
 
             TR = request.GET['time_range']
 

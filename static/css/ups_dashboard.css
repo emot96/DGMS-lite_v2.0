@@ -1,0 +1,110 @@
+@import url("fonts.css");
+
+.emsDashboard{
+    display: flex;
+    gap:40px;
+    margin: 20px;
+    min-height: 52vh;
+}
+
+.emsDashboard .left-side{
+    width: 80%;
+    background-color: rgb(255, 255, 255);
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+
+
+.emsDashboard .infoTable{
+    
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    border-collapse: collapse;
+    border-spacing: 0 1em;
+
+}
+
+.emsDashboard .infoTable tr.t_body th{
+    border-bottom: 2px solid rgb(224, 224, 224);
+    padding: 10px;
+}
+
+.emsDashboard .infoTable tr.t_body td{
+    border-bottom: 2px solid rgb(224, 224, 224);
+    border-right: 2px solid rgb(224, 224, 224);
+    padding: 10px;
+}
+
+
+.emsDashboard tr:nth-child(4).t_body td{
+	border-right: none;
+}
+
+.emsDashboard td:nth-child(1){
+    font-weight: bold;
+}
+
+.emsDashboard tr:nth-child(7).t_body td{
+	border-bottom: none;
+}
+
+.emsDashboard tr.t_body td:nth-child(4){
+    border-right: none;
+}
+
+
+
+
+
+
+.emsDashboard .right-side{
+    width: 25%;
+    background-color: rgb(255, 255, 255);
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+
+.emsDashboard .right-side .right_nav{
+    border-bottom: 3px solid rgb(25, 5, 78);
+}
+
+.emsDashboard .right-side .bal{
+    padding: 10px;
+    /* border-bottom: 1px solid black; */
+}
+.emsDashboard .right-side hr{
+    padding:0;
+    margin: 0;
+    margin-bottom: 10px;
+}
+.emsDashboard .right-side .nav_text{
+    margin: 10px;
+}
+
+.emsDashboard .right-side .right_body{
+    margin: 4px 5px 15px 10px;
+}
+.emsDashboard .right-side .bold{
+    font-weight: normal;
+    color: rgb(44, 92, 140);
+    margin-right: 5px;
+}
+
+
+
+
+
+
+
+.graphs-ems{
+    /* background-color: white; */
+    margin: 30px 20px 0px 20px;
+    
+}
+
+.one-graph{
+    margin-bottom: 30px;
+    /* background-color: rgb(255, 255, 255); */
+    min-height: 64vh;
+}

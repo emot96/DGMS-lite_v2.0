@@ -102,11 +102,11 @@
        <form class="row" method="get">
         <select name="time_range">
           {% if TR == None %}
-          <option value="" selected disabled hidden>
+          <option >
             Select Time Range
           </option>
           {% else %}
-          <option value="" selected disabled hidden>{{TR}}</option>
+          <option >{{TR}}</option>
           {% endif %}
           <!-- <option>{{TR}}</option> -->
           <option>Last 30 mins</option>

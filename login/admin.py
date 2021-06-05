@@ -120,6 +120,16 @@ class EMS_Service_HistoryAdmin(admin.ModelAdmin):
     ordering = ['Customer_Name', 'Device_ID', 'Service_Provider']
 
 
+class UPS_AssetAdmin(admin.ModelAdmin):
+    list_display = ('Customer_Name', 'Device_ID', 'UPS_Rating')
+    ordering = ['Customer_Name', 'Device_ID', 'UPS_Rating']
+
+
+class UPS_Service_HistoryAdmin(admin.ModelAdmin):
+    list_display = ('Customer_Name', 'Device_ID', 'Service_Provider')
+    ordering = ['Customer_Name', 'Device_ID', 'Service_Provider']
+
+
 # # # Register your models here.
 admin.site.register(User, UserAdmin)
 admin.site.register(Customer, CustomerAdmin)
@@ -136,3 +146,5 @@ admin.site.register(DevicesInfo, DevicesInfoAdmin)
 admin.site.register(Price, PriceAdmin)
 admin.site.register(EMS_Asset, EMS_AssetAdmin)
 admin.site.register(EMS_Service_History, EMS_Service_HistoryAdmin)
+admin.site.register(UPS_Asset, UPS_AssetAdmin)
+admin.site.register(UPS_Service_History, UPS_Service_HistoryAdmin)

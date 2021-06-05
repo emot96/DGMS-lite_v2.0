@@ -59,7 +59,7 @@
             <a href="{% url 'dashboard' %}">Diesel Generator</a>
           </div>
           <div class="sub-link"><a href="{% url 'ems' %}">Servo Voltage Stabilizer</a></div>
-          <div class="sub-link"><a href="#">Coming soon</a></div>
+          <div class="sub-link"><a href="{% url 'ups' %}">UPS</a></div>
         </div>
       </div>
     </nav>
@@ -306,12 +306,16 @@
               <div class="time-right">
                 <form class="row" method="get">
                   <select name="time_range">
-                    {% if TR == None %}
-                    <option value="" selected disabled hidden>
+                    {% if TR == None and Name == "PERFORMANCE BASED KPI" %}
+                    <option>
+                      Last 2 Weeks
+                    </option>
+                    {% elif TR == None and Name != "PERFORMANCE BASED KPI" %}
+                    <option>
                       Last 2 hours
                     </option>
                     {% else %}
-                    <option value="" selected disabled hidden>{{TR}}</option>
+                    <option >{{TR}}</option>
                     {% endif %}
                     <!-- <option>{{TR}}</option> -->
                     <option>Last 30 mins</option>

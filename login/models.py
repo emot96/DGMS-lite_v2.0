@@ -1,10 +1,5 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
+
+import datetime
 from django.db import models
 from django.db.models.aggregates import Count
 from django.db.models.base import Model
@@ -222,6 +217,40 @@ class Asset(models.Model):
     Battery_Charger_Other_Info = models.CharField(max_length=500)
 
 
+class UPS_Asset(models.Model):
+    Customer_Name = models.ForeignKey(
+        Customer, on_delete=models.CASCADE, max_length=50)
+    Device_ID = models.OneToOneField(
+        User_Detail, on_delete=models.CASCADE, max_length=50, unique=True, primary_key=True)
+    UPS_Rating = models.BigIntegerField()
+    UPS_Type = models.CharField(max_length=70)
+    Battery_Rating = models.CharField(max_length=200)
+    Number_of_batteries = models.BigIntegerField()
+    Operating_Volts = models.BigIntegerField()
+    OEM = models.CharField(max_length=50)
+    Seller_Name = models.CharField(max_length=50)
+    Service_Provider = models.CharField(max_length=50)
+    UPS_Make = models.CharField(max_length=50)
+    UPS_Model_No = models.CharField(max_length=50)
+    UPS_Serial_No = models.CharField(max_length=100)
+    UPS_Date_Of_Installation = models.DateField(max_length=50)
+    UPS_Warranty_Start_Date = models.DateField(max_length=50)
+    UPS_Warranty_End_Date = models.DateField(max_length=50)
+    UPS_Warranty_Period = models.CharField(max_length=50)
+    UPS_Warranty_Status = models.CharField(
+        max_length=20, choices=STATUS, default='YES')
+    Battery_Make = models.CharField(max_length=50)
+    Battery_Model_No = models.CharField(max_length=50)
+    Battery_Serial_No = models.CharField(max_length=100)
+    Battery_Date_Of_Installation = models.DateField(
+        max_length=50)
+    Battery_Warranty_Start_Date = models.DateField(max_length=50)
+    Battery_Warranty_End_Date = models.DateField(max_length=50)
+    Battery_Warranty_Period = models.CharField(max_length=50)
+    Battery_Warranty_Status = models.CharField(
+        max_length=20, choices=STATUS, default='YES')
+
+
 class EMS_Asset(models.Model):
     Customer_Name = models.ForeignKey(
         Customer, on_delete=models.CASCADE, max_length=50)
@@ -257,6 +286,28 @@ class Service_History(models.Model):
     Service_Provider = models.CharField(max_length=100)
     Address = models.CharField(max_length=100)
     Contact = models.CharField(max_length=20)
+    Email = models.CharField(max_length=50, default="info@emot.co.in")
+    Last_Service_Date = models.DateField(max_length=50)
+    Activity = models.CharField(max_length=300)
+    Remark = models.CharField(max_length=300)
+    Activity1 = models.CharField(max_length=300, default="NULL")
+    Remark1 = models.CharField(max_length=300, default="NULL")
+    Next_Service_Date = models.DateField(max_length=50)
+
+
+class UPS_Service_History(models.Model):
+    Customer_Name = models.ForeignKey(
+        Customer, on_delete=models.CASCADE, max_length=50)
+    Device_ID = models.OneToOneField(
+        User_Detail, on_delete=models.CASCADE, max_length=50, primary_key=True, unique=True)
+    Service_Contract = models.CharField(
+        max_length=20, choices=CONTRACT, default='AMC')
+    Service_Provider = models.CharField(max_length=100)
+    Address = models.CharField(max_length=100)
+    Contact = models.CharField(max_length=20)
+    Email = models.CharField(max_length=50, default="info@emot.co.in")
+    Battery_Last_Replaced_Date = models.DateField(max_length=50)
+    Battery_Next_Replacment_Date = models.DateField(max_length=50)
     Last_Service_Date = models.DateField(max_length=50)
     Activity = models.CharField(max_length=300)
     Remark = models.CharField(max_length=300)
@@ -275,6 +326,7 @@ class EMS_Service_History(models.Model):
     Service_Provider = models.CharField(max_length=100)
     Address = models.CharField(max_length=100)
     Contact = models.CharField(max_length=20)
+    Email = models.CharField(max_length=50, default="info@emot.co.in")
     Last_Service_Date = models.DateField()
     Activity = models.CharField(max_length=300)
     Remark = models.CharField(max_length=300)

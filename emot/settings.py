@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['127.0.0.1', 'dgms-emot-v2.herokuapp.com']
 INSTALLED_APPS = [
     'login',
     'ems',
+    'ups',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

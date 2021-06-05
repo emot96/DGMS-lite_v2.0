@@ -41,7 +41,7 @@
   <div class="dropdown-container">
     <div class="sub-link active"><a href="{% url 'dashboard' %}">Diesel Generator</a></div>
     <div class="sub-link"><a href="{% url 'ems' %}">Servo Voltage Stabilizer</a></div>
-    <div class="sub-link"><a href="#">Coming soon</a></div>
+    <div class="sub-link"><a href="{% url 'ups' %}">UPS</a></div>
   </div>
 
 
@@ -259,11 +259,11 @@
    
       <select name="time_range">
         {% if TR == None %}
-        <option value="" selected disabled hidden>
+        <option >
           Select Time Range
         </option>
         {% else %}
-        <option value="" selected disabled hidden>
+        <option >
           {{TR}}
         </option>
         {% endif %}

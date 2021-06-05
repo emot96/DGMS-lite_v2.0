@@ -41,7 +41,14 @@
                                     data: [{% for v in RC %} {{v}}, {% endfor %}],
                                     borderColor: 'rgba(242, 120, 75, 1)',
                                     borderWidth: 2
-                                }]
+                                },{
+                                        label: 'Run Count',
+                                        type:'line',
+                                        fill: false,
+                                        data: [{% for v in RC %} {{v}}, {% endfor %}],
+                                        borderColor: 'rgba(242, 120, 75, 1)',
+                                        borderWidth: 2
+                                    }]
                             },
                             options: {
 

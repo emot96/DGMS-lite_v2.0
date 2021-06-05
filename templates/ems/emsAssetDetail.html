@@ -55,7 +55,7 @@
 
 <div class="asset_detail">
  
-    <div class="asset_img"><img src="{% static './images/asset1.png' %}" alt="asset"></div>
+    <div class="asset_img"><img src="{% static './images/servo.png' %}" alt="asset"></div>
 
     <div class="asset_info">
         <div class="asset_name">Asset Detail</div>
@@ -178,7 +178,7 @@
 <!--PDF STRUCTURE-->
 <div style="display: none; font-family:Arial, Helvetica, sans-serif">
   <div id="pdfName" style="font-size: 25px;">EMS-Servo Asset Detail</div>
-  <div id="customerName" style="font-size: 25px; font-weight: bold;">Cafe Coffee Day</div>
+  <div id="customerName" style="font-size: 25px; font-weight: bold;">{{Customer_Name}}</div>
     <div id="assetDetail">
       <div><span style="font-weight: bold;">Asset:</span>{{Cit}}-{{Loc}}</span></div>
       <div><span style="font-weight: bold;">Rating:</span> {{Details.rating_in_kva}} kVA</div>

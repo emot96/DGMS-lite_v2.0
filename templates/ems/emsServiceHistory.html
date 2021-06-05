@@ -55,7 +55,7 @@
 
 <div class="asset_detail">
  
-    <div class="asset_img"><img src="{% static './images/asset1.png' %}" alt="asset"></div>
+    <div class="asset_img"><img src="{% static './images/servo.png' %}" alt="asset"></div>
 
     <div class="asset_info">
         <div class="asset_name">Service History</div>
@@ -87,8 +87,21 @@
           <td>CONTACT</td>
           <td>{{Details.contact}} </td>
         </tr>
+
+        <tr class="t_body">
+          <td>EMAIL</td>
+          <td>{{SC}}</td>
+        </tr>
     
-    
+        <tr class="t_body">
+          <td colspan="2">CONTRACT</td>
+        </tr>
+
+        <tr class="t_body">
+          <td>CONTRACT TYPE</td>
+          <td>{{Contract}}</td>
+        </tr>
+
         <tr class="t_body">
           <td colspan="2">LAST SERVICE</td>
         </tr>

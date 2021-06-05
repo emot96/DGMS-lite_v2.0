@@ -89,7 +89,7 @@
               </div></a
             >
             {% endif %}
-  <div class="type"> DGMS </div>
+  <div class="type"> <a href="{% url 'dashboard'  %}">DGMS</a> </div>
   
   
   
@@ -151,6 +151,14 @@
         <div class="weather-text">
           <div>{{temperature}} &deg; C</div>
           <div class="weather-type">{{description}}</div>
+        </div>
+      </div>
+      <div class="last-data">
+        <div class="last-data-time">
+          {{LTOD}}
+        </div>
+        <div class="last-data-text">
+          Last Data Recieved
         </div>
       </div>
     </div>
@@ -237,7 +245,7 @@
   
     <form class="row" method="get">
       {{myFilter.form.as_ul}}
-        <div class="go" ><button >Go</button></div>
+        <div class="go" ><button name="date">Go</button></div>
       </form>
   
    </div>

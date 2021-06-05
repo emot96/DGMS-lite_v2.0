@@ -239,7 +239,7 @@
                 </tr>
                 {% elif a.alert_level == "R" and a.alert_open == False %}
                 <tr class="t_body">
-                  <td>{{ forloop.counter  }}</td>
+                  <td>{{ forloop.counter }}</td>
                   <td>{{a.created_at}}</td>
                   <td>{{a.device_id}}</td>
                   <td>
@@ -265,6 +265,36 @@
                     Current {{a.alert_type_name}} =
                     {{a.param_value|floatformat:2}} and Threshold value =
                     {{a.param_threshold_value}}
+                  </td>
+                  <td>Resolved</td>
+                  <td>{{a.updated_at}}</td>
+                </tr>
+                {% elif a.alert_level == "V" and a.alert_open == True %}
+                <tr class="t_body">
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{a.created_at}}</td>
+                  <td>{{a.device_id}}</td>
+                  <td>
+                    <img src="{% static './images/rule-based.png' %}" />Rule
+                    based
+                  </td>
+                  <td>
+                    {{a.alert_type_name}} got down to {{a.param_value|floatformat:2}} suddenly
+                  </td>
+                  <td>Active</td>
+                  <td></td>
+                </tr>
+                {% elif a.alert_level == "V" and a.alert_open == False %}
+                <tr class="t_body">
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{a.created_at}}</td>
+                  <td>{{a.device_id}}</td>
+                  <td>
+                    <img src="{% static './images/rule-based.png' %}" />Rule
+                    based
+                  </td>
+                  <td>
+                    {{a.alert_type_name}} got down to {{a.param_value|floatformat:2}} suddenly
                   </td>
                   <td>Resolved</td>
                   <td>{{a.updated_at}}</td>

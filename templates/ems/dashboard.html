@@ -40,7 +40,7 @@
         </div>
 
         <div class="dropdown-btn active">
-          <a href="ems"
+          <a href="{% url 'ems' %}"
             ><img
               src="{% static './images/Dashboard.png' %}"
               alt="dashboard"
@@ -51,12 +51,12 @@
 
         <div class="dropdown-container">
           <div class="sub-link">
-            <a href="dashboard">Diesel Generator</a>
+            <a href="{% url 'dashboard' %}">Diesel Generator</a>
           </div>
           <div class="sub-link active">
-            <a href="ems">Servo Voltage Stabilizer</a>
+            <a href="{% url 'ems' %}">Servo Voltage Stabilizer</a>
           </div>
-          <div class="sub-link"><a href="#">Coming soon</a></div>
+          <div class="sub-link"><a href="{% url 'ups' %}">UPS</a></div>
         </div>
       </div>
     </nav>
@@ -86,7 +86,7 @@
               </div>
             </div></a
           >
-          <div class="type">EMS</div>
+          <div class="type">Servo</div>
 
           <div onclick="dropFunction()" class="user_name">
             {{username}} &ensp;
@@ -127,7 +127,7 @@
                 <form>
                   <select>
                     <option value="" selected disabled hidden>
-                      Current Staus
+                      Current Status
                     </option>
                     <option>ON</option>
                     <option>OFF</option>

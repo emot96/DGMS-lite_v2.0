@@ -125,16 +125,16 @@ class DeviceOperationalFilter(django_filters.FilterSet):
 
 class AlertFilter(django_filters.FilterSet):
     alert_level = django_filters.ChoiceFilter(
-        choices=ALTER_CHOICES, label='', field_name='alert_level',   lookup_expr='iexact')
+        choices=ALTER_CHOICES, label='', field_name='alert_level',   lookup_expr='iexact', empty_label="Alert Level",)
 
     # alert_open = django_filters.ChoiceFilter(
     #     choices=ALTERSTATUS_CHOICES, label='', field_name='alert_open',   lookup_expr='iexact')
 
     device_id = django_filters.ChoiceFilter(
-        choices=[[u.device_id,  u.device_id] for u in LoginUserDetail.objects.all()], field_name='device_id', lookup_expr='icontains', label='')
+        choices=[[u.device_id,  u.device_id] for u in LoginUserDetail.objects.all()], field_name='device_id', lookup_expr='icontains', label='', empty_label="Device ID",)
 
     alert_type_name = django_filters.ChoiceFilter(
-        choices=FILTER_CHOICES, label='', field_name='alert_type_name',   lookup_expr='iexact')
+        choices=FILTER_CHOICES, label='', field_name='alert_type_name',   lookup_expr='iexact', empty_label="Alert Name",)
 
     created_at = django_filters.DateFilter(label='Start Date', field_name='created_at', lookup_expr='date__gte',
                                            widget=DateInput(
@@ -171,7 +171,7 @@ class AlertFilter(django_filters.FilterSet):
 
 class DeviceAlertFilter(django_filters.FilterSet):
     alert_level = django_filters.ChoiceFilter(
-        choices=ALTER_CHOICES, label='', field_name='alert_level',   lookup_expr='iexact')
+        choices=ALTER_CHOICES, label='', field_name='alert_level',   lookup_expr='iexact', empty_label="Alter Level",)
 
     # alert_open = django_filters.ChoiceFilter(
     #     choices=ALTERSTATUS_CHOICES, label='', field_name='alert_open',   lookup_expr='iexact')
@@ -180,7 +180,7 @@ class DeviceAlertFilter(django_filters.FilterSet):
     # )], field_name='device_id', lookup_expr='icontains', label='')
 
     alert_type_name = django_filters.ChoiceFilter(
-        choices=FILTER_CHOICES, label='', field_name='alert_type_name',   lookup_expr='iexact')
+        choices=FILTER_CHOICES, label='', field_name='alert_type_name',   lookup_expr='iexact', empty_label="Alter Type",)
 
     created_at = django_filters.DateFilter(label='Start Date', field_name='created_at', lookup_expr='gt',
                                            widget=DateInput(

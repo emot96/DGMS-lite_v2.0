@@ -81,13 +81,26 @@
 .asset-table #service-history tr:nth-child(4),
 .asset-table #service-history tr:nth-child(8),
 
+.asset-table #service-history-ups tr:nth-child(5),
+.asset-table #service-history-ups tr:nth-child(7),
+.asset-table #service-history-ups tr:nth-child(10),
+.asset-table #service-history-ups tr:nth-child(14),
+
+
 .asset-table #asset-detail-servo tr:nth-child(10),
-.asset-table #asset-detail-servo tr:nth-child(16)
+.asset-table #asset-detail-servo tr:nth-child(16),
+
+
+.asset-table #asset-detail-ups tr:nth-child(10)
 {
 	background-color: rgb(225, 245, 217);
 	color: rgb(2, 94, 16);
 }
 
+.asset-table #asset-detail-ups tr:nth-child(10).t_body{
+    font-weight: bold;
+    text-transform: uppercase;
+}
 
 
 @media screen and (max-width: 600px){

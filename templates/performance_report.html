@@ -91,7 +91,7 @@
               </div></a
             >
             {% endif %}
-  <div class="type"> DGMS </div>
+  <div class="type"> <a href="{% url 'dashboard'  %}">DGMS</a> </div>
   
   
   
@@ -154,6 +154,14 @@
       <div class="weather-text">
         <div>{{temperature}} &deg; C</div>
         <div class="weather-type">{{description}}</div>
+      </div>
+    </div>
+    <div class="last-data">
+      <div class="last-data-time">
+        {{LTOD}}
+      </div>
+      <div class="last-data-text">
+        Last Data Recieved
       </div>
     </div>
   </div>
@@ -240,7 +248,7 @@
   
     <form class="row" method="get">
       {{myFilter.form.as_ul}}
-        <div class="go" ><button >Go</button></div>
+        <div class="go" ><button name="date">Go</button></div>
       </form>
   
    </div>
@@ -329,7 +337,7 @@
         <td>{{ r }}</td>
         <td>{{x.start_time}}</td>
         {% if x.end_time == None %}
-        <td>{{x.end_time}}</td>
+        <td>Running</td>
         <td>Running</td>
         <td>Running</td>
         <td>Running</td>
@@ -411,6 +419,14 @@
           <td>{{ forloop.counter }}.</td>
           <td>{{ R }}</td>
           <td>{{O.start_time}}</td>
+          {% if O.end_time == None %}
+          <td>Running</td>
+          <td>Running</td>
+          <td>Running</td>
+          <td>Running</td>
+          <td>Running</td>
+          <td>Running</td>
+          {% else %}
           <td>{{O.end_time}}</td>
           <td>{{Run}}</td>
           <td>{{O.fuel_consumed}}</td>
@@ -418,6 +434,7 @@
           <td>{{O.efficiency}}</td>
           <td>{{P}}</td>
         </tr>
+        {% endif %}
   {% endfor %}
 
  <!-- -------------------------Footer of table-------------------- -->          

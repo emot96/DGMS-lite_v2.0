@@ -232,16 +232,19 @@ class DeviceOperationalFilter(django_filters.FilterSet):
 
 class AlertFilter(django_filters.FilterSet):
     alert_level = django_filters.ChoiceFilter(
-        choices=ALTER_CHOICES, label='', field_name='alert_level',   lookup_expr='iexact')
+        choices=ALTER_CHOICES, label='', field_name='alert_level',   lookup_expr='iexact', empty_label="Alert Level",)
 
     # alert_open = django_filters.ChoiceFilter(
     #     choices=ALTERSTATUS_CHOICES, label='', field_name='alert_open',   lookup_expr='iexact')
 
     device_id = django_filters.ChoiceFilter(
-        choices=[[u.Device_ID,  u.Device_ID] for u in User_Detail.objects.all()], field_name='device_id', lookup_expr='icontains', label='')
+        choices=[[u.Device_ID,  u.Device_ID] for u in User_Detail.objects.all()], field_name='device_id', lookup_expr='icontains', label='', empty_label="Device ID",)
+
+    # device_id = django_filters.ModelChoiceFilter(field_name='device_id', lookup_expr='icontains', label='',
+    #                                              empty_label="Device ID", widget=forms.Select(attrs={'class': 'form-control'}), queryset=None)
 
     alert_type_name = django_filters.ChoiceFilter(
-        choices=FILTER_CHOICES, label='', field_name='alert_type_name',   lookup_expr='iexact')
+        choices=FILTER_CHOICES, label='', field_name='alert_type_name',   lookup_expr='iexact', empty_label="Alert Name",)
 
     created_at = django_filters.DateFilter(label='Start Date', field_name='created_at', lookup_expr='date__gte',
                                            widget=DateInput(
@@ -266,19 +269,28 @@ class AlertFilter(django_filters.FilterSet):
                    'param_threshold_value', 'created_at', 'updated_at', ]
 
     # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
 
+    #     super(AlertFilter, self).__init__(*args, **kwargs)
     #     request = kwargs['request']
     #     if request.user.is_authenticated:
-    #         username = request.user.username
-    #         my_choices = [[u.Device_ID,  u.Device_ID]
-    #                       for u in User_Detail.objects.filter(Customer_Name=username)]
-    #         self.filters['device_id'].extra.update({'choices': my_choices})
+    #         username = request.user.id
+    #         userlocation = request.user.location_id
+    #         if request.user.is_superuser:
+    #             self.filters['device_id'].queryset = User_Detail.objects.all()
+    #         elif request.user.is_customer:
+    #             self.filters['device_id'].queryset = User_Detail.objects.filter(
+    #                 Customer_Name=username)
+    #         elif request.user.is_manager:
+    #             self.filters['device_id'].queryset = User_Detail.objects.filter(
+    #                 Manager_Name=username)
+    #         elif request.user.is_user:
+    #             self.filters['device_id'].queryset = User_Detail.objects.filter(
+    #                 User_Name=username)
 
 
 class DeviceAlertFilter(django_filters.FilterSet):
     alert_level = django_filters.ChoiceFilter(
-        choices=ALTER_CHOICES, label='', field_name='alert_level',   lookup_expr='iexact')
+        choices=ALTER_CHOICES, label='', field_name='alert_level',   lookup_expr='iexact', empty_label="Alter Level",)
 
     # alert_open = django_filters.ChoiceFilter(
     #     choices=ALTERSTATUS_CHOICES, label='', field_name='alert_open',   lookup_expr='iexact')
@@ -287,7 +299,7 @@ class DeviceAlertFilter(django_filters.FilterSet):
     # )], field_name='device_id', lookup_expr='icontains', label='')
 
     alert_type_name = django_filters.ChoiceFilter(
-        choices=FILTER_CHOICES, label='', field_name='alert_type_name',   lookup_expr='iexact')
+        choices=FILTER_CHOICES, label='', field_name='alert_type_name',   lookup_expr='iexact', empty_label="Alter Type",)
 
     created_at = django_filters.DateFilter(label='Start Date', field_name='created_at', lookup_expr='gt',
                                            widget=DateInput(

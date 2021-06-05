@@ -1,0 +1,167 @@
+@import url("fonts.css");
+
+.ups_dasboard{
+    margin: 30px 20px 20px 20px;
+    display: flex;
+    gap: 20px;
+    min-height: 69vh;
+}
+
+.ups_dasboard .table-wrapper{
+    width: 100%;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    border: 1px solid rgb(255, 255, 255);
+}
+
+.table-wrapper .table-nav{
+
+    min-height: 6vh;
+    display: flex;
+    justify-content: space-between;
+    /* margin-top:10px; */
+}
+
+
+.table-nav .table-name{
+    margin: 10px 0px 0px 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.table-name img{
+    width: 25px;
+    height: 25px;
+    margin: 0px 10px 3px 10px;
+
+}
+
+.drop_downs form select{
+    margin-right: 0px ;
+    margin-top: 10px;
+    border: none;
+    font-size: 13px;
+    width: 8rem;
+    height: 1.6rem;
+    border-radius: 5px;
+    outline:none;
+   opacity: 0.9;
+   border: 1px solid rgb(216, 216, 216);
+   
+   }
+   
+   
+   .drop_downs form select:hover{
+    
+    opacity: 1;
+    -webkit-box-shadow: 3px 3px 3px #666;
+       -moz-box-shadow: 3px 3px 3px #666;
+       box-shadow:3px 3px 3px #666;
+   }
+
+
+.drop_downs .go{
+    text-transform: inherit;
+    outline: none;
+    border: none;
+    margin-right: 10px;
+    background-color: #0d4162;
+    color: #ffffff;
+    border-radius: 50%;
+    width: 28px;
+    height: 25px;
+    text-align: center;
+    box-shadow: 1px 1.5px 1px  rgba(50, 50, 50, 0.6);
+	font-size: 11px;
+	margin-left: 10px;
+ 
+}
+
+
+
+.drop_downs .go:hover{
+   
+    background-color: rgb(27, 84, 120);
+    
+}
+
+
+.drop_downs .go:active{
+    background-color: rgb(27, 84, 120);
+    box-shadow: none;
+}
+
+
+.ups-table-back{
+    min-height: 73.9vh;
+	max-height: 73.9vh;
+    overflow-x:auto;
+	overflow-y:auto;
+    /* background-color: rgb(202, 75, 75); */
+}
+
+.ups-table{
+    width: 100%;
+    font-size: 13px;
+    border-collapse: collapse;
+    border-spacing: 0 1em;
+    /* border: 2px solid black; */
+    text-align: center;
+}
+
+.ups-table th,td{
+    padding: 10px;
+}
+
+.ups-table th{
+	background-color:#e0dede; 
+	color: #005e23;
+	position: sticky;
+    top: 0; /* Don't forget this, required for the stickiness */
+    text-transform: uppercase;
+    font-size: 12px;
+  
+}
+
+.ups-table tr.t_body td{
+    border-bottom: 1px solid rgb(224, 224, 224);
+    padding: 10px;
+}
+
+
+
+.on{
+	color: #ffffff;
+    font-weight: bold;
+    background-color: #fa5757;
+    width: 30px;
+    height: 30px;
+    display: flex;
+	justify-content: center;
+	align-items: center;
+    border-radius: 50%;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    margin: 5px;
+}
+
+
+.off{
+	color: #ffffff;
+    font-weight: bold;
+    background-color: #797979;
+    width: 30px;
+    height: 30px;
+    display: flex;
+	justify-content: center;
+	align-items: center;
+    border-radius: 50%;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    margin: 5px;
+}
+
+.star img{
+    width: 80px;
+    height: 17px;
+}
