@@ -229,26 +229,25 @@ class UPS_Asset(models.Model):
     Operating_Volts = models.BigIntegerField()
     OEM = models.CharField(max_length=50)
     Seller_Name = models.CharField(max_length=50)
-    Service_Provider = models.CharField(max_length=50)
     UPS_Make = models.CharField(max_length=50)
     UPS_Model_No = models.CharField(max_length=50)
     UPS_Serial_No = models.CharField(max_length=100)
-    UPS_Date_Of_Installation = models.DateField(max_length=50)
-    UPS_Warranty_Start_Date = models.DateField(max_length=50)
-    UPS_Warranty_End_Date = models.DateField(max_length=50)
+    UPS_Date_Of_Installation = models.DateField()
+    UPS_Warranty_Start_Date = models.DateField()
+    UPS_Warranty_End_Date = models.DateField()
     UPS_Warranty_Period = models.CharField(max_length=50)
     UPS_Warranty_Status = models.CharField(
         max_length=20, choices=STATUS, default='YES')
     Battery_Make = models.CharField(max_length=50)
     Battery_Model_No = models.CharField(max_length=50)
     Battery_Serial_No = models.CharField(max_length=100)
-    Battery_Date_Of_Installation = models.DateField(
-        max_length=50)
-    Battery_Warranty_Start_Date = models.DateField(max_length=50)
-    Battery_Warranty_End_Date = models.DateField(max_length=50)
+    Battery_Date_Of_Installation = models.DateField()
+    Battery_Warranty_Start_Date = models.DateField()
+    Battery_Warranty_End_Date = models.DateField()
     Battery_Warranty_Period = models.CharField(max_length=50)
     Battery_Warranty_Status = models.CharField(
         max_length=20, choices=STATUS, default='YES')
+    UPS_EMS_Date_Of_Installation = models.DateField()
 
 
 class EMS_Asset(models.Model):
@@ -261,11 +260,10 @@ class EMS_Asset(models.Model):
     S_No = models.CharField(max_length=50)
     Cooling = models.CharField(
         max_length=20, choices=COOLING, default='AIR COOLED')
-    Oil_Tank_Size = models.BigIntegerField()
+    Oil_Tank_Size = models.CharField(max_length=100, blank=True)
     Other_Info = models.CharField(max_length=100)
     OEM = models.CharField(max_length=50)
     Seller_Name = models.CharField(max_length=50)
-    Service_Provider = models.CharField(max_length=100)
     Date_Of_Installation = models.DateField()
     Warranty_Start_Date = models.DateField()
     Warranty_End_Date = models.DateField()
@@ -556,3 +554,11 @@ class SetAlert(models.Model):
         max_length=50, choices=ALTERTYPE, default='energy_output_kw')
     Less_Than = models.CharField(max_length=30, blank=False)
     More_Than = models.CharField(max_length=30, blank=False)
+
+
+class Automation(models.Model):
+    Device_ID = models.CharField(max_length=30, blank=False)
+    Status = models.CharField(max_length=30, blank=False)
+    Start_Time = models.DateTimeField()
+    End_Time = models.DateTimeField()
+    Button = models.CharField(max_length=30, blank=True)

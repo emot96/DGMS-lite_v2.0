@@ -1,0 +1,418 @@
+{% extends 'ems-servo/base.html' %} {% load static %}
+{% block css %} 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <link rel="stylesheet" href="{% static './css/servo_dashbaord_device.css' %}" />
+    <link rel="stylesheet" href="{% static './css/chart.css' %}" />
+{% endblock %}
+
+{% block content %} 
+
+<div class="cont">
+
+  <div class="internal_nav"> 
+    <div class="row" >
+        <div class="active_link"><p><a href="{% url 'emsDashboard' device_id %}">Dashboard</a></p></div>
+
+        <div class="drop_asset ">
+          <p>KPI</p>
+   
+          <div class="drop-down">
+            <div>
+              <a href="{% url 'emsEnergyPara' device_id %}"
+                >Energy Parameters</a
+              >
+            </div>
+            <hr />
+            <div>
+              <a href="{% url 'emsLoadKPI' device_id %}">Load Side KPI</a>
+            </div>
+            <hr />
+            <div>
+              <a href="{% url 'emsDeviceInfoKPI' device_id %}"
+                >EMS Device Info</a
+              >
+            </div>
+          </div>
+   
+          </div> 
+
+       <div class="drop_asset">
+       <p>Asset Information</p>
+
+       <div class="drop-down">
+        <div>
+          <a href="{% url 'emsasset_detail' device_id %}"
+            >Asset Detail</a
+          >
+        </div>
+        <hr />
+        <div>
+          <a href="{% url 'emsservice_history' device_id %}"
+            >Service History</a
+          >
+        </div>
+      </div>
+       </div> 
+
+         <div ><p><a href="{% url 'emsdevice_alert' device_id %}">Alerts</a></p></div>
+
+    </div>
+</div> <!-- class ="internal_nav" ends here -->
+
+
+<div class="servoDashboard">
+
+  <div class="left-side">
+ 
+    <div class="row">
+  
+    <div class="servo-block">
+      <div class="type-wrapper">
+        <div class="type-name">Input<br>Voltage</div>
+        <div class="type-img"><img src="{% static './images/input-voltage.png' %}" /></div>
+      </div>
+  
+      <div class="value-wrapper">
+        <table>
+          <tr class="t_body">
+            <td class="bold">RY</td>
+            <td>{{ Details.vry_phase_voltage|floatformat:2}}</td>
+          </tr>
+  
+          <tr class="t_body">
+            <td class="bold">YB</td>
+            <td>{{Details.vyb_phase_voltage|floatformat:2}}</td>
+          </tr>
+  
+          <tr>
+            <td class="bold">BR</td>
+            <td>{{Details.vbr_phase_voltage|floatformat:2}}</td>
+          </tr>
+        </table>
+      </div>
+  
+    </div>
+  
+  
+    <div class="servo-block">
+      <div class="type-wrapper">
+        <div class="type-name">Output<br>Voltage</div>
+        <div class="type-img"><img src="{% static './images/output-voltage.png' %}" /></div>
+      </div>
+  
+      <div class="value-wrapper">
+        <table>
+          <tr class="t_body">
+            <td class="bold">RY</td>
+            <td>{{Details.vry_phase_voltage|floatformat:2}}</td>
+          </tr>
+  
+          <tr class="t_body">
+            <td class="bold">YB</td>
+            <td>{{Details.vry_phase_voltage|floatformat:2}}</td>
+          </tr>
+  
+          <tr>
+            <td class="bold">BR</td>
+            <td>{{Details.vry_phase_voltage|floatformat:2}}</td>
+          </tr>
+        </table>
+      </div>
+  
+    </div>
+  
+  
+    <div class="servo-block">
+      <div class="type-wrapper">
+        <div class="type-name">Load <br> (kVA)</div>
+        <div class="type-img"><img src="{% static './images/law-scale.png' %}" /></div>
+      </div>
+  
+      <div class="value-wrapper">
+        <table>
+          <tr>
+            <td>{{Details.energy_output_kva|floatformat:2}}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  
+  
+    <div class="servo-block">
+      <div class="type-wrapper">
+        <div class="type-name">Power <br> Factor</div>
+        <div class="type-img"  align="center"><div class="pf"><span class="pf-text">cos&#966</span></div></div>
+      </div>
+  
+      <div class="value-wrapper">
+        <table>
+          <tr>
+            <td>{{Details.power_factor|floatformat:2}}</td>
+          </tr>
+        </table>
+      </div>
+      
+    </div>
+   </div>  
+  
+   <div class="row">
+  
+    <div class="servo-block">
+      <div class="type-wrapper">
+        <div class="type-name">Input <br> Voltage</div>
+        <div class="type-img"><img src="{% static './images/input-voltage.png' %}" /></div>
+      </div>
+  
+      <div class="value-wrapper">
+        <table>
+          <tr class="t_body">
+            <td class="bold">RN</td>
+            <td>{{Details.vr_phase_voltage|floatformat:2}}</td>
+          </tr>
+  
+          <tr class="t_body">
+            <td class="bold">YN</td>
+            <td>{{Details.vy_phase_voltage|floatformat:2}}</td>
+          </tr>
+  
+          <tr>
+            <td class="bold">BN</td>
+            <td>{{Details.vb_phase_voltage|floatformat:2}}</td>
+          </tr>
+        </table>
+      </div>
+  
+    </div>
+  
+  
+    <div class="servo-block">
+      <div class="type-wrapper">
+        <div class="type-name">Output <br> Voltage</div>
+        <div class="type-img"><img src="{% static './images/output-voltage.png' %}" /></div>
+      </div>
+  
+      <div class="value-wrapper">
+        <table>
+          <tr class="t_body">
+            <td class="bold">RN</td>
+            <td>{{Details.vr_phase_voltage|floatformat:2}}</td>
+          </tr>
+  
+          <tr class="t_body">
+            <td class="bold">YN</td>
+            <td>{{Details.vy_phase_voltage|floatformat:2}}</td>
+          </tr>
+  
+          <tr>
+            <td class="bold">BN</td>
+            <td>{{Details.vb_phase_voltage|floatformat:2}}</td>
+          </tr>
+        </table>
+      </div>
+  
+    </div>
+  
+  
+    <div class="servo-block">
+      <div class="type-wrapper">
+        <div class="type-name">Load <br> (kVA)</div>
+        <div class="type-img"><img src="{% static './images/law-scale.png' %}" /></div>
+      </div>
+  
+      <div class="value-wrapper">
+        <table>
+          <tr class="t_body">
+            <td class="bold">R</td>
+            <td>{{Details.energy_output_kva|floatformat:2}}</td>
+          </tr>
+  
+          <tr class="t_body">
+            <td class="bold">Y</td>
+            <td>{{Details.energy_output_kva|floatformat:2}}</td>
+          </tr>
+  
+          <tr>
+            <td class="bold">B</td>
+            <td>{{Details.energy_output_kva|floatformat:2}}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  
+  
+    <div class="servo-block">
+      <div class="type-wrapper">
+        <div class="type-name">Power Factor</div>
+        <div class="type-img" align="center"><div class="pf"><span class="pf-text">cos&#966</span></div></div>
+      </div>
+  
+      <div class="value-wrapper">
+        <table>
+          <tr class="t_body">
+            <td class="bold">R</td>
+            <td>{{Details.power_factor|floatformat:2}}</td>
+          </tr>
+  
+          <tr class="t_body">
+            <td class="bold">Y</td>
+            <td>{{Details.power_factor|floatformat:2}}</td>
+          </tr>
+  
+          <tr>
+            <td class="bold">B</td>
+            <td>{{Details.power_factor|floatformat:2}}</td>
+          </tr>
+        </table>
+      </div>
+      
+    </div>
+   </div> 
+   
+   
+    </div>
+    <!-- class="left-side" ends here-->
+
+
+  <div class="right-side">
+    <div class="right_nav">
+      <div class="nav_text">ASSET INFO</div>
+    </div>
+    <div class="right_body">
+      <span class="bold">Voltage Input Range:</span>
+      {{asset_details.input_voltage_range}}
+    </div>
+    <div class="right_body">
+      <span class="bold">Cooling:</span>
+      {{asset_details.cooling}}
+    </div>
+    <div class="right_body">
+      <span class="bold">Date of Installation:</span>
+      {{asset_details.date_of_installation}}
+    </div>
+    <div class="right_body">
+      <span class="bold">Warranty Status:</span>
+      {{asset_details.warranty_status}}
+    </div>
+    <div class="right_body">
+      <span class="bold">Last Service Date:</span>
+      {{service_details.last_service_date}}
+    </div>
+    <div class="right_body">
+      <span class="bold">Next Service Date:</span>
+      {{service_details.next_service_date}}
+    </div>
+    <div class="right_body">
+      <span class="bold">Service Provider:</span>
+      {{service_details.service_provider}}
+    </div>
+  </div>
+  <!-- class="right-side" ends here-->
+
+</div>
+
+<!-- class="servoDashboard" ends here-->
+
+<div class="graphs-ems"> 
+
+  <div class="one-graph">
+        <canvas id="peak_ld" ></canvas>
+        <script>
+          var peak_ld = document
+            .getElementById("peak_ld")
+            .getContext("2d");
+          var myChart1 = new Chart(peak_ld, {
+            type: "line",
+            data: {
+              labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+              datasets: [
+                {
+                  label: "Peak Load",
+                  fill: false,
+                  data: [{% for f in PL %} {{f}}, {% endfor %}],
+                  borderColor: "rgba(0, 230, 64, 1)",
+                  borderWidth: 2,
+                },
+              ],
+            },
+            options: {
+              legend: {
+                labels: {
+                  fontColor: "black",
+                  fontSize: 13,
+                },
+              },
+
+              scales: {
+                yAxes: [
+                  {
+                    gridLines: {
+                      color: "rgba(0,0,0,0.3)",
+                    },
+                    ticks: {
+                      fontColor: "black",
+                      beginAtZero: true,
+                      fontSize: 17,
+                    },
+                  },
+                ],
+
+                xAxes: [
+                  {
+                    gridLines: {
+                      color: "rgba(0,0,0,0)",
+                    },
+                    ticks: {
+                      autoSkip: true,
+                      maxTicksLimit: 12,
+                      fontColor: "black",
+                      fontSize: 17,
+                      maxRotation: 0,
+                    },
+                  },
+                ],
+              },
+
+              title: {
+                display: true,
+                text: "Peak Load",
+                fontSize: 17,
+                fontColor: "balck",
+                fontFamily: "Helvetica",
+              },
+            },
+          });
+        </script>
+  </div>
+
+</div>
+
+
+</div> 
+<!-- class ="cont" ends here -->
+{% endblock %}
+
+
+{% block js %}
+
+    <!-- js -->
+
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+      crossorigin="anonymous"
+    ></script>
+
+    <script type="text/javascript" src="{% static './js/navbar.js' %}"></script>
+    <!-- <script
+      type="text/javascript"
+      src="{% static './js/emsDashboard.js' %}"
+    ></script> -->
+  </body>
+</html>
+
+{% endblock %}

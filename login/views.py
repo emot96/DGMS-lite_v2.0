@@ -18,7 +18,20 @@ from django.core.files.storage import FileSystemStorage
 import json
 import urllib.request
 import requests
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.http.response import JsonResponse
+from .serializers import *
 # Create your views here.
+
+
+@api_view(['GET'])
+def automation(request):
+
+    details = Automation.objects.all()
+    serializer = AutomationSerializer(details, many=True)
+
+    return Response(serializer.data)
 
 
 def index(request):
@@ -237,7 +250,7 @@ def dashboard(request):
             description = r['weather'][0]['description']
             icon = r['weather'][0]['icon']
 
-            return render(request, 'dgms/dgmsDashboard.html', {'temperature': temperature, 'description': description, 'icon': icon, 'Fuel2': Fuel2, 'DDOI': DDOI, 'alert_count': alert_count, 'Fuel1': Fuel1, 'Time': Time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Fuel2': Fuel2, 'Tank_Size': Tank_Size, 'Fuel_Per': Fuel_Per, 'hh': hh, 'UG': UG, 'Carbon_Foot_Print': Carbon_Foot_Print, 'BV': BV, 'AvgFC': AvgFC, 'Energy_OA': Energy_OA, 'MaxDLoad': MaxDLoad, 'DeviceC': DeviceC, 'DOI': DOI, 'WS': WS, 'LSD': LSD, 'NSD': NSD, 'SP': SP, 'Star': Star, 'RT': RT, 'diff': diff, 'Level': Level, 'Fuel1': Fuel1, 'Time': Time})
+            return render(request, 'dgms/dgms_dashboard_device.html', {'temperature': temperature, 'description': description, 'icon': icon, 'Fuel2': Fuel2, 'DDOI': DDOI, 'alert_count': alert_count, 'Fuel1': Fuel1, 'Time': Time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Fuel2': Fuel2, 'Tank_Size': Tank_Size, 'Fuel_Per': Fuel_Per, 'hh': hh, 'UG': UG, 'Carbon_Foot_Print': Carbon_Foot_Print, 'BV': BV, 'AvgFC': AvgFC, 'Energy_OA': Energy_OA, 'MaxDLoad': MaxDLoad, 'DeviceC': DeviceC, 'DOI': DOI, 'WS': WS, 'LSD': LSD, 'NSD': NSD, 'SP': SP, 'Star': Star, 'RT': RT, 'diff': diff, 'Level': Level, 'Fuel1': Fuel1, 'Time': Time})
 
         elif request.user.is_manager:
             Customer_Name = Manager.objects.get(
@@ -408,7 +421,7 @@ def dashboard(request):
                 device_id__in=DeviceID, alert_open=True).exclude(alert_type_name__in=status).order_by('-created_at')
             alert_count = len(alert)
 
-            return render(request, 'dgms/dashboard.html', {'alert_count': alert_count, 'username': username, 'Customer_Name': Customer_Name, 'Total': Total, 'Live': Live, 'Offline': Offline, 'Capacity': Capacity, 'InUse': InUse, 'Fuel__Consumed': Fuel__Consumed, 'Fuel__Cost': Fuel__Cost, 'Carbon_Foot__Print': Carbon_Foot__Print, 'UserDetail': UserDetail})
+            return render(request, 'dgms/dgms_dashboard.html', {'alert_count': alert_count, 'username': username, 'Customer_Name': Customer_Name, 'Total': Total, 'Live': Live, 'Offline': Offline, 'Capacity': Capacity, 'InUse': InUse, 'Fuel__Consumed': Fuel__Consumed, 'Fuel__Cost': Fuel__Cost, 'Carbon_Foot__Print': Carbon_Foot__Print, 'UserDetail': UserDetail})
 
         elif request.user.is_superuser:
             Customer_Name = 'Admin'
@@ -739,7 +752,7 @@ def dashboard(request):
                 device_id__in=Device_ID, alert_open=True).exclude(alert_type_name__in=status).order_by('-created_at')
             alert_count = len(alert)
 
-        return render(request, 'dgms/dashboard.html', {'alert_count': alert_count, 'username': username, 'Customer_Name': Customer_Name, 'Total': Total, 'Live': Live, 'Offline': Offline, 'Capacity': Capacity, 'InUse': InUse, 'Fuel__Consumed': Fuel__Consumed, 'Fuel__Cost': Fuel__Cost, 'Carbon_Foot__Print': Carbon_Foot__Print, 'UserDetail': UserDetail})
+        return render(request, 'dgms/dgms_dashboard.html', {'alert_count': alert_count, 'username': username, 'Customer_Name': Customer_Name, 'Total': Total, 'Live': Live, 'Offline': Offline, 'Capacity': Capacity, 'InUse': InUse, 'Fuel__Consumed': Fuel__Consumed, 'Fuel__Cost': Fuel__Cost, 'Carbon_Foot__Print': Carbon_Foot__Print, 'UserDetail': UserDetail})
 
 
 @ login_required(login_url='login')
@@ -919,7 +932,7 @@ def asset(request, device_id):
 
         Address1 = Device.objects.get(device_id=device_id).device_location
 
-    return render(request, 'dgms/asset_detail.html', {'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'Address': Address, 'DDOI': DDOI, 'alert_count': alert_count, 'CD': CD, 'OP': OP, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'PRH': PRH, 'PFC': PFC, 'RC': RC, 'UG': UG, 'current_time': current_time, 'EP': EP, 'DP': DP, 'DOI': DOI, 'EMMI': EMMI, 'EMMN': EMMN, 'EMS': EMS, 'CTMI': CTMI, 'CTMN': CTMN, 'CTSN': CTSN, 'CTCR': CTCR, 'FSMI': FSMI, 'FSMN': FSMN, 'FSN': FSN, 'FSL': FSL, 'DSN': DSN, 'Version': Version, 'SC': SC, 'IMEI': IMEI, 'OtherInfo': OtherInfo, 'Other': Other, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Tank_Size': Tank_Size, 'SellerName': SellerName, 'Oem': Oem, 'WSD': WSD, 'WED': WED, 'WP': WP, 'WS': WS, 'EM': EM, 'EMN': EMN, 'ESN': ESN, 'EOI': EOI, 'BM': BM, 'BMN': BMN, 'BSN': BSN, 'BOI': BOI, 'AM': AM, 'AMN': AMN, 'ASN': ASN, 'AOI': AOI, 'BCM': EM, 'BCMN': BCMN, 'BCSN': BCSN, 'BCOI': BCOI})
+    return render(request, 'dgms/dgms_asset_detail.html', {'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'Address': Address, 'DDOI': DDOI, 'alert_count': alert_count, 'CD': CD, 'OP': OP, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'PRH': PRH, 'PFC': PFC, 'RC': RC, 'UG': UG, 'current_time': current_time, 'EP': EP, 'DP': DP, 'DOI': DOI, 'EMMI': EMMI, 'EMMN': EMMN, 'EMS': EMS, 'CTMI': CTMI, 'CTMN': CTMN, 'CTSN': CTSN, 'CTCR': CTCR, 'FSMI': FSMI, 'FSMN': FSMN, 'FSN': FSN, 'FSL': FSL, 'DSN': DSN, 'Version': Version, 'SC': SC, 'IMEI': IMEI, 'OtherInfo': OtherInfo, 'Other': Other, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Tank_Size': Tank_Size, 'SellerName': SellerName, 'Oem': Oem, 'WSD': WSD, 'WED': WED, 'WP': WP, 'WS': WS, 'EM': EM, 'EMN': EMN, 'ESN': ESN, 'EOI': EOI, 'BM': BM, 'BMN': BMN, 'BSN': BSN, 'BOI': BOI, 'AM': AM, 'AMN': AMN, 'ASN': ASN, 'AOI': AOI, 'BCM': EM, 'BCMN': BCMN, 'BCSN': BCSN, 'BCOI': BCOI})
 
 
 @ login_required(login_url='login')
@@ -1204,7 +1217,53 @@ def alert(request):
 
             Count = len(alert)
 
-            return render(request, 'dgms/alert.html', {'alerts': alerts, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
+            Start_Time1 = []
+            End_Time1 = []
+
+            for a in alerts:
+                Start_Time1.append(a.created_at.strftime('%Y-%m-%d %H:%M:%S'))
+                End_Time1.append(a.updated_at.strftime('%Y-%m-%d %H:%M:%S'))
+
+            Time = zip(Start_Time1, End_Time1)
+
+            UTC = '0000-00-00 05:30:00'
+            y = UTC[:4]
+            mo = UTC[5:7]
+            da = UTC[8:10]
+            h = UTC[11:13]
+            m = UTC[14:16]
+            s = UTC[17:19]
+            d1 = datetime.timedelta(days=(int(
+                y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
+
+            Start_Time = []
+            End_Time = []
+            for s, e in Time:
+                y1 = s[:4]
+                mo1 = s[5:7]
+                da1 = s[8:10]
+                h1 = s[11:13]
+                m1 = s[14:16]
+                s1 = s[17:19]
+                d21 = datetime.datetime(year=int(y1), month=int(mo1), day=int(
+                    da1), hour=int(h1), minute=int(m1), second=int(s1))
+
+                Start_Time.append(d1 + d21)
+
+                y2 = e[:4]
+                mo2 = e[5:7]
+                da2 = e[8:10]
+                h2 = e[11:13]
+                m2 = e[14:16]
+                s2 = e[17:19]
+                d22 = datetime.datetime(year=int(y2), month=int(mo2), day=int(
+                    da2), hour=int(h2), minute=int(m2), second=int(s2))
+
+                End_Time.append(d1 + d22)
+
+                alerts_details = zip(Start_Time, End_Time, alerts)
+
+            return render(request, 'dgms/dgms_alert.html', {'alerts_details': alerts_details, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
 
         elif request.user.is_superuser:
             Customer_Name = 'Admin'
@@ -1439,9 +1498,55 @@ def alert(request):
 
             Count = len(alert)
 
-            return render(request, 'dgms/alert.html', {'alerts': alerts, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
+            Start_Time1 = []
+            End_Time1 = []
 
-        if request.user.is_manager:
+            for a in alerts:
+                Start_Time1.append(a.created_at.strftime('%Y-%m-%d %H:%M:%S'))
+                End_Time1.append(a.updated_at.strftime('%Y-%m-%d %H:%M:%S'))
+
+            Time = zip(Start_Time1, End_Time1)
+
+            UTC = '0000-00-00 05:30:00'
+            y = UTC[:4]
+            mo = UTC[5:7]
+            da = UTC[8:10]
+            h = UTC[11:13]
+            m = UTC[14:16]
+            s = UTC[17:19]
+            d1 = datetime.timedelta(days=(int(
+                y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
+
+            Start_Time = []
+            End_Time = []
+            for s, e in Time:
+                y1 = s[:4]
+                mo1 = s[5:7]
+                da1 = s[8:10]
+                h1 = s[11:13]
+                m1 = s[14:16]
+                s1 = s[17:19]
+                d21 = datetime.datetime(year=int(y1), month=int(mo1), day=int(
+                    da1), hour=int(h1), minute=int(m1), second=int(s1))
+
+                Start_Time.append(d1 + d21)
+
+                y2 = e[:4]
+                mo2 = e[5:7]
+                da2 = e[8:10]
+                h2 = e[11:13]
+                m2 = e[14:16]
+                s2 = e[17:19]
+                d22 = datetime.datetime(year=int(y2), month=int(mo2), day=int(
+                    da2), hour=int(h2), minute=int(m2), second=int(s2))
+
+                End_Time.append(d1 + d22)
+
+                alerts_details = zip(Start_Time, End_Time, alerts)
+
+            return render(request, 'dgms/dgms_alert.html', {'alerts_details': alerts_details, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
+
+        elif request.user.is_manager:
             Customer_Name = Manager.objects.get(
                 Manager_Name=username).Customer_Name
             managername = Manager.objects.get(
@@ -1704,7 +1809,53 @@ def alert(request):
 
             Count = len(alert)
 
-            return render(request, 'dgms/alert.html', {'alerts': alerts, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
+            Start_Time1 = []
+            End_Time1 = []
+
+            for a in alerts:
+                Start_Time1.append(a.created_at.strftime('%Y-%m-%d %H:%M:%S'))
+                End_Time1.append(a.updated_at.strftime('%Y-%m-%d %H:%M:%S'))
+
+            Time = zip(Start_Time1, End_Time1)
+
+            UTC = '0000-00-00 05:30:00'
+            y = UTC[:4]
+            mo = UTC[5:7]
+            da = UTC[8:10]
+            h = UTC[11:13]
+            m = UTC[14:16]
+            s = UTC[17:19]
+            d1 = datetime.timedelta(days=(int(
+                y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
+
+            Start_Time = []
+            End_Time = []
+            for s, e in Time:
+                y1 = s[:4]
+                mo1 = s[5:7]
+                da1 = s[8:10]
+                h1 = s[11:13]
+                m1 = s[14:16]
+                s1 = s[17:19]
+                d21 = datetime.datetime(year=int(y1), month=int(mo1), day=int(
+                    da1), hour=int(h1), minute=int(m1), second=int(s1))
+
+                Start_Time.append(d1 + d21)
+
+                y2 = e[:4]
+                mo2 = e[5:7]
+                da2 = e[8:10]
+                h2 = e[11:13]
+                m2 = e[14:16]
+                s2 = e[17:19]
+                d22 = datetime.datetime(year=int(y2), month=int(mo2), day=int(
+                    da2), hour=int(h2), minute=int(m2), second=int(s2))
+
+                End_Time.append(d1 + d22)
+
+                alerts_details = zip(Start_Time, End_Time, alerts)
+
+            return render(request, 'dgms/dgms_alert.html', {'alerts_details': alerts_details, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
 
 
 @ login_required(login_url='login')
@@ -1822,7 +1973,7 @@ def servicehistory(request, device_id):
         Contract = Service_History.objects.get(
             Device_ID=device_id).Service_Contract
 
-    return render(request, 'dgms/service_history.html', {'Contract': Contract, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'Tank_Size': Tank_Size, 'Remark1': Remark1, 'Activity1': Activity1, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'Remark': Remark, 'SP': SP, 'SC': SC, 'Address': Address, 'Con': Con, 'LSD': LSD, 'Activity': Activity, 'NSD': NSD, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id})
+    return render(request, 'dgms/dgms_service_history.html', {'Contract': Contract, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'Tank_Size': Tank_Size, 'Remark1': Remark1, 'Activity1': Activity1, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'Remark': Remark, 'SP': SP, 'SC': SC, 'Address': Address, 'Con': Con, 'LSD': LSD, 'Activity': Activity, 'NSD': NSD, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id})
 
 
 @ login_required(login_url='login')
@@ -2027,7 +2178,7 @@ def dgmsDashboard(request, device_id):
 
         LTOD = d1 + d21
 
-    return render(request, 'dgms/dgmsDashboard.html', {'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'Fuel2': Fuel2, 'DDOI': DDOI, 'alert_count': alert_count, 'Fuel1': Fuel1, 'Time': Time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Fuel2': Fuel2, 'Tank_Size': Tank_Size, 'Fuel_Per': Fuel_Per, 'hh': hh, 'UG': UG, 'Carbon_Foot_Print': Carbon_Foot_Print, 'BV': BV, 'AvgFC': AvgFC, 'Energy_OA': Energy_OA, 'MaxDLoad': MaxDLoad, 'DeviceC': DeviceC, 'DOI': DOI, 'WS': WS, 'LSD': LSD, 'NSD': NSD, 'SP': SP, 'Star': Star, 'RT': RT, 'diff': diff, 'Level': Level, 'Fuel1': Fuel1, 'Time': Time})
+    return render(request, 'dgms/dgms_dashboard_device.html', {'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'Fuel2': Fuel2, 'DDOI': DDOI, 'alert_count': alert_count, 'Fuel1': Fuel1, 'Time': Time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Fuel2': Fuel2, 'Tank_Size': Tank_Size, 'Fuel_Per': Fuel_Per, 'hh': hh, 'UG': UG, 'Carbon_Foot_Print': Carbon_Foot_Print, 'BV': BV, 'AvgFC': AvgFC, 'Energy_OA': Energy_OA, 'MaxDLoad': MaxDLoad, 'DeviceC': DeviceC, 'DOI': DOI, 'WS': WS, 'LSD': LSD, 'NSD': NSD, 'SP': SP, 'Star': Star, 'RT': RT, 'diff': diff, 'Level': Level, 'Fuel1': Fuel1, 'Time': Time})
 
 
 @ login_required(login_url='login')
@@ -2371,7 +2522,7 @@ def energyPara(request, device_id):
 
         Name = "Energy Parameters"
 
-        return render(request, 'dgms/energyPara.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'DDOI': DDOI, 'VLN': VLN, 'VLL': VLL, 'FREQ': FREQ, 'alert_count': alert_count, 'Time': Time,  'TR': TR, 'myFilter': myFilter, 'UG': UG, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        return render(request, 'dgms/dgms_energyPara.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'DDOI': DDOI, 'VLN': VLN, 'VLL': VLL, 'FREQ': FREQ, 'alert_count': alert_count, 'Time': Time,  'TR': TR, 'myFilter': myFilter, 'UG': UG, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -2715,7 +2866,7 @@ def loadKPI(request, device_id):
 
         Name = "Load Side KPI"
 
-        return render(request, 'dgms/loadKPI.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'DDOI': DDOI, 'alert_count': alert_count, 'WT': WT, 'EO': EO, 'Time': Time, 'TR': TR, 'myFilter': myFilter, 'CA': CA, 'CR': CR, 'CY': CY, 'CB': CB, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        return render(request, 'dgms/dgms_loadKPI.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'DDOI': DDOI, 'alert_count': alert_count, 'WT': WT, 'EO': EO, 'Time': Time, 'TR': TR, 'myFilter': myFilter, 'CA': CA, 'CR': CR, 'CY': CY, 'CB': CB, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -3060,7 +3211,7 @@ def enginePara(request, device_id):
 
         Name = "Engine Parameters"
 
-        return render(request, 'dgms/enginePara.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'DDOI': DDOI, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'DL': DL, 'RPM': RPM, 'DBV': DBV, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        return render(request, 'dgms/dgms_enginePara.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'DDOI': DDOI, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'DL': DL, 'RPM': RPM, 'DBV': DBV, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -3308,6 +3459,7 @@ def performanceKPI(request, device_id):
         Total_FCO = 0
         Total_RH1 = 0
         Total_RH = 0
+        Total_UG = 0
 
         for det in Details:
             if det.run_hours == None:
@@ -3320,7 +3472,10 @@ def performanceKPI(request, device_id):
                 CF.append(round(det.carbon_footprint, 2))
                 FC.append(round(det.fuel_consumed, 2))
                 FCO.append(round(det.fuel_cost, 2))
-                UG.append(round(det.energy_generated_kwh, 2))
+                if det.unit_generated_kwh == 0:
+                    UG.append(0)
+                else:
+                    UG.append(round(det.energy_generated_kwh, 2))
                 RC.append(round(det.run_count, 2))
 
         RH.reverse()
@@ -3332,6 +3487,7 @@ def performanceKPI(request, device_id):
         UG.reverse()
         RC.reverse()
 
+        Total_UG = round(sum(UG), 2)
         Total_FC = round(sum(FC), 2)
         Total_FCO = round(sum(FCO), 2)
         Total_RH1 = round((sum(RH)*3600), 2)
@@ -3448,7 +3604,7 @@ def performanceKPI(request, device_id):
 
         Name = "PERFORMANCE BASED KPI"
 
-        return render(request, 'dgms/performanceKPI.html', {'Name': Name, 'LTOD': LTOD, 'RC': RC, 'temperature': temperature, 'description': description, 'icon': icon, 'Total_RH': Total_RH, 'RunCount': RunCount, 'Total_FC': Total_FC, 'Total_FCO': Total_FCO, 'UG': UG, 'DDOI': DDOI, 'RH': RH, 'MDL': MDL, 'LE': LE, 'CF': CF, 'FC': FC, 'FCO': FCO, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        return render(request, 'dgms/dgms_performanceKPI.html', {'Total_UG': Total_UG, 'Name': Name, 'LTOD': LTOD, 'RC': RC, 'temperature': temperature, 'description': description, 'icon': icon, 'Total_RH': Total_RH, 'RunCount': RunCount, 'Total_FC': Total_FC, 'Total_FCO': Total_FCO, 'UG': UG, 'DDOI': DDOI, 'RH': RH, 'MDL': MDL, 'LE': LE, 'CF': CF, 'FC': FC, 'FCO': FCO, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -3815,7 +3971,7 @@ def deviceInfoKPI(request, device_id):
 
         Name = "DGMS DEVICE INFO"
 
-        return render(request, 'dgms/deviceInfoKPI.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'GSMSignal': GSMSignal, 'PowerStatus': PowerStatus, 'BatteryVoltage': BatteryVoltage, 'DDOI': DDOI, 'GSM': GSM, 'GB': GB, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        return render(request, 'dgms/dgms_deviceInfoKPI.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'GSMSignal': GSMSignal, 'PowerStatus': PowerStatus, 'BatteryVoltage': BatteryVoltage, 'DDOI': DDOI, 'GSM': GSM, 'GB': GB, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -4061,8 +4217,36 @@ def fuel_report(request, device_id):
 
         Count = Fuel.count()
         Total = 0
+        Time1 = []
         for F in Fuel:
             Total = F.fuel_added + Total
+            Time1.append(F.device_time.strftime('%Y-%m-%d %H:%M:%S'))
+
+        UTC = '0000-00-00 05:30:00'
+        y = UTC[:4]
+        mo = UTC[5:7]
+        da = UTC[8:10]
+        h = UTC[11:13]
+        m = UTC[14:16]
+        s = UTC[17:19]
+        d1 = datetime.timedelta(days=(int(
+            y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
+
+        Time = []
+        for t in Time1:
+
+            y1 = t[:4]
+            mo1 = t[5:7]
+            da1 = t[8:10]
+            h1 = t[11:13]
+            m1 = t[14:16]
+            s1 = t[17:19]
+            d21 = datetime.datetime(year=int(y1), month=int(mo1), day=int(
+                da1), hour=int(h1), minute=int(m1), second=int(s1))
+
+            Time.append(d1 + d21)
+
+        Fuel_Details = zip(Time, Fuel)
 
         Cit = User_Detail.objects.get(Device_ID=device_id).City
         Loc = User_Detail.objects.get(Device_ID=device_id).Location
@@ -4122,16 +4306,6 @@ def fuel_report(request, device_id):
         description = r['weather'][0]['description']
         icon = r['weather'][0]['icon']
 
-        UTC = '0000-00-00 05:30:00'
-        y = UTC[:4]
-        mo = UTC[5:7]
-        da = UTC[8:10]
-        h = UTC[11:13]
-        m = UTC[14:16]
-        s = UTC[17:19]
-        d1 = datetime.timedelta(days=(int(
-            y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
-
         LTOD1 = DevicesInfo.objects.filter(
             device_id=device_id).last().device_time.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -4148,7 +4322,7 @@ def fuel_report(request, device_id):
 
         Name = "Fuel filled report"
 
-    return render(request, 'dgms/fuel_report.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'DDOI': DDOI, 'alert_count': alert_count, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'TR': TR, 'Address': Address, 'Tank_Size': Tank_Size, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'Fuel': Fuel, 'Total': Total, 'Count': Count, 'myFilter': myFilter})
+    return render(request, 'dgms/dgms_fuel_report.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'DDOI': DDOI, 'alert_count': alert_count, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'TR': TR, 'Address': Address, 'Tank_Size': Tank_Size, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'Fuel_Details': Fuel_Details, 'Total': Total, 'Count': Count, 'myFilter': myFilter})
 
 
 @ login_required(login_url='login')
@@ -4452,6 +4626,8 @@ def operational_report(request, device_id):
         RC = []
         Run1 = []
         Run = []
+        Start_Time1 = []
+        End_Time1 = []
 
         # for p in PR:
         #     if p.run_hours == None:
@@ -4466,6 +4642,9 @@ def operational_report(request, device_id):
 
         for o in OPR:
             if o.run_hours == None:
+                Start_Time1.append(
+                    o.start_time.strftime('%Y-%m-%d %H:%M:%S'))
+                End_Time1.append(None)
                 Total_RH = 0 + Total_RH
                 Run1.append(0)
                 Total_RHour.append(0)
@@ -4473,6 +4652,10 @@ def operational_report(request, device_id):
                 Total_FuelCon.append(0)
                 Total_energy.append(0)
             else:
+                Start_Time1.append(
+                    o.start_time.strftime('%Y-%m-%d %H:%M:%S'))
+                End_Time1.append(
+                    o.end_time.strftime('%Y-%m-%d %H:%M:%S'))
                 Run1.append(float(o.run_hours*3600))
                 Total_RHour.append(round(o.run_hours, 2))
                 Total_Fuel.append(abs(round(o.fuel_consumed, 2)))
@@ -4484,6 +4667,47 @@ def operational_report(request, device_id):
                 # Total_F = abs(o.fuel_consumed + Total_F)
                 # Total_FC = abs(o.fuel_cost + Total_FC)
                 # Total_EG = o.energy_generated_kwh + Total_EG
+
+        Time = zip(Start_Time1, End_Time1)
+
+        UTC = '0000-00-00 05:30:00'
+        y = UTC[:4]
+        mo = UTC[5:7]
+        da = UTC[8:10]
+        h = UTC[11:13]
+        m = UTC[14:16]
+        s = UTC[17:19]
+        d1 = datetime.timedelta(days=(int(
+            y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
+
+        Start_Time = []
+        End_Time = []
+        for s, e in Time:
+            y1 = s[:4]
+            mo1 = s[5:7]
+            da1 = s[8:10]
+            h1 = s[11:13]
+            m1 = s[14:16]
+            s1 = s[17:19]
+            d21 = datetime.datetime(year=int(y1), month=int(mo1), day=int(
+                da1), hour=int(h1), minute=int(m1), second=int(s1))
+
+            Start_Time.append(d1 + d21)
+
+            if e == None:
+                End_Time.append(None)
+            else:
+
+                y2 = e[:4]
+                mo2 = e[5:7]
+                da2 = e[8:10]
+                h2 = e[11:13]
+                m2 = e[14:16]
+                s2 = e[17:19]
+                d22 = datetime.datetime(year=int(y2), month=int(mo2), day=int(
+                    da2), hour=int(h2), minute=int(m2), second=int(s2))
+
+                End_Time.append(d1 + d22)
 
         Total_RH1 = sum(Total_RHour)
         Total_F = sum(Total_Fuel)
@@ -4514,8 +4738,7 @@ def operational_report(request, device_id):
         Tank_Size = Asset.objects.get(Device_ID=device_id).Diesel_Tank_Size
         Address = User_Detail.objects.get(Device_ID=device_id).Address
 
-        OP1 = zip(OPR, RC, Run)
-        OP2 = zip(OPR, RC, Run)
+        OP1 = zip(Start_Time, End_Time, OPR, RC, Run)
 
         status = ['power_factor']
 
@@ -4533,16 +4756,6 @@ def operational_report(request, device_id):
         description = r['weather'][0]['description']
         icon = r['weather'][0]['icon']
 
-        UTC = '0000-00-00 05:30:00'
-        y = UTC[:4]
-        mo = UTC[5:7]
-        da = UTC[8:10]
-        h = UTC[11:13]
-        m = UTC[14:16]
-        s = UTC[17:19]
-        d1 = datetime.timedelta(days=(int(
-            y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
-
         LTOD1 = DevicesInfo.objects.filter(
             device_id=device_id).last().device_time.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -4559,7 +4772,7 @@ def operational_report(request, device_id):
 
         Name = "Operational report"
 
-    return render(request, 'dgms/operational_report.html', {'Name': Name, 'RC': RC, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'DDOI': DDOI, 'alert_count': alert_count, 'RC': RC, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'TR': TR, 'Address': Address, 'Tank_Size': Tank_Size, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'OP1': OP1, 'OP2': OP2, 'Count': Count, 'Total_RH': Total_RH, 'Total_F': Total_F, 'Total_FC': Total_FC, 'Total_EG': Total_EG, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'myFilter': myFilter})
+    return render(request, 'dgms/dgms_operational_report.html', {'Name': Name, 'RC': RC, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'DDOI': DDOI, 'alert_count': alert_count, 'RC': RC, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'TR': TR, 'Address': Address, 'Tank_Size': Tank_Size, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'OP1': OP1, 'Count': Count, 'Total_RH': Total_RH, 'Total_F': Total_F, 'Total_FC': Total_FC, 'Total_EG': Total_EG, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'myFilter': myFilter})
 
 
 @ login_required(login_url='login')
@@ -4860,15 +5073,24 @@ def performance_report(request, device_id):
         Total_RH1 = 0
         Run1 = []
         Run = []
+        Start_Time1 = []
+        End_Time1 = []
 
         FC = []
         RH = []
 
         for p in PR:
             if p.run_hours == None:
+                Start_Time1.append(
+                    p.start_time.strftime('%Y-%m-%d %H:%M:%S'))
+                End_Time1.append(None)
                 Total_RH = 0 + Total_RH
                 Run1.append(0)
             else:
+                Start_Time1.append(
+                    p.start_time.strftime('%Y-%m-%d %H:%M:%S'))
+                End_Time1.append(
+                    p.end_time.strftime('%Y-%m-%d %H:%M:%S'))
                 RC.append(p.run_count)
                 Total_RH1 = p.run_hours + Total_RH1
                 Run1.append(float(p.run_hours*3600))
@@ -4887,6 +5109,47 @@ def performance_report(request, device_id):
             seconds %= 60
             hh = "%d:%02d:%02d" % (hour, minutes, seconds)
             Run.append(hh)
+
+        Time = zip(Start_Time1, End_Time1)
+
+        UTC = '0000-00-00 05:30:00'
+        y = UTC[:4]
+        mo = UTC[5:7]
+        da = UTC[8:10]
+        h = UTC[11:13]
+        m = UTC[14:16]
+        s = UTC[17:19]
+        d1 = datetime.timedelta(days=(int(
+            y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
+
+        Start_Time = []
+        End_Time = []
+        for s, e in Time:
+            y1 = s[:4]
+            mo1 = s[5:7]
+            da1 = s[8:10]
+            h1 = s[11:13]
+            m1 = s[14:16]
+            s1 = s[17:19]
+            d21 = datetime.datetime(year=int(y1), month=int(mo1), day=int(
+                da1), hour=int(h1), minute=int(m1), second=int(s1))
+
+            Start_Time.append(d1 + d21)
+
+            if e == None:
+                End_Time.append(None)
+            else:
+
+                y2 = e[:4]
+                mo2 = e[5:7]
+                da2 = e[8:10]
+                h2 = e[11:13]
+                m2 = e[14:16]
+                s2 = e[17:19]
+                d22 = datetime.datetime(year=int(y2), month=int(mo2), day=int(
+                    da2), hour=int(h2), minute=int(m2), second=int(s2))
+
+                End_Time.append(d1 + d22)
 
         Total_RH2 = (Total_RH1*3600)
 
@@ -4922,8 +5185,7 @@ def performance_report(request, device_id):
 
         # RC.reverse()
 
-        context1 = zip(PR, AFC, RC, Run)
-        context2 = zip(PR, AFC, RC, Run)
+        context1 = zip(Start_Time, End_Time, PR, AFC, RC, Run)
 
         Tank_Size = Asset.objects.get(Device_ID=device_id).Diesel_Tank_Size
         Address = User_Detail.objects.get(Device_ID=device_id).Address
@@ -4944,16 +5206,6 @@ def performance_report(request, device_id):
         description = r['weather'][0]['description']
         icon = r['weather'][0]['icon']
 
-        UTC = '0000-00-00 05:30:00'
-        y = UTC[:4]
-        mo = UTC[5:7]
-        da = UTC[8:10]
-        h = UTC[11:13]
-        m = UTC[14:16]
-        s = UTC[17:19]
-        d1 = datetime.timedelta(days=(int(
-            y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
-
         LTOD1 = DevicesInfo.objects.filter(
             device_id=device_id).last().device_time.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -4970,7 +5222,7 @@ def performance_report(request, device_id):
 
         Name = "Performance report"
 
-    return render(request, 'dgms/performance_report.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'DDOI': DDOI, 'alert_count': alert_count, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'Avg_AL': Avg_AL, 'Avg_PL': Avg_PL, 'Avg_FC': Avg_FC, 'TR': TR, 'context2': context2, 'PR': PR, 'Address': Address, 'Tank_Size': Tank_Size, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'context1': context1, 'Count': Count, 'Total_RH': Total_RH, 'Total_F': Total_F, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'myFilter': myFilter})
+    return render(request, 'dgms/dgms_performance_report.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'DDOI': DDOI, 'alert_count': alert_count, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'Avg_AL': Avg_AL, 'Avg_PL': Avg_PL, 'Avg_FC': Avg_FC, 'TR': TR, 'PR': PR, 'Address': Address, 'Tank_Size': Tank_Size, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'context1': context1, 'Count': Count, 'Total_RH': Total_RH, 'Total_F': Total_F, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'myFilter': myFilter})
 
 
 @ login_required(login_url='login')
@@ -5463,6 +5715,15 @@ def device_alert(request, device_id):
         description = r['weather'][0]['description']
         icon = r['weather'][0]['icon']
 
+        Start_Time1 = []
+        End_Time1 = []
+
+        for a in alerts:
+            Start_Time1.append(a.created_at.strftime('%Y-%m-%d %H:%M:%S'))
+            End_Time1.append(a.updated_at.strftime('%Y-%m-%d %H:%M:%S'))
+
+        Time = zip(Start_Time1, End_Time1)
+
         UTC = '0000-00-00 05:30:00'
         y = UTC[:4]
         mo = UTC[5:7]
@@ -5472,6 +5733,31 @@ def device_alert(request, device_id):
         s = UTC[17:19]
         d1 = datetime.timedelta(days=(int(
             y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
+
+        Start_Time = []
+        End_Time = []
+        for s, e in Time:
+            y1 = s[:4]
+            mo1 = s[5:7]
+            da1 = s[8:10]
+            h1 = s[11:13]
+            m1 = s[14:16]
+            s1 = s[17:19]
+            d21 = datetime.datetime(year=int(y1), month=int(mo1), day=int(
+                da1), hour=int(h1), minute=int(m1), second=int(s1))
+
+            Start_Time.append(d1 + d21)
+
+            y2 = e[:4]
+            mo2 = e[5:7]
+            da2 = e[8:10]
+            h2 = e[11:13]
+            m2 = e[14:16]
+            s2 = e[17:19]
+            d22 = datetime.datetime(year=int(y2), month=int(mo2), day=int(
+                da2), hour=int(h2), minute=int(m2), second=int(s2))
+
+            End_Time.append(d1 + d22)
 
         LTOD1 = DevicesInfo.objects.filter(
             device_id=device_id).last().device_time.strftime('%Y-%m-%d %H:%M:%S')
@@ -5487,9 +5773,11 @@ def device_alert(request, device_id):
 
         LTOD = d1 + d21
 
+        alerts_details = zip(Start_Time, End_Time, alerts)
+
         # http://openweathermap.org/img/w/{{icon}}.png
 
-        return render(request, 'dgms/device_alert.html', {'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'Tank_Size': Tank_Size, 'Address': Address, 'TR': TR, 'myFilter': myFilter, 'alerts': alerts, 'alert_count': alert_count, 'DDOI': DDOI, 'Count': Count,  'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff,  'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, })
+        return render(request, 'dgms/dgms_device_alert.html', {'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'Tank_Size': Tank_Size, 'Address': Address, 'TR': TR, 'myFilter': myFilter, 'alerts_details': alerts_details, 'alert_count': alert_count, 'DDOI': DDOI, 'Count': Count,  'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff,  'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, })
 
 
 # @ login_required(login_url='login')

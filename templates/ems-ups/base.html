@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta http-equiv="refresh" content="60" />
     <!-- <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
     <title>{{Loc}}</title>
@@ -14,8 +15,8 @@
     />
 
     <link rel="stylesheet" href="{% static './css/navbar.css' %}" />
-    <link rel="stylesheet" href="{% static './css/dgmsInfo.css' %}" />
-    <link rel="stylesheet" href="{% static './css/internal_nav.css' %}" />
+    <link rel="stylesheet" href="{% static './css/Info-bar.css' %}" />
+    <link rel="stylesheet" href="{% static './css/navbar_internal.css' %}" />
     <link rel="stylesheet" href="{% static './css/footer.css' %}" />
     {% block css %} {% endblock %}
   </head>
@@ -123,7 +124,7 @@
           <div class="on-left">
             <div class="dg_info_dev">
               <div class="asset_name">{{Cit}}-{{Loc}}</div>
-              <div class="inst_dgms">UPS Installation Date: {{EDOI}}</div>
+              <div class="inst_dgms">UPS-EMS Installation Date: {{EDOI}}</div>
             </div>
 
             <div class="star-kva">

@@ -1,0 +1,203 @@
+{% extends 'dgms/base.html' %} {% load static %}
+{% block css %} 
+<link rel="stylesheet" href="{% static './css/asset.css' %}">
+{% endblock %}
+
+
+{% block content %} 
+<div class="cont">
+
+  <div class="internal_nav"> 
+    <div class="row" >
+        <div ><p><a href="{% url 'dgmsDashboard' device_id %}">Dashboard</a></p></div>
+        <!-- <div class="active_link" ><p><a href="kpi.html">KPI</a></p></div> -->
+
+        <div class="drop_asset ">
+          <p>KPI</p>
+   
+          <div class="drop-down ">
+           
+            <div><a href="{% url 'energyPara' device_id %}">Energy Parameters</a></div>
+            <hr>
+            <div><a href="{% url 'loadKPI' device_id %}">Load Side KPI</a></div>
+            <hr>
+            <div><a href="{% url 'enginePara' device_id %}">Engine Parameters</a></div>
+            <hr>
+            <div><a href="{% url 'performanceKPI' device_id %}">Performance based KPI</a></div>
+            <hr>
+            <div><a href="{% url 'deviceInfoKPI' device_id %}">DGMS Device Info</a></div>
+            
+          </div>
+   
+          </div> 
+
+       <div class="drop_asset active_link">
+       <p>Asset Information</p>
+
+       <div class="drop-down">
+        
+        <div ><a href="{% url 'asset' device_id  %}">Asset Detail</a></div>
+        <hr>
+        <div><a href="{% url 'servicehistory' device_id  %}">Service History</a></div>
+         
+       </div>
+
+       </div> 
+
+       <div class="drop_asset ">
+         <p>Reports</p>
+ 
+         <div class="drop-down">
+          
+          <div><a href="{% url 'fuel_report' device_id  %}">Fuel filled report</a></div>
+          <hr>
+          <div><a href="{% url 'operational_report' device_id  %}">Operational report</a></div>
+          <hr>
+          <div><a href="{% url 'performance_report' device_id  %}">Performance report</a></div>
+           
+         </div>
+ 
+         </div> 
+
+         <div ><p><a href="{% url 'device_alert' device_id  %}">Alerts</a></p></div>
+
+    </div>
+</div> <!-- class ="internal_nav" ends here -->
+
+
+
+<div class="asset_detail">
+ 
+    <div class="asset_img"><img src="{% static './images/asset1.png' %}" alt="asset"></div>
+
+    <div class="asset_info">
+        <div class="asset_name">Service History</div>
+        <div onclick="genPDF()" class="download_info" ><img src="{% static './images/download.png' %}" alt="asset"></div>
+    </div>
+
+    <div class="asset-table">
+      <table id="service-history">
+        <thead>
+        <tr class="t_body">
+          <th>SERVICE HISTORY</th>
+          <th></th>
+        </tr>
+      </thead>
+    
+      <tbody>  
+    
+        <tr class="t_body">
+          <td>SERVICE PROVIDER</td>
+          <td >{{SP}} </td>
+        </tr>
+    
+        <tr class="t_body">
+          <td>ADDRESS</td>
+          <td> {{Address}} </td>
+        </tr>
+    
+        <tr class="t_body">
+          <td>CONTACT NUMBER</td>
+          <td>{{SC}}</td>
+        </tr>
+        
+        <tr class="t_body">
+          <td>EMAIL</td>
+          <td>{{SC}}</td>
+        </tr>
+
+        <tr class="t_body">
+          <td colspan="2">CONTRACT</td>
+        </tr>
+
+        <tr class="t_body">
+          <td>CONTRACT TYPE</td>
+          <td>{{Contract}}</td>
+        </tr>
+    
+        <tr class="t_body">
+          <td colspan="2">LAST SERVICE</td>
+        </tr>
+    
+        <tr class="t_body">
+          <td>LAST SERVICE DATE</td>
+          <td>{{LSD}}</td>
+        </tr>
+    
+        <tr class="t_body">
+          <td>ACTIVITY</td>
+          <td>{{Activity}}</td>
+        </tr>
+    
+        <tr class="t_body">
+          <td>REMARK</td>
+          <td>{{Remark}}</td>
+        </tr>
+
+
+        <tr class="t_body">
+          <td colspan="2">NEXT SERVICE</td>
+        </tr>
+    
+        <tr class="t_body">
+          <td>NEXT SERVICE DATE</td>
+          <td>{{NSD}}</td>
+        </tr>
+    
+        <tr class="t_body">
+          <td>ACTIVITY</td>
+          <td>{{Activity1}}</td>
+        </tr>
+    
+        <tr class="t_body">
+          <td>REMARK</td>
+          <td>{{Remark1}}</td>
+        </tr>
+  
+      </tbody>
+    
+      </table>
+    
+      <br>
+      <br>
+    </div>
+
+</div> <!-- class ="asset_detail" ends here -->
+
+</div> <!-- class ="cont" ends here -->
+
+
+<!--PDF Structure-->
+<div style=" display: none; font-family:Arial, Helvetica, sans-serif">
+  <div id="pdfName" style="font-size: 25px;">Service History</div>
+  <div id="customerName" style="font-size: 25px; font-weight: bold;">{{Customer_Name}}</div>
+    <div id="assetDetail">
+      <div><span style="font-weight: bold;">Asset:</span>{{Cit}}-{{Loc}}</span></div>
+      <div><span style="font-weight: bold;">Rating:</span> {{Rat}} kVA</div>
+      <div><span style="font-weight: bold;">Diesel Tank Size:</span> {{Tank_Size}} Liters</div>
+    </div>
+    <div id="assetAddress">
+      <div style="font-weight: bold;">Address:</div> 
+      <div>{{Address1}}</div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block js %}
+
+<!-- js -->
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.14/jspdf.plugin.autotable.min.js" ></script>
+    
+
+<script type="text/javascript" src="{% static './js/navbar.js' %}"></script>
+<script type="text/javascript" src="{% static './js/dgms_pdf-download_service-history.js ' %}"></script>
+
+</body>
+
+</html>
+{% endblock %}

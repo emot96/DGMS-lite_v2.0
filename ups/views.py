@@ -1,3 +1,4 @@
+from login.models import Automation
 from django.shortcuts import render, redirect
 from .models import *
 from django.contrib.auth import authenticate, login, logout
@@ -6,9 +7,11 @@ from django.db.models import Avg, Sum, Max
 import datetime
 import requests
 from .filters import *
+from django.http.response import JsonResponse
+from django.shortcuts import render, redirect
+
 
 # Create your views here.
-
 
 @ login_required(login_url='login')
 def logoutUser(request):
@@ -134,7 +137,7 @@ def ups(request):
             else:
                 Star = 5
 
-            return render(request, 'ems-ups/emsDashboard.html', {'Star': Star, 'diff': diff, 'LTOD': LTOD, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'temperature': temperature, 'description': description, 'icon': icon, 'Time': Time, 'PL': PL, 'username': username, 'Customer_Name': Customer_Name, 'device_id': device_id, 'Details': Details, 'Details_graph': Details_graph})
+            return render(request, 'ems-ups/ups_dashboard_device.html', {'Star': Star, 'diff': diff, 'LTOD': LTOD, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'temperature': temperature, 'description': description, 'icon': icon, 'Time': Time, 'PL': PL, 'username': username, 'Customer_Name': Customer_Name, 'device_id': device_id, 'Details': Details, 'Details_graph': Details_graph})
 
         elif request.user.is_manager:
             Customer_Name = LoginManager.objects.get(
@@ -425,7 +428,7 @@ def ups(request):
                         device_id__in=DeviceID, alert_open=True).exclude(alert_type_name__in=status).order_by('-created_at')
                     alert_count = len(alert)
 
-        return render(request, 'ems-ups/dashboard.html', {'Total': Total, 'Capacity': Capacity, 'Air_total': Air_total, 'Oil_total': Oil_total, 'Air_Capacity': Air_Capacity, 'Oil_Capacity': Oil_Capacity, 'alert_count': alert_count, 'username': username, 'Customer_Name': Customer_Name, 'UserDetail': UserDetail})
+        return render(request, 'ems-ups/ups_dashboard.html', {'Total': Total, 'Capacity': Capacity, 'Air_total': Air_total, 'Oil_total': Oil_total, 'Air_Capacity': Air_Capacity, 'Oil_Capacity': Oil_Capacity, 'alert_count': alert_count, 'username': username, 'Customer_Name': Customer_Name, 'UserDetail': UserDetail})
 
 
 @login_required(login_url='login')
@@ -456,11 +459,11 @@ def upsDashboard(request, device_id):
             Customer_ID = LoginCustomer.objects.get(
                 customer_name=username).customer_id
 
+        Details_graph = DevicesInfo.objects.filter(
+            device_id=device_id, device_time__gte=datetime.datetime.now() - datetime.timedelta(days=60)).exclude(vry_phase_voltage=0)
+
         Details = DevicesInfo.objects.filter(
             device_id=device_id).exclude(vry_phase_voltage=0).last()
-
-        Details_graph = DeviceOperational.objects.filter(
-            device_id=device_id).order_by('-start_time')
 
         # , device_time__gte=datetime.datetime.now() - datetime.timedelta(hours=12)
 
@@ -468,7 +471,7 @@ def upsDashboard(request, device_id):
         Time = []
 
         for det in Details_graph:
-            Time1.append(det.start_time .strftime('%Y-%m-%d %H:%M:%S'))
+            Time1.append(det.device_time.strftime('%Y-%m-%d %H:%M:%S'))
 
         UTC = '0000-00-00 05:30:00'
         y = UTC[:4]
@@ -573,9 +576,9 @@ def upsDashboard(request, device_id):
             device_id=device_id)
 
         EDOI = LoginUpsAsset.objects.get(
-            device_id=device_id).ups_date_of_installation
+            device_id=device_id).ups_ems_date_of_installation
 
-    return render(request, 'ems-ups/emsDashboard.html', {'EDOI': EDOI, 'service_details': service_details, 'asset_details': asset_details, 'alert_count': alert_count, 'Star': Star, 'diff': diff, 'LTOD': LTOD, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'temperature': temperature, 'description': description, 'icon': icon, 'Time': Time,  'username': username, 'Customer_Name': Customer_Name, 'device_id': device_id, 'Details': Details, 'Details_graph': Details_graph})
+    return render(request, 'ems-ups/ups_dashboard_device.html', {'EDOI': EDOI, 'service_details': service_details, 'asset_details': asset_details, 'alert_count': alert_count, 'Star': Star, 'diff': diff, 'LTOD': LTOD, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'temperature': temperature, 'description': description, 'icon': icon, 'Time': Time,  'username': username, 'Customer_Name': Customer_Name, 'device_id': device_id, 'Details': Details, 'Details_graph': Details_graph})
 
 
 @ login_required(login_url='login')
@@ -687,10 +690,13 @@ def upsasset_detail(request, device_id):
 
         Details = LoginUpsAsset.objects.get(device_id=device_id)
 
-        EDOI = LoginUpsAsset.objects.get(
-            device_id=device_id).ups_date_of_installation
+        Service_History = LoginUpsServiceHistory.objects.get(
+            device_id=device_id)
 
-    return render(request, 'ems-ups/emsAssetDetail.html', {'EDOI': EDOI, 'Details': Details, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat})
+        EDOI = LoginUpsAsset.objects.get(
+            device_id=device_id).ups_ems_date_of_installation
+
+    return render(request, 'ems-ups/ups_asset_asset-detail.html', {'Service_History': Service_History, 'EDOI': EDOI, 'Details': Details, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat})
 
 
 @ login_required(login_url='login')
@@ -978,7 +984,53 @@ def upsalert(request):
 
             Count = len(alert)
 
-            return render(request, 'ems-ups/emsalert.html', {'alerts': alerts, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
+            Start_Time1 = []
+            End_Time1 = []
+
+            for a in alerts:
+                Start_Time1.append(a.created_at.strftime('%Y-%m-%d %H:%M:%S'))
+                End_Time1.append(a.updated_at.strftime('%Y-%m-%d %H:%M:%S'))
+
+            Time = zip(Start_Time1, End_Time1)
+
+            UTC = '0000-00-00 05:30:00'
+            y = UTC[:4]
+            mo = UTC[5:7]
+            da = UTC[8:10]
+            h = UTC[11:13]
+            m = UTC[14:16]
+            s = UTC[17:19]
+            d1 = datetime.timedelta(days=(int(
+                y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
+
+            Start_Time = []
+            End_Time = []
+            for s, e in Time:
+                y1 = s[:4]
+                mo1 = s[5:7]
+                da1 = s[8:10]
+                h1 = s[11:13]
+                m1 = s[14:16]
+                s1 = s[17:19]
+                d21 = datetime.datetime(year=int(y1), month=int(mo1), day=int(
+                    da1), hour=int(h1), minute=int(m1), second=int(s1))
+
+                Start_Time.append(d1 + d21)
+
+                y2 = e[:4]
+                mo2 = e[5:7]
+                da2 = e[8:10]
+                h2 = e[11:13]
+                m2 = e[14:16]
+                s2 = e[17:19]
+                d22 = datetime.datetime(year=int(y2), month=int(mo2), day=int(
+                    da2), hour=int(h2), minute=int(m2), second=int(s2))
+
+                End_Time.append(d1 + d22)
+
+                alerts_details = zip(Start_Time, End_Time, alerts)
+
+            return render(request, 'ems-ups/ups_alerts.html', {'alerts_details': alerts_details, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
 
         elif request.user.is_superuser:
             Customer_Name = 'Admin'
@@ -1228,7 +1280,53 @@ def upsalert(request):
 
             Count = len(alert)
 
-            return render(request, 'ems-ups/emsalert.html', {'alerts': alerts, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
+            Start_Time1 = []
+            End_Time1 = []
+
+            for a in alerts:
+                Start_Time1.append(a.created_at.strftime('%Y-%m-%d %H:%M:%S'))
+                End_Time1.append(a.updated_at.strftime('%Y-%m-%d %H:%M:%S'))
+
+            Time = zip(Start_Time1, End_Time1)
+
+            UTC = '0000-00-00 05:30:00'
+            y = UTC[:4]
+            mo = UTC[5:7]
+            da = UTC[8:10]
+            h = UTC[11:13]
+            m = UTC[14:16]
+            s = UTC[17:19]
+            d1 = datetime.timedelta(days=(int(
+                y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
+
+            Start_Time = []
+            End_Time = []
+            for s, e in Time:
+                y1 = s[:4]
+                mo1 = s[5:7]
+                da1 = s[8:10]
+                h1 = s[11:13]
+                m1 = s[14:16]
+                s1 = s[17:19]
+                d21 = datetime.datetime(year=int(y1), month=int(mo1), day=int(
+                    da1), hour=int(h1), minute=int(m1), second=int(s1))
+
+                Start_Time.append(d1 + d21)
+
+                y2 = e[:4]
+                mo2 = e[5:7]
+                da2 = e[8:10]
+                h2 = e[11:13]
+                m2 = e[14:16]
+                s2 = e[17:19]
+                d22 = datetime.datetime(year=int(y2), month=int(mo2), day=int(
+                    da2), hour=int(h2), minute=int(m2), second=int(s2))
+
+                End_Time.append(d1 + d22)
+
+                alerts_details = zip(Start_Time, End_Time, alerts)
+
+            return render(request, 'ems-ups/ups_alerts.html', {'alerts_details': alerts_details, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
 
         if request.user.is_manager:
             Customer_Name = LoginManager.objects.get(
@@ -1509,7 +1607,53 @@ def upsalert(request):
 
             Count = len(alert)
 
-            return render(request, 'ems-ups/emsalert.html', {'alerts': alerts, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
+            Start_Time1 = []
+            End_Time1 = []
+
+            for a in alerts:
+                Start_Time1.append(a.created_at.strftime('%Y-%m-%d %H:%M:%S'))
+                End_Time1.append(a.updated_at.strftime('%Y-%m-%d %H:%M:%S'))
+
+            Time = zip(Start_Time1, End_Time1)
+
+            UTC = '0000-00-00 05:30:00'
+            y = UTC[:4]
+            mo = UTC[5:7]
+            da = UTC[8:10]
+            h = UTC[11:13]
+            m = UTC[14:16]
+            s = UTC[17:19]
+            d1 = datetime.timedelta(days=(int(
+                y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
+
+            Start_Time = []
+            End_Time = []
+            for s, e in Time:
+                y1 = s[:4]
+                mo1 = s[5:7]
+                da1 = s[8:10]
+                h1 = s[11:13]
+                m1 = s[14:16]
+                s1 = s[17:19]
+                d21 = datetime.datetime(year=int(y1), month=int(mo1), day=int(
+                    da1), hour=int(h1), minute=int(m1), second=int(s1))
+
+                Start_Time.append(d1 + d21)
+
+                y2 = e[:4]
+                mo2 = e[5:7]
+                da2 = e[8:10]
+                h2 = e[11:13]
+                m2 = e[14:16]
+                s2 = e[17:19]
+                d22 = datetime.datetime(year=int(y2), month=int(mo2), day=int(
+                    da2), hour=int(h2), minute=int(m2), second=int(s2))
+
+                End_Time.append(d1 + d22)
+
+                alerts_details = zip(Start_Time, End_Time, alerts)
+
+            return render(request, 'ems-ups/ups_alerts.html', {'alerts_details': alerts_details, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
 
 
 @ login_required(login_url='login')
@@ -1619,12 +1763,12 @@ def upsservice_history(request, device_id):
         Asset_Details = LoginEmsAsset.objects.get(device_id=device_id)
 
         EDOI = LoginUpsAsset.objects.get(
-            device_id=device_id).ups_date_of_installation
+            device_id=device_id).ups_ems_date_of_installation
 
         Contract = LoginUpsServiceHistory.objects.get(
             device_id=device_id).service_contract
 
-    return render(request, 'ems-ups/emsServiceHistory.html', {'Contract': Contract, 'EDOI': EDOI, 'Asset_Details': Asset_Details, 'Details': Details, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id})
+    return render(request, 'ems-ups/ups_asset_service-history.html', {'Contract': Contract, 'EDOI': EDOI, 'Asset_Details': Asset_Details, 'Details': Details, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id})
 
 
 @ login_required(login_url='login')
@@ -1982,11 +2126,11 @@ def upsLoadKPI(request, device_id):
         LTOD = d1 + d21
 
         EDOI = LoginUpsAsset.objects.get(
-            device_id=device_id).ups_date_of_installation
+            device_id=device_id).ups_ems_date_of_installation
 
         Name = "Load Side KPI"
 
-        return render(request, 'ems-ups/emsLoadKPI.html', {'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'WT': WT, 'EO': EO, 'Time': Time, 'TR': TR, 'myFilter': myFilter, 'CA': CA, 'CR': CR, 'CY': CY, 'CB': CB, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        return render(request, 'ems-ups/ups_kpi_load-side.html', {'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'WT': WT, 'EO': EO, 'Time': Time, 'TR': TR, 'myFilter': myFilter, 'CA': CA, 'CR': CR, 'CY': CY, 'CB': CB, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -2335,11 +2479,11 @@ def upsEnergyPara(request, device_id):
         LTOD = d1 + d21
 
         EDOI = LoginUpsAsset.objects.get(
-            device_id=device_id).ups_date_of_installation
+            device_id=device_id).ups_ems_date_of_installation
 
         Name = "Energy Parameter KPI"
 
-        return render(request, 'ems-ups/emsEnergyPara.html', {'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'PF': PF, 'VLN': VLN, 'VLL': VLL,  'alert_count': alert_count, 'Time': Time,  'TR': TR, 'myFilter': myFilter,  'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        return render(request, 'ems-ups/ups_kpi_energy-parameters.html', {'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'PF': PF, 'VLN': VLN, 'VLL': VLL,  'alert_count': alert_count, 'Time': Time,  'TR': TR, 'myFilter': myFilter,  'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -2712,11 +2856,11 @@ def upsDeviceInfoKPI(request, device_id):
         LTOD = d1 + d21
 
         EDOI = LoginUpsAsset.objects.get(
-            device_id=device_id).ups_date_of_installation
+            device_id=device_id).ups_ems_date_of_installation
 
         Name = "Device Info KPI"
 
-        return render(request, 'ems-ups/emsDeviceInfoKPI.html', {'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'GSMSignal': GSMSignal, 'PowerStatus': PowerStatus, 'BatteryVoltage': BatteryVoltage, 'GSM': GSM, 'GB': GB, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        return render(request, 'ems-ups/ups_kpi_device-info.html', {'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'GSMSignal': GSMSignal, 'PowerStatus': PowerStatus, 'BatteryVoltage': BatteryVoltage, 'GSM': GSM, 'GB': GB, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -3066,11 +3210,47 @@ def upsdevice_alert(request, device_id):
         LTOD = d1 + d21
 
         EDOI = LoginUpsAsset.objects.get(
-            device_id=device_id).ups_date_of_installation
+            device_id=device_id).ups_ems_date_of_installation
 
         # http://openweathermap.org/img/w/{{icon}}.png
 
-        return render(request, 'ems-ups/emsDeviceAlerts.html', {'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'alerts': alerts, 'alert_count': alert_count,  'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff,  'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, })
+        Start_Time1 = []
+        End_Time1 = []
+
+        for a in alerts:
+            Start_Time1.append(a.created_at.strftime('%Y-%m-%d %H:%M:%S'))
+            End_Time1.append(a.updated_at.strftime('%Y-%m-%d %H:%M:%S'))
+
+        Time = zip(Start_Time1, End_Time1)
+
+        Start_Time = []
+        End_Time = []
+        for s, e in Time:
+            y1 = s[:4]
+            mo1 = s[5:7]
+            da1 = s[8:10]
+            h1 = s[11:13]
+            m1 = s[14:16]
+            s1 = s[17:19]
+            d21 = datetime.datetime(year=int(y1), month=int(mo1), day=int(
+                da1), hour=int(h1), minute=int(m1), second=int(s1))
+
+            Start_Time.append(d1 + d21)
+
+            y2 = e[:4]
+            mo2 = e[5:7]
+            da2 = e[8:10]
+            h2 = e[11:13]
+            m2 = e[14:16]
+            s2 = e[17:19]
+            d22 = datetime.datetime(year=int(y2), month=int(mo2), day=int(
+                da2), hour=int(h2), minute=int(m2), second=int(s2))
+
+            End_Time.append(d1 + d22)
+
+            alerts_details = zip(Start_Time, End_Time, alerts)
+
+        return render(request, 'ems-ups/ups_alert_device.html', {'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'alerts_details': alerts_details, 'alert_count': alert_count,  'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff,  'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, })
 
 
 @ login_required(login_url='login')
@@ -3378,15 +3558,24 @@ def upsoperational_report(request, device_id):
         Total_RH1 = 0
         Run1 = []
         Run = []
+        Start_Time1 = []
+        End_Time1 = []
 
         FC = []
         RH = []
 
         for p in PR:
             if p.run_hours == None:
+                Start_Time1.append(
+                    p.start_time.strftime('%Y-%m-%d %H:%M:%S'))
+                End_Time1.append(None)
                 Total_RH = 0 + Total_RH
                 Run1.append(0)
             else:
+                Start_Time1.append(
+                    p.start_time.strftime('%Y-%m-%d %H:%M:%S'))
+                End_Time1.append(
+                    p.end_time.strftime('%Y-%m-%d %H:%M:%S'))
                 RC.append(p.run_count)
                 Total_RH1 = p.run_hours + Total_RH1
                 Run1.append(float(p.run_hours*3600))
@@ -3405,6 +3594,47 @@ def upsoperational_report(request, device_id):
             seconds %= 60
             hh = "%d:%02d:%02d" % (hour, minutes, seconds)
             Run.append(hh)
+
+        Time = zip(Start_Time1, End_Time1)
+
+        UTC = '0000-00-00 05:30:00'
+        y = UTC[:4]
+        mo = UTC[5:7]
+        da = UTC[8:10]
+        h = UTC[11:13]
+        m = UTC[14:16]
+        s = UTC[17:19]
+        d1 = datetime.timedelta(days=(int(
+            y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
+
+        Start_Time = []
+        End_Time = []
+        for s, e in Time:
+            y1 = s[:4]
+            mo1 = s[5:7]
+            da1 = s[8:10]
+            h1 = s[11:13]
+            m1 = s[14:16]
+            s1 = s[17:19]
+            d21 = datetime.datetime(year=int(y1), month=int(mo1), day=int(
+                da1), hour=int(h1), minute=int(m1), second=int(s1))
+
+            Start_Time.append(d1 + d21)
+
+            if e == None:
+                End_Time.append(None)
+            else:
+
+                y2 = e[:4]
+                mo2 = e[5:7]
+                da2 = e[8:10]
+                h2 = e[11:13]
+                m2 = e[14:16]
+                s2 = e[17:19]
+                d22 = datetime.datetime(year=int(y2), month=int(mo2), day=int(
+                    da2), hour=int(h2), minute=int(m2), second=int(s2))
+
+                End_Time.append(d1 + d22)
 
         Total_RH2 = (Total_RH1*3600)
 
@@ -3440,8 +3670,7 @@ def upsoperational_report(request, device_id):
 
         # RC.reverse()
 
-        context1 = zip(PR, RC, Run)
-        context2 = zip(PR, RC, Run)
+        context1 = zip(Start_Time, End_Time, PR, RC, Run)
 
         Address = LoginUserDetail.objects.get(device_id=device_id).address
 
@@ -3460,16 +3689,6 @@ def upsoperational_report(request, device_id):
         description = r['weather'][0]['description']
         icon = r['weather'][0]['icon']
 
-        UTC = '0000-00-00 05:30:00'
-        y = UTC[:4]
-        mo = UTC[5:7]
-        da = UTC[8:10]
-        h = UTC[11:13]
-        m = UTC[14:16]
-        s = UTC[17:19]
-        d1 = datetime.timedelta(days=(int(
-            y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
-
         LTOD1 = DevicesInfo.objects.filter(
             device_id=device_id).last().device_time.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -3485,6 +3704,6 @@ def upsoperational_report(request, device_id):
         LTOD = d1 + d21
 
         EDOI = LoginUpsAsset.objects.get(
-            device_id=device_id).ups_date_of_installation
+            device_id=device_id).ups_ems_date_of_installation
 
-    return render(request, 'ems-ups/operational_report.html', {'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'EDOI': EDOI, 'alert_count': alert_count, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'Avg_AL': Avg_AL, 'Avg_PL': Avg_PL, 'Avg_FC': Avg_FC, 'TR': TR, 'context2': context2, 'PR': PR, 'Address': Address, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'context1': context1, 'Count': Count, 'Total_RH': Total_RH, 'Total_F': Total_F, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'myFilter': myFilter})
+    return render(request, 'ems-ups/ups_report_operational-report.html', {'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'EDOI': EDOI, 'alert_count': alert_count, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'Avg_AL': Avg_AL, 'Avg_PL': Avg_PL, 'Avg_FC': Avg_FC, 'TR': TR,  'PR': PR, 'Address': Address, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'context1': context1, 'Count': Count, 'Total_RH': Total_RH, 'Total_F': Total_F, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'myFilter': myFilter})

@@ -1,3 +1,4 @@
+from login.models import Service_History
 from django.shortcuts import render, redirect
 from .models import *
 from django.contrib.auth import authenticate, login, logout
@@ -134,7 +135,7 @@ def ems(request):
             else:
                 Star = 5
 
-            return render(request, 'ems/emsDashboard.html', {'Star': Star, 'diff': diff, 'LTOD': LTOD, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'temperature': temperature, 'description': description, 'icon': icon, 'Time': Time, 'PL': PL, 'username': username, 'Customer_Name': Customer_Name, 'device_id': device_id, 'Details': Details, 'Details_graph': Details_graph})
+            return render(request, 'ems-servo/servo_dashboard_device.html', {'Star': Star, 'diff': diff, 'LTOD': LTOD, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'temperature': temperature, 'description': description, 'icon': icon, 'Time': Time, 'PL': PL, 'username': username, 'Customer_Name': Customer_Name, 'device_id': device_id, 'Details': Details, 'Details_graph': Details_graph})
 
         elif request.user.is_manager:
             Customer_Name = LoginManager.objects.get(
@@ -405,7 +406,7 @@ def ems(request):
                         device_id__in=DeviceID, alert_open=True).exclude(alert_type_name__in=status).order_by('-created_at')
                     alert_count = len(alert)
 
-        return render(request, 'ems/dashboard.html', {'Total': Total, 'Capacity': Capacity, 'Air_total': Air_total, 'Oil_total': Oil_total, 'Air_Capacity': Air_Capacity, 'Oil_Capacity': Oil_Capacity, 'alert_count': alert_count, 'username': username, 'Customer_Name': Customer_Name, 'UserDetail': UserDetail})
+        return render(request, 'ems-servo/servo_dashboard.html', {'Total': Total, 'Capacity': Capacity, 'Air_total': Air_total, 'Oil_total': Oil_total, 'Air_Capacity': Air_Capacity, 'Oil_Capacity': Oil_Capacity, 'alert_count': alert_count, 'username': username, 'Customer_Name': Customer_Name, 'UserDetail': UserDetail})
 
 
 @login_required(login_url='login')
@@ -561,7 +562,7 @@ def emsDashboard(request, device_id):
         EDOI = LoginEmsAsset.objects.get(
             device_id=device_id).ems_date_of_installation
 
-    return render(request, 'ems/emsDashboard.html', {'EDOI': EDOI, 'service_details': service_details, 'asset_details': asset_details, 'alert_count': alert_count, 'Star': Star, 'diff': diff, 'LTOD': LTOD, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'temperature': temperature, 'description': description, 'icon': icon, 'Time': Time, 'PL': PL, 'username': username, 'Customer_Name': Customer_Name, 'device_id': device_id, 'Details': Details, 'Details_graph': Details_graph})
+    return render(request, 'ems-servo/servo_dashboard_device.html', {'EDOI': EDOI, 'service_details': service_details, 'asset_details': asset_details, 'alert_count': alert_count, 'Star': Star, 'diff': diff, 'LTOD': LTOD, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'temperature': temperature, 'description': description, 'icon': icon, 'Time': Time, 'PL': PL, 'username': username, 'Customer_Name': Customer_Name, 'device_id': device_id, 'Details': Details, 'Details_graph': Details_graph})
 
 
 @ login_required(login_url='login')
@@ -673,10 +674,13 @@ def emsasset_detail(request, device_id):
 
         Details = LoginEmsAsset.objects.get(device_id=device_id)
 
+        Service_History = LoginEmsServiceHistory.objects.get(
+            device_id=device_id)  # LoginEmsAsset
+
         EDOI = LoginEmsAsset.objects.get(
             device_id=device_id).ems_date_of_installation
 
-    return render(request, 'ems/emsAssetDetail.html', {'EDOI': EDOI, 'Details': Details, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat})
+    return render(request, 'ems-servo/servo_asset_asset-detail.html', {'Service_History': Service_History, 'EDOI': EDOI, 'Details': Details, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat})
 
 
 @ login_required(login_url='login')
@@ -964,7 +968,53 @@ def emsalert(request):
 
             Count = len(alert)
 
-            return render(request, 'ems/emsalert.html', {'alerts': alerts, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
+            Start_Time1 = []
+            End_Time1 = []
+
+            for a in alerts:
+                Start_Time1.append(a.created_at.strftime('%Y-%m-%d %H:%M:%S'))
+                End_Time1.append(a.updated_at.strftime('%Y-%m-%d %H:%M:%S'))
+
+            Time = zip(Start_Time1, End_Time1)
+
+            UTC = '0000-00-00 05:30:00'
+            y = UTC[:4]
+            mo = UTC[5:7]
+            da = UTC[8:10]
+            h = UTC[11:13]
+            m = UTC[14:16]
+            s = UTC[17:19]
+            d1 = datetime.timedelta(days=(int(
+                y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
+
+            Start_Time = []
+            End_Time = []
+            for s, e in Time:
+                y1 = s[:4]
+                mo1 = s[5:7]
+                da1 = s[8:10]
+                h1 = s[11:13]
+                m1 = s[14:16]
+                s1 = s[17:19]
+                d21 = datetime.datetime(year=int(y1), month=int(mo1), day=int(
+                    da1), hour=int(h1), minute=int(m1), second=int(s1))
+
+                Start_Time.append(d1 + d21)
+
+                y2 = e[:4]
+                mo2 = e[5:7]
+                da2 = e[8:10]
+                h2 = e[11:13]
+                m2 = e[14:16]
+                s2 = e[17:19]
+                d22 = datetime.datetime(year=int(y2), month=int(mo2), day=int(
+                    da2), hour=int(h2), minute=int(m2), second=int(s2))
+
+                End_Time.append(d1 + d22)
+
+                alerts_details = zip(Start_Time, End_Time, alerts)
+
+            return render(request, 'ems-servo/servo_alerts.html', {'alerts_details': alerts_details, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
 
         elif request.user.is_superuser:
             Customer_Name = 'Admin'
@@ -1214,7 +1264,53 @@ def emsalert(request):
 
             Count = len(alert)
 
-            return render(request, 'ems/emsalert.html', {'alerts': alerts, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
+            Start_Time1 = []
+            End_Time1 = []
+
+            for a in alerts:
+                Start_Time1.append(a.created_at.strftime('%Y-%m-%d %H:%M:%S'))
+                End_Time1.append(a.updated_at.strftime('%Y-%m-%d %H:%M:%S'))
+
+            Time = zip(Start_Time1, End_Time1)
+
+            UTC = '0000-00-00 05:30:00'
+            y = UTC[:4]
+            mo = UTC[5:7]
+            da = UTC[8:10]
+            h = UTC[11:13]
+            m = UTC[14:16]
+            s = UTC[17:19]
+            d1 = datetime.timedelta(days=(int(
+                y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
+
+            Start_Time = []
+            End_Time = []
+            for s, e in Time:
+                y1 = s[:4]
+                mo1 = s[5:7]
+                da1 = s[8:10]
+                h1 = s[11:13]
+                m1 = s[14:16]
+                s1 = s[17:19]
+                d21 = datetime.datetime(year=int(y1), month=int(mo1), day=int(
+                    da1), hour=int(h1), minute=int(m1), second=int(s1))
+
+                Start_Time.append(d1 + d21)
+
+                y2 = e[:4]
+                mo2 = e[5:7]
+                da2 = e[8:10]
+                h2 = e[11:13]
+                m2 = e[14:16]
+                s2 = e[17:19]
+                d22 = datetime.datetime(year=int(y2), month=int(mo2), day=int(
+                    da2), hour=int(h2), minute=int(m2), second=int(s2))
+
+                End_Time.append(d1 + d22)
+
+                alerts_details = zip(Start_Time, End_Time, alerts)
+
+            return render(request, 'ems-servo/servo_alerts.html', {'alerts_details': alerts_details, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
 
         if request.user.is_manager:
             Customer_Name = LoginManager.objects.get(
@@ -1495,7 +1591,53 @@ def emsalert(request):
 
             Count = len(alert)
 
-            return render(request, 'ems/emsalert.html', {'alerts': alerts, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
+            Start_Time1 = []
+            End_Time1 = []
+
+            for a in alerts:
+                Start_Time1.append(a.created_at.strftime('%Y-%m-%d %H:%M:%S'))
+                End_Time1.append(a.updated_at.strftime('%Y-%m-%d %H:%M:%S'))
+
+            Time = zip(Start_Time1, End_Time1)
+
+            UTC = '0000-00-00 05:30:00'
+            y = UTC[:4]
+            mo = UTC[5:7]
+            da = UTC[8:10]
+            h = UTC[11:13]
+            m = UTC[14:16]
+            s = UTC[17:19]
+            d1 = datetime.timedelta(days=(int(
+                y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
+
+            Start_Time = []
+            End_Time = []
+            for s, e in Time:
+                y1 = s[:4]
+                mo1 = s[5:7]
+                da1 = s[8:10]
+                h1 = s[11:13]
+                m1 = s[14:16]
+                s1 = s[17:19]
+                d21 = datetime.datetime(year=int(y1), month=int(mo1), day=int(
+                    da1), hour=int(h1), minute=int(m1), second=int(s1))
+
+                Start_Time.append(d1 + d21)
+
+                y2 = e[:4]
+                mo2 = e[5:7]
+                da2 = e[8:10]
+                h2 = e[11:13]
+                m2 = e[14:16]
+                s2 = e[17:19]
+                d22 = datetime.datetime(year=int(y2), month=int(mo2), day=int(
+                    da2), hour=int(h2), minute=int(m2), second=int(s2))
+
+                End_Time.append(d1 + d22)
+
+                alerts_details = zip(Start_Time, End_Time, alerts)
+
+            return render(request, 'ems-servo/servo_alerts.html', {'alerts_details': alerts_details, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'Count': Count, 'Customer_Name': Customer_Name, 'username': username})
 
 
 @ login_required(login_url='login')
@@ -1610,7 +1752,7 @@ def emsservice_history(request, device_id):
         Contract = LoginEmsServiceHistory.objects.get(
             device_id=device_id).service_contract
 
-    return render(request, 'ems/emsServiceHistory.html', {'Contract': Contract, 'EDOI': EDOI, 'Asset_Details': Asset_Details, 'Details': Details, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id})
+    return render(request, 'ems-servo/servo_asset_service-history.html', {'Contract': Contract, 'EDOI': EDOI, 'Asset_Details': Asset_Details, 'Details': Details, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id})
 
 
 @ login_required(login_url='login')
@@ -1972,7 +2114,7 @@ def emsLoadKPI(request, device_id):
 
         Name = "Load Side KPI"
 
-        return render(request, 'ems/emsLoadKPI.html', {'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'WT': WT, 'EO': EO, 'Time': Time, 'TR': TR, 'myFilter': myFilter, 'CA': CA, 'CR': CR, 'CY': CY, 'CB': CB, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        return render(request, 'ems-servo/servo_kpi_load-side.html', {'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'WT': WT, 'EO': EO, 'Time': Time, 'TR': TR, 'myFilter': myFilter, 'CA': CA, 'CR': CR, 'CY': CY, 'CB': CB, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -2325,7 +2467,7 @@ def emsEnergyPara(request, device_id):
 
         Name = "Energy Parameter KPI"
 
-        return render(request, 'ems/emsEnergyPara.html', {'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'PF': PF, 'VLN': VLN, 'VLL': VLL,  'alert_count': alert_count, 'Time': Time,  'TR': TR, 'myFilter': myFilter,  'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        return render(request, 'ems-servo/servo_kpi_energy-parameters.html', {'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'PF': PF, 'VLN': VLN, 'VLL': VLL,  'alert_count': alert_count, 'Time': Time,  'TR': TR, 'myFilter': myFilter,  'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -2702,7 +2844,7 @@ def emsDeviceInfoKPI(request, device_id):
 
         Name = "Device Info KPI"
 
-        return render(request, 'ems/emsDeviceInfoKPI.html', {'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'GSMSignal': GSMSignal, 'PowerStatus': PowerStatus, 'BatteryVoltage': BatteryVoltage, 'GSM': GSM, 'GB': GB, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        return render(request, 'ems-servo/servo_kpi_device-info.html', {'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'GSMSignal': GSMSignal, 'PowerStatus': PowerStatus, 'BatteryVoltage': BatteryVoltage, 'GSM': GSM, 'GB': GB, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -3021,11 +3163,14 @@ def emsdevice_alert(request, device_id):
 
         alert_count = len(alert)
 
-        url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&appid=6841e5450643e5d4ff59981dbf58944e'
-        r = requests.get(url.format(Cit)).json()
-        temperature = round((float(r['main']['temp'])-32)*0.555, 2)
-        description = r['weather'][0]['description']
-        icon = r['weather'][0]['icon']
+        Start_Time1 = []
+        End_Time1 = []
+
+        for a in alerts:
+            Start_Time1.append(a.created_at.strftime('%Y-%m-%d %H:%M:%S'))
+            End_Time1.append(a.updated_at.strftime('%Y-%m-%d %H:%M:%S'))
+
+        Time = zip(Start_Time1, End_Time1)
 
         UTC = '0000-00-00 05:30:00'
         y = UTC[:4]
@@ -3036,6 +3181,39 @@ def emsdevice_alert(request, device_id):
         s = UTC[17:19]
         d1 = datetime.timedelta(days=(int(
             y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
+
+        Start_Time = []
+        End_Time = []
+        for s, e in Time:
+            y1 = s[:4]
+            mo1 = s[5:7]
+            da1 = s[8:10]
+            h1 = s[11:13]
+            m1 = s[14:16]
+            s1 = s[17:19]
+            d21 = datetime.datetime(year=int(y1), month=int(mo1), day=int(
+                da1), hour=int(h1), minute=int(m1), second=int(s1))
+
+            Start_Time.append(d1 + d21)
+
+            y2 = e[:4]
+            mo2 = e[5:7]
+            da2 = e[8:10]
+            h2 = e[11:13]
+            m2 = e[14:16]
+            s2 = e[17:19]
+            d22 = datetime.datetime(year=int(y2), month=int(mo2), day=int(
+                da2), hour=int(h2), minute=int(m2), second=int(s2))
+
+            End_Time.append(d1 + d22)
+
+            alerts_details = zip(Start_Time, End_Time, alerts)
+
+        url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&appid=6841e5450643e5d4ff59981dbf58944e'
+        r = requests.get(url.format(Cit)).json()
+        temperature = round((float(r['main']['temp'])-32)*0.555, 2)
+        description = r['weather'][0]['description']
+        icon = r['weather'][0]['icon']
 
         LTOD1 = DevicesInfo.objects.filter(
             device_id=device_id).last().device_time.strftime('%Y-%m-%d %H:%M:%S')
@@ -3056,4 +3234,4 @@ def emsdevice_alert(request, device_id):
 
         # http://openweathermap.org/img/w/{{icon}}.png
 
-        return render(request, 'ems/emsDeviceAlerts.html', {'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'alerts': alerts, 'alert_count': alert_count,  'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff,  'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, })
+        return render(request, 'ems-servo/servo_alert_device.html', {'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'alerts_details': alerts_details, 'alert_count': alert_count,  'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff,  'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, })

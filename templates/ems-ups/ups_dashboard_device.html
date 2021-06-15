@@ -1,0 +1,379 @@
+
+{% extends 'ems-ups/base.html' %} {% load static %}
+{% block css %} 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <link rel="stylesheet" href="{% static './css/ups_dashboard_device.css' %}">
+    <link rel="stylesheet" href="{% static './css/chart.css' %}" />
+    <link rel="stylesheet" href="{% static './css/footer.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+      <div class="cont">
+        <div class="internal_nav">
+          <div class="row">
+            <div class="active_link">
+              <p><a href="{% url 'upsDashboard' device_id %}">Dashboard</a></p>
+            </div>
+
+            <div class="drop_asset">
+              <p>KPI</p>
+
+              <div class="drop-down">
+                <div>
+                  <a href="{% url 'upsEnergyPara' device_id %}"
+                    >Energy Parameters</a
+                  >
+                </div>
+                <hr />
+                <div>
+                  <a href="{% url 'upsLoadKPI' device_id %}">Load Side KPI</a>
+                </div>
+                <hr />
+                <div>
+                  <a href="{% url 'upsDeviceInfoKPI' device_id %}"
+                    >EMS Device Info</a
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="drop_asset">
+              <p>Asset Information</p>
+
+              <div class="drop-down">
+                <div>
+                  <a href="{% url 'upsasset_detail' device_id %}"
+                    >Asset Detail</a
+                  >
+                </div>
+                <hr />
+                <div>
+                  <a href="{% url 'upsservice_history' device_id %}"
+                    >Service History</a
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="drop_asset">
+              <p>Reports</p>
+
+              <div class="drop-down">
+                <div>
+                  <a href="{% url 'upsoperational_report' device_id %}"> Operational Report</a>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <p><a href="{% url 'upsdevice_alert' device_id %}">Alerts</a></p>
+            </div>
+          </div>
+        </div>
+        <!-- class ="internal_nav" ends here -->
+
+        <div class="upsDashboard">
+          <div class="left-side">
+ 
+            <div class="row">
+          
+            <div class="servo-block">
+              <div class="type-wrapper">
+                <div class="type-name">Input<br>Voltage</div>
+                <div class="type-img"><img src="{% static './images/input-voltage.png' %}" /></div>
+              </div>
+          
+              <div class="value-wrapper">
+                <table>
+                  <tr class="t_body">
+                    <td class="bold">RY</td>
+                    <td>{{ Details.vry_phase_voltage|floatformat:2}}</td>
+                  </tr>
+          
+                  <tr class="t_body">
+                    <td class="bold">YB</td>
+                    <td>{{ Details.vyb_phase_voltage|floatformat:2}}</td>
+                  </tr>
+          
+                  <tr>
+                    <td class="bold">BR</td>
+                    <td>{{ Details.vbr_phase_voltage|floatformat:2}}</td>
+                  </tr>
+                </table>
+              </div>
+          
+            </div>
+          
+          
+            <div class="servo-block">
+              <div class="type-wrapper">
+                <div class="type-name">Output<br>Voltage</div>
+                <div class="type-img"><img src="{% static './images/output-voltage.png' %}" /></div>
+              </div>
+          
+              <div class="value-wrapper">
+                <table>
+                  <tr class="t_body">
+                    <td class="bold">RY</td>
+                    <td>{{Details.vry_phase_voltage|floatformat:2}}</td>
+                  </tr>
+          
+                  <tr class="t_body">
+                    <td class="bold">YB</td>
+                    <td>{{Details.vyb_phase_voltage|floatformat:2}}</td>
+                  </tr>
+          
+                  <tr>
+                    <td class="bold">BR</td>
+                    <td>{{Details.vbr_phase_voltage|floatformat:2}}</td>
+                  </tr>
+                </table>
+              </div>
+          
+            </div>
+          
+          
+            <div class="servo-block">
+              <div class="type-wrapper">
+                <div class="type-name">Load <br> (kVA)</div>
+                <div class="type-img"><img src="{% static './images/law-scale.png' %}" /></div>
+              </div>
+          
+              <div class="value-wrapper">
+                <table>
+                  <tr>
+                    <td>{{Details.energy_output_kva|floatformat:2}}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+        
+           </div>  
+          
+           <div class="row">
+          
+            <div class="servo-block">
+              <div class="type-wrapper">
+                <div class="type-name">Input <br> Voltage</div>
+                <div class="type-img"><img src="{% static './images/input-voltage.png' %}" /></div>
+              </div>
+          
+              <div class="value-wrapper">
+                <table>
+                  <tr class="t_body">
+                    <td class="bold">RN</td>
+                    <td>{{Details.vr_phase_voltage|floatformat:2}}</td>
+                  </tr>
+          
+                  <tr class="t_body">
+                    <td class="bold">YN</td>
+                    <td>{{Details.vy_phase_voltage|floatformat:2}}</td>
+                  </tr>
+          
+                  <tr>
+                    <td class="bold">BN</td>
+                    <td>{{Details.vb_phase_voltage|floatformat:2}}</td>
+                  </tr>
+                </table>
+              </div>
+          
+            </div>
+          
+          
+            <div class="servo-block">
+              <div class="type-wrapper">
+                <div class="type-name">Output <br> Voltage</div>
+                <div class="type-img"><img src="{% static './images/output-voltage.png' %}" /></div>
+              </div>
+          
+              <div class="value-wrapper">
+                <table>
+                  <tr class="t_body">
+                    <td class="bold">RN</td>
+                    <td>{{Details.vr_phase_voltage|floatformat:2}}</td>
+                  </tr>
+          
+                  <tr class="t_body">
+                    <td class="bold">YN</td>
+                    <td>{{Details.vy_phase_voltage|floatformat:2}}</td>
+                  </tr>
+          
+                  <tr>
+                    <td class="bold">BN</td>
+                    <td>{{Details.vb_phase_voltage|floatformat:2}}</td>
+                  </tr>
+                </table>
+              </div>
+          
+            </div>
+          
+          
+            <div class="servo-block">
+              <div class="type-wrapper">
+                <div class="type-name">Load <br> (kVA)</div>
+                <div class="type-img"><img src="{% static './images/law-scale.png' %}" /></div>
+              </div>
+          
+              <div class="value-wrapper">
+                <table>
+                  <tr class="t_body">
+                    <td class="bold">R</td>
+                    <td>{{Details.energy_output_kva|floatformat:2}}</td>
+                  </tr>
+          
+                  <tr class="t_body">
+                    <td class="bold">Y</td>
+                    <td>{{Details.energy_output_kva|floatformat:2}}</td>
+                  </tr>
+          
+                  <tr>
+                    <td class="bold">B</td>
+                    <td>{{Details.energy_output_kva|floatformat:2}}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+        
+           </div> 
+           
+           
+            </div>
+            <!-- class ="left-side" ends here -->
+          <div class="right-side">
+            <div class="right_nav">
+              <div class="nav_text">ASSET INFO</div>
+            </div>
+
+            <div class="right_body">
+              <span class="bold">UPS Type:</span>{{asset_details.ups_type }}
+            </div>
+            <div class="right_body">
+              <span class="bold">Battery Range:</span>{{asset_details.battery_rating}}
+            </div>
+            <div class="right_body">
+              <span class="bold">Operating Volts:</span>{{asset_details.operating_volts }} V DC
+            </div>
+            <div class="right_body">
+              <span class="bold">Date of Installation:</span> {{asset_details.ups_date_of_installation}}
+            </div>
+            <div class="right_body">
+              <span class="bold">Warranty Status:</span> {{asset_details.ups_warranty_status}}
+            </div>
+            <div class="right_body">
+              <span class="bold">Last Service Date:</span> {{service_details.last_service_date }}
+            </div>
+            <div class="right_body">
+              <span class="bold">Next Service Date:</span> {{service_details.next_service_date}}
+            </div>
+            <div class="right_body">
+              <span class="bold">Service Provider:</span> {{service_details.service_provider}}
+            </div>
+          </div>
+        </div>
+
+        <div class="graphs-ems">
+          <div class="one-graph">
+            <canvas id="cur_rby"></canvas>
+            <script>
+              var cur_rby = document.getElementById('cur_rby').getContext('2d');
+                        var chart9 = new Chart(cur_rby, {
+                            type: 'line',
+                            data: {
+                                labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                datasets: [{
+                                    label: 'CurrentPhaseR',
+                                    fill: false,
+                                    data: [{% for v in Details_graph %} {{v.current_r_phase}}, {% endfor %}],
+                                    borderColor: 'rgba(207, 0, 15, 1)',
+                                    borderWidth: 2
+                                },
+                                {
+                                    label: 'CurrentPhaseY',
+                                    fill: false,
+                                    data: [{% for v in Details_graph %} {{v.current_y_phase}}, {% endfor %}],
+                                    borderColor: 'rgba(247, 202, 24, 1)',
+                                    borderWidth: 2
+                                },
+                                {
+                                    label: 'CurrentPhaseB',
+                                    fill: false,
+                                    data: [{% for v in Details_graph %} {{v.current_b_phase}}, {% endfor %}],
+                                    borderColor:'rgba(44, 130, 201, 1)',
+                                    borderWidth: 2
+                                }
+                            ]
+                            },
+                            options: {
+      
+                                legend: {
+                                          labels: {
+                                              fontColor: "black",
+                                              fontSize: 13
+                                          }
+                                      },
+      
+                                  scales: {
+                                      yAxes: [{
+                                          gridLines: {
+                                              color: "rgba(0,0,0,0.3)",
+                                          },
+                                          ticks: {
+                                              fontColor: "black",
+                                              beginAtZero: true,
+                                              fontSize: 17
+                                          }
+                                      }],
+      
+                                      xAxes: [{
+                                          gridLines: {
+                                              color: "rgba(0,0,0,0.3)",
+                                          },
+                                          ticks: {
+                                            autoSkip: true,
+                                            maxTicksLimit: 12,
+                                            fontColor: "black",
+                                            fontSize: 17,
+                                            maxRotation: 0,
+                                          }
+                                      }]
+                                  },
+      
+                                  title: {
+                                    display: true,
+                                    text: 'Phasewise Current',
+                                    fontSize: 17,
+                                    fontColor: "balck",
+                                    fontFamily: "Helvetica"
+                                }
+                              }
+                        });
+            </script>
+          </div>
+        </div>
+      </div>
+      <!-- class ="cont" ends here -->
+
+{% endblock %}
+
+{% block js %}
+
+    <!-- js -->
+
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+      crossorigin="anonymous"
+    ></script>
+    
+
+    <script type="text/javascript" src="{% static './js/navbar.js' %}"></script>
+  </body>
+</html>
+
+{% endblock %}

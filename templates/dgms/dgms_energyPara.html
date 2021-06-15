@@ -1,0 +1,198 @@
+{% extends 'dgms/KPI-base.html' %} {% block content %} {% load static %}
+<div class="kpi">
+  <div class="graphs-kpi">
+    <div class="one-graph">
+      <canvas id="vln_avg"></canvas>
+      <script>
+        var vln_avg = document.getElementById('vln_avg').getContext('2d');
+                        var myChart3 = new Chart(vln_avg, {
+                            type: 'line',
+                            data: {
+                                labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                datasets: [{
+                                    label: 'VLN Average',
+                                    fill: false,
+                                    data: [{% for v in VLN  %} {{v}}, {% endfor %}],
+                                    borderColor:'rgba(30, 130, 76, 1)',
+                                    borderWidth: 2
+                                }]
+                            },
+                            options: {
+
+                              legend: {
+                                        labels: {
+                                            fontColor: "black",
+                                            fontSize: 13
+                                        }
+                                    },
+
+                                scales: {
+                                    yAxes: [{
+                                        gridLines: {
+                                            color: "rgba(0,0,0,0.3)",
+                                        },
+                                        ticks: {
+                                            fontColor: "black",
+                                            beginAtZero: true,
+                                            fontSize: 17
+                                        }
+                                    }],
+
+                                    xAxes: [{
+                                        gridLines: {
+                                            color: "rgba(0,0,0,0.3)",
+                                        },
+                                        ticks: {
+                                            autoSkip: true,
+                                            maxTicksLimit: 12,
+                                            fontColor: "black",
+                                            fontSize: 17,
+                                            maxRotation: 0,
+                                        }
+                                    }]
+                                },
+
+                                title: {
+                                    display: true,
+                                    text: 'VLN Average',
+                                    fontSize: 17,
+                                    fontColor: "balck",
+                                    fontFamily: "Helvetica"
+                                }
+                            }
+                        });
+      </script>
+    </div>
+
+    <div class="one-graph">
+      <canvas id="avg_voltage"></canvas>
+      <script>
+        var avg_voltage = document.getElementById('avg_voltage').getContext('2d');
+                        var myChart4 = new Chart(avg_voltage, {
+                            type: 'line',
+                            data: {
+                                labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                datasets: [{
+                                    label: 'VLL',
+                                    fill: false,
+                                    data: [{% for v in VLL %} {{v}}, {% endfor %}],
+                                    borderColor: 'rgba(247, 202, 24, 1)',
+                                    borderWidth: 2
+                                }]
+                            },
+                            options: {
+
+                              legend: {
+                                        labels: {
+                                            fontColor: "black",
+                                            fontSize: 13
+                                        }
+                                    },
+
+                                scales: {
+                                    yAxes: [{
+                                        gridLines: {
+                                            color: "rgba(0,0,0,0.3)",
+                                        },
+                                        ticks: {
+                                            fontColor: "black",
+                                            beginAtZero: true,
+                                            fontSize: 17
+                                        }
+                                    }],
+
+                                    xAxes: [{
+                                        gridLines: {
+                                            color: "rgba(0,0,0,0.3)",
+                                        },
+                                        ticks: {
+                                            autoSkip: true,
+                                            maxTicksLimit: 12,
+                                            fontColor: "black",
+                                            fontSize: 17,
+                                            maxRotation: 0,
+                                        }
+                                    }]
+                                },
+
+                                title: {
+                                    display: true,
+                                    text: 'VLL',
+                                    fontSize: 17,
+                                    fontColor: "balck",
+                                    fontFamily: "Helvetica"
+                                }
+
+                            }
+                        });
+      </script>
+    </div>
+
+    <div class="one-graph">
+      <canvas id="freq"></canvas>
+      <script>
+        var cfreq = document.getElementById('freq').getContext('2d');
+                        var myChart5 = new Chart(freq, {
+                            type: 'line',
+                            data: {
+                                labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                datasets: [{
+                                    label: 'Frequency',
+                                    fill: false,
+                                    data: [{% for v in FREQ %} {{v}}, {% endfor %}],
+                                    borderColor: 'rgba(210, 82, 127, 1)',
+                                    borderWidth: 2
+                                }]
+                            },
+                            options: {
+
+                              legend: {
+                                        labels: {
+                                            fontColor: "black",
+                                            fontSize: 13
+                                        }
+                                    },
+
+                                scales: {
+                                    yAxes: [{
+                                        gridLines: {
+                                            color: "rgba(0,0,0,0.3)",
+                                        },
+                                        ticks: {
+                                            fontColor: "black",
+                                            beginAtZero: true,
+                                            fontSize: 17
+                                        }
+                                    }],
+
+                                    xAxes: [{
+                                        gridLines: {
+                                            color: "rgba(0,0,0,0.3)",
+                                        },
+                                        ticks: {
+                                            autoSkip: true,
+                                            maxTicksLimit: 12,
+                                            fontColor: "black",
+                                            fontSize: 17,
+                                            maxRotation: 0,
+                                        }
+                                    }]
+                                },
+
+                                title: {
+                                    display: true,
+                                    text: 'Frequency',
+                                    fontSize: 17,
+                                    fontColor: "balck",
+                                    fontFamily: "Helvetica"
+                                }
+
+                            }
+                        });
+      </script>
+    </div>
+  </div>
+  <!-- class ="kpi-graphs" ends here -->
+</div>
+<!--KPI Ends here-->
+{% endblock %}

@@ -1,0 +1,302 @@
+{% extends 'ems-ups/KPI-base.html' %} {% block content %} {% load static %}
+<div class="kpi">
+  <div class="graphs-kpi">
+    <div class="one-graph">
+      <canvas id="inV"></canvas>
+      <script>
+        var inV = document.getElementById("inV").getContext("2d");
+        var myChart1 = new Chart(inV, {
+          type: "line",
+          data: {
+            labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+            datasets: [
+              {
+                label: "Input Voltage",
+                fill: false,
+                data: [{% for v in VLL %} {{v}}, {% endfor %}],
+                borderColor: "rgba(0, 230, 64, 1)",
+                borderWidth: 2,
+              },
+            ],
+          },
+          options: {
+            legend: {
+              labels: {
+                fontColor: "black",
+                fontSize: 13,
+              },
+            },
+
+            scales: {
+              yAxes: [
+                {
+                  gridLines: {
+                    color: "rgba(0,0,0,0.3)",
+                  },
+                  ticks: {
+                    fontColor: "black",
+                    beginAtZero: true,
+                    fontSize: 17,
+                  },
+                },
+              ],
+
+              xAxes: [
+                {
+                  gridLines: {
+                    color: "rgba(0,0,0,0)",
+                  },
+                  ticks: {
+                    autoSkip: true,
+                    maxTicksLimit: 12,
+                    fontColor: "balck",
+                    fontSize: 17,
+                    maxRotation: 0,
+                  },
+                },
+              ],
+            },
+
+            title: {
+              display: true,
+              text: "Input Voltage (VLL)",
+              fontSize: 17,
+              fontColor: "balck",
+              fontFamily: "Helvetica",
+            },
+          },
+        });
+      </script>
+    </div>
+
+    <div class="one-graph">
+      <canvas id="outV"></canvas>
+      <script>
+        var outV = document.getElementById("outV").getContext("2d");
+        var myChart2 = new Chart(outV, {
+          type: "line",
+          data: {
+            labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+            datasets: [
+              {
+                label: "Output Voltage",
+                fill: false,
+                data: [{% for v in VLL %} {{v}}, {% endfor %}],
+                borderColor: "rgba(0, 230, 64, 1)",
+                borderWidth: 2,
+              },
+            ],
+          },
+          options: {
+            legend: {
+              labels: {
+                fontColor: "black",
+                fontSize: 13,
+              },
+            },
+
+            scales: {
+              yAxes: [
+                {
+                  gridLines: {
+                    color: "rgba(0,0,0,0.3)",
+                  },
+                  ticks: {
+                    fontColor: "black",
+                    beginAtZero: true,
+                    fontSize: 17,
+                  },
+                },
+              ],
+
+              xAxes: [
+                {
+                  gridLines: {
+                    color: "rgba(0,0,0,0)",
+                  },
+                  ticks: {
+                    autoSkip: true,
+                    maxTicksLimit: 12,
+                    fontColor: "balck",
+                    fontSize: 17,
+                    maxRotation: 0,
+                  },
+                },
+              ],
+            },
+
+            title: {
+              display: true,
+              text: "Output Voltage (VLL)",
+              fontSize: 17,
+              fontColor: "balck",
+              fontFamily: "Helvetica",
+            },
+          },
+        });
+      </script>
+    </div>
+
+    <div class="one-graph">
+      <canvas id="vln_avg"></canvas>
+      <script>
+        var vln_avg = document
+          .getElementById("vln_avg")
+          .getContext("2d");
+        var myChart3 = new Chart(vln_avg, {
+          type: "line",
+          data: {
+            labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+            datasets: [
+              {
+                label: "Output Voltage VLN Average",
+                fill: false,
+                data: [{% for v in VLN  %} {{v}}, {% endfor %}],
+                borderColor: "rgba(219, 10, 91, 1)",
+                borderWidth: 2,
+              },
+            ],
+          },
+          options: {
+            legend: {
+              labels: {
+                fontColor: "black",
+                fontSize: 13,
+              },
+            },
+
+            scales: {
+              yAxes: [
+                {
+                  gridLines: {
+                    color: "rgba(0,0,0,0.3)",
+                  },
+                  ticks: {
+                    fontColor: "black",
+                    beginAtZero: true,
+                    fontSize: 17,
+                  },
+                },
+              ],
+
+              xAxes: [
+                {
+                  gridLines: {
+                    color: "rgba(0,0,0,0)",
+                  },
+                  ticks: {
+                    autoSkip: true,
+                    maxTicksLimit: 12,
+                    fontColor: "balck",
+                    fontSize: 17,
+                    maxRotation: 0,
+                  },
+                },
+              ],
+            },
+
+            title: {
+              display: true,
+              text: "Output Voltage VLN Average",
+              fontSize: 17,
+              fontColor: "balck",
+              fontFamily: "Helvetica",
+            },
+          },
+        });
+      </script>
+    </div>
+
+    <!-- <div class="one-graph">
+      <canvas id="pow_fac"></canvas>
+      <script>
+        var pow_fac = document
+          .getElementById("pow_fac")
+          .getContext("2d");
+        var myChart3 = new Chart(pow_fac, {
+          type: "line",
+          data: {
+            labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+            datasets: [
+              {
+                label: "Power Factor",
+                fill: false,
+                data: [{% for v in PF  %} {{v}}, {% endfor %}],
+                borderColor: "rgba(219, 10, 91, 1)",
+                borderWidth: 2,
+              },
+            ],
+          },
+          options: {
+            legend: {
+              labels: {
+                fontColor: "black",
+                fontSize: 13,
+              },
+            },
+
+            scales: {
+              yAxes: [
+                {
+                  // type: 'linear',
+                  gridLines: {
+                    color: "rgba(0,0,0,0.3)",
+                  },
+                  ticks: {
+                    fontColor: "black",
+                    beginAtZero: true,
+                    fontSize: 10,
+                  },
+                },
+              ],
+
+              xAxes: [
+                {
+                  // type: 'time',
+                  gridLines: {
+                    color: "rgba(0,0,0,0)",
+                  },
+                  ticks: {
+                    fontColor: "black",
+                    fontSize: 17,
+                    autoSkip: true,
+                    maxTicksLimit: 12,
+                    maxRotation: 0,
+                  },
+                },
+              ],
+            },
+            plugins: {
+              title: {
+                display: true,
+                text: "Power Factor",
+                fontSize: 17,
+                fontColor: "balck",
+                fontFamily: "Helvetica",
+              },
+              zoom: {
+                pan: {
+                  enabled: true,
+                  mode: "x",
+                  // overScaleMode: 'y'
+                },
+                zoom: {
+                  enabled: true,
+                  mode: "x",
+                  // drag: true,
+                  speed: 0.00001,
+                  threshold: 0,
+                  sensitivity: 0,
+                  // overScaleMode: 'y'
+                },
+              },
+            },
+          },
+        });
+      </script>
+    </div> -->
+  </div>
+  <!-- class ="kpi-graphs" ends here -->
+</div>
+<!--KPI Ends here-->
+{% endblock %}

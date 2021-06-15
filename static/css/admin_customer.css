@@ -1,0 +1,207 @@
+@import url("fonts.css");
+
+/*--------------------- CSS for Customer name and Manager box --------------------*/
+.cont .row{
+  justify-content: space-between;
+  margin: 0px ;
+  padding: 0;
+}
+
+.cust_name{
+    margin: 10px;
+    font-size: 30px;
+}
+
+.manager{
+    background-color: white;
+    margin: 10px;
+    width: 440px;
+    min-height: 20vh;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.manager div{
+    padding: 5px;
+}
+
+.manager_head{
+    font-size: 17px;
+    font-weight: bold;
+    color: #06511C;
+    
+}
+
+.manager hr{
+    padding: 0;
+    margin: 0;
+}
+
+.mbold{
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.m_contact{
+    display: flex;
+   
+}
+
+.m_contact div{
+   padding: 0;
+   margin-right: 40px;
+}
+
+/*---------------------- css for user table---------------------------------*/
+
+
+.user_info{
+
+	background-color: #B5FE9F;
+	margin: 10px 10px 10px 10px;
+	min-height: 60vh;
+	box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    border: 1px solid rgb(113, 113, 113);
+}
+
+
+.top{
+	display: flex;
+	justify-content: space-between;
+	list-style-type:none;
+	margin: 0px;
+	padding: 0px;
+}
+.head{
+	margin: 10px 10px 0px 10px;
+	font-size: 20px;
+    font-weight: bold;
+    color: #06511C;
+	font-family: 'Heebo', sans-serif;
+	/*color: #3AB404;*/
+}
+
+.user_info .total{
+    font-size: 14px;
+    font-weight: normal;
+    color: black;
+}
+
+
+
+.drop_downs{
+	margin: 10px;
+}
+
+.top form select{
+ margin-left: 15px;
+ margin-top: 1px;
+ border: none;
+ font-size: 13px;
+ width: 8rem;
+ height: 2rem;
+ border-radius: 5px;
+ outline:none;
+opacity: 0.9;
+
+}
+
+.top form select:hover{
+ 
+ opacity: 1;
+ -webkit-box-shadow: 3px 3px 3px #666;
+    -moz-box-shadow: 3px 3px 3px #666;
+    box-shadow:3px 3px 3px #666;
+}
+
+.drop_downs .go{
+    text-transform: inherit;
+    outline: none;
+    border: none;
+    margin-top: 2px;
+    /* margin-left: 10px; */
+    background-color: #08450c;
+    color: #ffffff;
+    border-radius: 50%;
+    width: 32px;
+    height: 30px;
+    text-align: center;
+    box-shadow: 1px 1.5px 1px  rgba(50, 50, 50, 0.6);
+	font-size: 13px;
+	margin-left: 10px;
+ 
+}
+
+.drop_downs .go:hover{
+   
+    background-color: #ffffff;
+    color: #08450c;
+}
+
+.drop_downs .go:active{
+    background-color: #08450c;
+    color: #ffffff;
+    box-shadow: none;
+}
+
+
+
+.user_info_table{
+	margin: 10px;
+	overflow-x:auto;
+	overflow-y:auto;
+	min-height: 49vh;
+	max-height: 49vh;
+}
+
+.user_table{
+
+     text-align: left;
+     /*border-collapse: collapse;*/
+     border-collapse: separate;
+     border-spacing: 0 1em;
+     width: 100%;
+    
+
+}
+
+
+.user_table tr:nth-child(n+2){
+	background-color: white;
+	box-shadow: 0 5px 6px -6px black;
+
+}
+
+.user_table tr:nth-child(n+2):hover{
+	background-color: rgb(218, 218, 218);
+	color: rgb(0, 0, 0);
+
+}
+
+.user_table td:nth-child(16){
+	border-left: 4px solid #C2EDFD;
+	padding: 10px 0;
+	/*border-right: 1px solid #E9E8E8;*/
+
+}
+
+.user_table th, .user_table td{
+	font-size: 12px;
+	/*border: 1px solid #ddd;*/
+    padding: 8px;
+   
+}
+.user_table th{
+	background-color:#B5FE9F; 
+	color: #000000;
+	position: sticky;
+    top: 0; /* Don't forget this, required for the stickiness */
+    /*text-transform: uppercase;*/
+
+  
+}
+
+.user_table td{
+	font-size: 12px;
+    text-transform: capitalize;
+}
+

@@ -276,9 +276,6 @@ class LoginEmsAsset(models.Model):
     # Field name made lowercase.
     seller_name = models.CharField(db_column='Seller_Name', max_length=50)
     # Field name made lowercase.
-    service_provider = models.CharField(
-        db_column='Service_Provider', max_length=100)
-    # Field name made lowercase.
     date_of_installation = models.DateField(db_column='Date_Of_Installation')
     # Field name made lowercase.
     warranty_start_date = models.DateField(db_column='Warranty_Start_Date')
@@ -359,9 +356,6 @@ class LoginUpsAsset(models.Model):
     # Field name made lowercase.
     seller_name = models.CharField(db_column='Seller_Name', max_length=50)
     # Field name made lowercase.
-    service_provider = models.CharField(
-        db_column='Service_Provider', max_length=50)
-    # Field name made lowercase.
     ups_make = models.CharField(db_column='UPS_Make', max_length=50)
     # Field name made lowercase.
     ups_model_no = models.CharField(db_column='UPS_Model_No', max_length=50)
@@ -409,6 +403,9 @@ class LoginUpsAsset(models.Model):
         db_column='Battery_Date_Of_Installation')
     # Field name made lowercase.
     ups_type = models.CharField(db_column='UPS_Type', max_length=70)
+    # Field name made lowercase.
+    ups_ems_date_of_installation = models.DateField(
+        db_column='UPS_EMS_Date_Of_Installation')
 
     class Meta:
         managed = False

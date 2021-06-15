@@ -1,0 +1,105 @@
+{% extends 'dgms/Report-base.html' %} {% block content %} {% load static %}
+
+
+<div class="download_report" align="right">
+
+
+  <div  class="download">
+  <div><img src="{% static './images/download.png' %}" alt="download"> </div>
+  <div onclick="reportFunction()" class="dn-txt">Download </div>
+</div>
+
+<div id="report-dropdown" class="report-dropdown-content">
+  <div onclick="genPDF()">pdf</div>
+  <hr>
+  <div onclick="download_table_as_csv( 'report','performance_report')">csv</div>
+</div>
+
+</div>
+
+<div class="report">
+  <div class="report_table">
+    <table id="report">
+      <thead >
+      <tr id="per"> 
+          <th>S.NO</th>
+          <th>RUN COUNT</th>
+          <th>START TIME</th>
+          <th>END TIME</th>
+          <th>RUN HOUR</th>
+          <th>FUEL CONSUMED (L)</th>
+          <th>PEAK LOAD(kVA)</th>
+          <th>AVERAGE LOAD (%)</th>
+          <th>AVG. CONSUMPTION (per hour)</th>
+      </tr>
+     </thead>
+
+     <tbody>
+      {% for s,e,x,y,r,run in context1 %}
+      <tr>
+        <td>{{ forloop.counter }}.</td>
+        <td>{{ r }}</td>
+        <td>{{s}}</td>
+        {% if e == None %}
+        <td>Running</td>
+        <td>Running</td>
+        <td>Running</td>
+        <td>Running</td>
+        <td>Running</td>
+        <td>Running</td>
+        {% else %}
+        <td>{{e}}</td>
+        <td>{{run}}</td>
+        <td>{{x.fuel_consumed|floatformat:2}}</td>
+        <td>{{x.maximum_demand_load|floatformat:2}}</td>
+        <td>{{x.efficiency|floatformat:2}}</td>
+        <td>{{y|floatformat:2}}</td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+     </tbody>
+
+      <tr class="tfoot">
+        <td>Total:</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>{{Total_RH}}</td>
+        <td>{{Total_F|floatformat:2}}</td>
+        <td>{{Avg_PL|floatformat:2}}</td>
+        <td>{{Avg_AL|floatformat:2}}</td>
+        <td>{{Avg_FC|floatformat:2}}</td>
+      </tr>
+
+  </table>
+  </div> <!-- class ="report_table" ends here -->
+
+  <div class="total_records">
+    <div class="tr_text">Total Records Fetched: {{Count}} </div>
+  </div>
+
+</div> <!-- class ="report" ends here -->
+
+</div> <!-- class ="cont" ends here -->
+
+
+<!--PDF Report--->
+
+<div class="report_struct" style=" display: none; font-family:Arial, Helvetica, sans-serif">
+  <div id="reportName" style="font-size: 27px;">Performance Report</div>
+  <div id="customerName" style="font-size: 25px; font-weight: bold;">{{Customer_Name}}</div>
+  <div id="assetDetail">
+    <div><span style="font-weight: bold;">Asset:</span>{{Cit}}-{{Loc}}</span></div>
+    <div><span style="font-weight: bold;">Rating:</span> {{Rat}} kVA</div>
+    <div><span style="font-weight: bold;">Diesel Tank Size:</span> {{Tank_Size}} Liters</div>
+  </div>
+  <div id="assetAddress">
+    <div style="font-weight: bold;">Address:</div> 
+    <div>{{Address}}</div>
+  </div>
+  <div id="dateRange" >{{enddate}} TO {{startdate}}</div>
+  <div id="fuelCon"><span style="font-weight: bold;">Total Fuel Consumed:</span> {{Total_F}} L</div>
+  
+</div>
+
+{% endblock %}

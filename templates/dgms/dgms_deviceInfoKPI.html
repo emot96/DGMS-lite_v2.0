@@ -1,0 +1,153 @@
+{% extends 'dgms/KPI-base.html' %} {% block content %} {% load static %}
+
+<div class="kpi">
+  <div class="kpi-info">
+    <div class="info">
+      <div class="heading">Power Supply</div>
+      <img src="{% static './images/lightning.png' %}" alt="power" />
+      <div class="value">{{PowerStatus}}</div>
+    </div>
+
+    <div class="info">
+      <div class="heading">Battery Volts</div>
+      <img src="{% static './images/low-battery.png' %}" alt="battery" />
+      <div class="value">{{BatteryVoltage}} VDC</div>
+    </div>
+
+    <div class="info">
+      <div class="heading">GSM Signal</div>
+      <img src="{% static './images/gsm.png' %}" alt="gsm" />
+      <div class="value">{{GSMSignal}}</div>
+    </div>
+  </div>
+  <div class="graphs-kpi">
+    <div class="one-graph">
+      <canvas id="gsm"></canvas>
+      <script>
+        var gsm = document.getElementById('gsm').getContext('2d');
+                        var myChart = new Chart(gsm, {
+                            type: 'line',
+                            data: {
+                                labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                datasets: [{
+                                    label: 'GSM',
+                                    fill:false,
+                                    data: [{% for v in GSM %} {{v}}, {% endfor %}],
+                                    borderColor: 'rgba(0, 230, 64, 1)',
+                                    borderWidth: 2
+                                }]
+                            },
+                            options: {
+
+                              legend: {
+                                        labels: {
+                                            fontColor: "black",
+                                            fontSize: 13
+                                        }
+                                    },
+
+                                scales: {
+                                    yAxes: [{
+                                        gridLines: {
+                                            color: "rgba(0,0,0,0.3)",
+                                        },
+                                        ticks: {
+                                            fontColor: "black",
+                                            beginAtZero: true,
+                                            fontSize: 17
+                                        }
+                                    }],
+
+                                    xAxes: [{
+                                        gridLines: {
+                                            color: "rgba(0,0,0,0.3)",
+                                        },
+                                        ticks: {
+                                          autoSkip: true,
+                                          maxTicksLimit: 12,
+                                          fontColor: "black",
+                                          fontSize: 17,
+                                          maxRotation: 0,
+                                        }
+                                    }]
+                                },
+
+                                title: {
+                                    display: true,
+                                    text: 'GSM',
+                                    fontSize: 17,
+                                    fontColor: "balck",
+                                    fontFamily: "Helvetica"
+                                }
+                            }
+                        });
+      </script>
+    </div>
+
+    <div class="one-graph">
+      <canvas id="gt_battery"></canvas>
+      <script>
+        var gt_battery = document.getElementById('gt_battery').getContext('2d');
+                          var myChart1 = new Chart(gt_battery, {
+                              type: 'line',
+                              data: {
+                                  labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                  datasets: [{
+                                      label: 'Gateway Battery',
+                                      fill:false,
+                                      data: [{% for v in GB %} {{v}}, {% endfor %}],
+                                      borderColor:'rgba(219, 10, 91, 1)',
+                                      borderWidth: 2
+                                  }]
+                              },
+                              options: {
+
+                                legend: {
+                                          labels: {
+                                              fontColor: "black",
+                                              fontSize: 13
+                                          }
+                                      },
+
+                                  scales: {
+                                      yAxes: [{
+                                          gridLines: {
+                                              color: "rgba(0,0,0,0.3)",
+                                          },
+                                          ticks: {
+                                              fontColor: "black",
+                                              beginAtZero: true,
+                                              fontSize: 17
+                                          }
+                                      }],
+
+                                      xAxes: [{
+                                          gridLines: {
+                                              color: "rgba(0,0,0,0.3)",
+                                          },
+                                          ticks: {
+                                            autoSkip: true,
+                                            maxTicksLimit: 12,
+                                            fontColor: "black",
+                                            fontSize: 17,
+                                            maxRotation: 0,
+                                          }
+                                      }]
+                                  },
+
+                                  title: {
+                                      display: true,
+                                      text: 'Gateway Battery',
+                                      fontSize: 17,
+                                      fontColor: "balck",
+                                      fontFamily: "Helvetica"
+                                  }
+                              }
+                          });
+      </script>
+    </div>
+  </div>
+  <!-- class ="kpi-graphs" ends here -->
+</div>
+<!--KPI Ends here-->
+{% endblock %}

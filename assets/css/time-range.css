@@ -16,7 +16,7 @@
 
 .page-info{
     padding: 10px;
-    color: rgb(61, 6, 49);
+    color: rgb(0, 0, 0);
     
 }
 
@@ -128,7 +128,7 @@
 @media screen and (max-width: 3000px){
 
     .select-time-bar{
-        top: 74px;
+        top: 67px;
     }    
 
 }

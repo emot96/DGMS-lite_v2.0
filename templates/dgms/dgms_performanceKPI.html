@@ -1,0 +1,470 @@
+{% extends 'dgms/KPI-base.html' %} {% block content %} {% load static %}
+<div class="kpi">
+  <div class="kpi-info">
+    <div class="info">
+      <div class="heading">Run Hour</div>
+      <img src="{% static './images/running.png' %}" alt="runhour" />
+      <div class="value">{{Total_RH}}</div>
+    </div>
+
+    <div class="info">
+      <div class="heading">Energy Generated</div>
+      <img src="{% static './images/energy.png' %}" alt="runhour" />
+      <div class="value">{{Total_UG}}</div>
+    </div>
+
+    <div class="info">
+      <div class="heading">Run Count</div>
+      <img src="{% static './images/pedometer.png' %}" alt="runcount" />
+      <div class="value">{{RunCount}}</div>
+    </div>
+
+    <div class="info">
+      <div class="heading">Total Fuel Consumed</div>
+      <img src="{% static './images/gas-station.png' %}" alt="fuel" />
+      <div class="value">{{Total_FC}} L</div>
+    </div>
+
+    <div class="info">
+      <div class="heading">Price</div>
+      <img src="{% static './images/rupee.png' %}" alt="Price" />
+      <div class="value">INR {{Total_FCO}}</div>
+    </div>
+  </div>
+
+  <div class="graphs-kpi">
+    <div class="one-graph">
+      <canvas id="run_count"></canvas>
+      <script>
+        var run_count = document.getElementById('run_count').getContext('2d');
+                        var myChart2 = new Chart(run_count, {
+                            type: 'bar',
+                            data: {
+                                labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                datasets: [{
+                                    label: 'Run Count',
+                                    fill: false,
+                                    data: [{% for v in RC %} {{v}}, {% endfor %}],
+                                    borderColor: 'rgba(242, 120, 75, 1)',
+                                    borderWidth: 2
+                                },{
+                                        label: 'Run Count',
+                                        type:'line',
+                                        fill: false,
+                                        data: [{% for v in RC %} {{v}}, {% endfor %}],
+                                        borderColor: 'rgba(242, 120, 75, 1)',
+                                        borderWidth: 2
+                                    }]
+                            },
+                            options: {
+
+                              legend: {
+                                        labels: {
+                                            fontColor: "black",
+                                            fontSize: 13
+                                        }
+                                    },
+
+                                scales: {
+                                    yAxes: [{
+                                        gridLines: {
+                                            color: "rgba(0,0,0,0.3)",
+                                        },
+                                        ticks: {
+                                            fontColor: "balck",
+                                            beginAtZero: true,
+                                            fontSize: 17
+                                        }
+                                    }],
+
+                                    xAxes: [{
+                                        gridLines: {
+                                            color: "rgba(0,0,0,0.3)",
+                                        },
+                                        ticks: {
+                                            autoSkip: true,
+                                            maxTicksLimit: 12,
+                                            fontColor: "balck",
+                                            fontSize: 17,
+                                            maxRotation: 0,
+                                        }
+                                    }]
+                                },
+
+                                title: {
+                                    display: true,
+                                    text: 'Run Count',
+                                    fontSize: 17,
+                                    fontColor: "balck",
+                                    fontFamily: "Helvetica"
+                                }
+                            }
+                        });
+      </script>
+    </div>
+
+    <div class="one-graph">
+      <canvas id="unit_gen"></canvas>
+      <script>
+        var run_count = document.getElementById('unit_gen').getContext('2d');
+                        var myChart1 = new Chart(unit_gen, {
+                            type: 'bar',
+                            data: {
+                                labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                datasets: [{
+                                    label: 'Energy Generated',
+                                    fill:false,
+                                    data: [{% for v in UG  %} {{v}}, {% endfor %}],
+                                    borderColor: 'rgba(129, 207, 224, 1)',
+                                    borderWidth: 2
+                                },{
+                                  label: 'Energy Generated',
+                                  fill:false,
+                                  type:'line',
+                                  data: [{% for v in UG  %} {{v}}, {% endfor %}],
+                                  borderColor: 'rgba(129, 207, 224, 1)',
+                                  borderWidth: 2
+                              }]
+                            },
+                            options: {
+
+                              legend: {
+                                        labels: {
+                                            fontColor: "black",
+                                            fontSize: 13
+                                        }
+                                    },
+
+                                scales: {
+                                    yAxes: [{
+                                        gridLines: {
+                                            color: "rgba(0,0,0,0.3)",
+                                        },
+                                        ticks: {
+                                            fontColor: "black",
+                                            beginAtZero: true,
+                                            fontSize: 17
+                                        }
+                                    }],
+
+                                    xAxes: [{
+                                        gridLines: {
+                                            color: "rgba(0,0,0,0.3)",
+                                        },
+                                        ticks: {
+                                            autoSkip: true,
+                                            maxTicksLimit: 12,
+                                            fontColor: "black",
+                                            fontSize: 17,
+                                            maxRotation: 0,
+                                        }
+                                    }]
+                                },
+
+                                title: {
+                                    display: true,
+                                    text: 'Energy Generated',
+                                    fontSize: 17,
+                                    fontColor: "balck",
+                                    fontFamily: "Helvetica"
+                                }
+                            }
+                        });
+      </script>
+    </div>
+    <div class="one-graph">
+      <canvas id="run_hr"></canvas>
+      <script>
+        var run_count = document.getElementById('run_hr').getContext('2d');
+        var myChart = new Chart(run_hr, {
+            type: 'bar',
+            data: {
+                labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                datasets: [{
+                    label: 'Run Hour',
+                    fill: false,
+                    data: [{% for v in RH %} {{v}}, {% endfor %}],
+                    backgroundColor: 'rgba(242, 38, 19, 0.4)',
+                    borderColor: 'rgba(242, 38, 19, 0.5)',
+                    borderWidth: 2
+                },
+                {
+                    type: 'line',
+                    label: 'Run Hour',
+                    fill: false,
+                    data: [{% for v in RH %} {{v}}, {% endfor %}],
+                    borderColor: 'rgba(242, 38, 19, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+
+              legend: {
+                        labels: {
+                            fontColor: "black",
+                            fontSize: 13
+                        }
+                    },
+
+                scales: {
+                    yAxes: [{
+                        gridLines: {
+                            color: "rgba(0,0,0,0.3)",
+                        },
+                        ticks: {
+                            fontColor: "black",
+                            beginAtZero: true,
+                            fontSize: 17
+                        }
+                    }],
+
+                    xAxes: [{
+                        gridLines: {
+                            color: "rgba(0,0,0,0.3)",
+                        },
+                        ticks: {
+                          autoSkip: true,
+                          maxTicksLimit: 12,
+                          fontColor: "balck",
+                          fontSize: 17,
+                          maxRotation: 0,
+
+                        }
+                    }]
+                },
+
+                title: {
+                    display: true,
+                    text: 'Run Hour',
+                    fontSize: 17,
+                    fontColor: "balck",
+                    fontFamily: "Helvetica"
+                }
+            }
+        });
+      </script>
+    </div>
+
+    <div class="one-graph">
+      <canvas id="load_ef"></canvas>
+      <script>
+        var load_eff = document.getElementById('load_ef').getContext('2d');
+        var myChart = new Chart(load_eff, {
+            type: 'bar',
+            data: {
+                labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                datasets: [{
+                    label: 'Average Load(%)',
+                    fill: false,
+                    data: [{% for v in LE %} {{v}}, {% endfor %}],
+                    backgroundColor: 'rgba(42, 187, 155, 0.4)',
+                    borderColor: 'rgba(42, 187, 155, 0.5)',
+                    borderWidth: 2
+                },
+                {
+                    type: 'line',
+                    label: 'Average Load(%)',
+                    fill: false,
+                    data: [{% for v in LE  %} {{v}}, {% endfor %}],
+                    borderColor: 'rgba(42, 187, 155, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+
+              legend: {
+                        labels: {
+                            fontColor: "black",
+                            fontSize: 13
+                        }
+                    },
+
+                scales: {
+                    yAxes: [{
+                        gridLines: {
+                            color: "rgba(0,0,0,0.3)",
+                        },
+                        ticks: {
+                            fontColor: "black",
+                            beginAtZero: true,
+                            fontSize: 17
+                        }
+                    }],
+
+                    xAxes: [{
+                        gridLines: {
+                            color: "rgba(0,0,0,0.3)",
+                        },
+                        ticks: {
+                          autoSkip: true,
+                          maxTicksLimit: 12,
+                          fontColor: "balck",
+                          fontSize: 17,
+                          maxRotation: 0,
+
+                        }
+                    }]
+                },
+
+                title: {
+                    display: true,
+                    text: 'Average Load(%)',
+                    fontSize: 17,
+                    fontColor: "balck",
+                    fontFamily: "Helvetica"
+                }
+            }
+        });
+      </script>
+    </div>
+
+    <div class="one-graph">
+      <canvas id="peak_load"></canvas>
+      <script>
+        var peak_load = document.getElementById('peak_load').getContext('2d');
+                          var myChart = new Chart(peak_load, {
+                              type: 'bar',
+                              data: {
+                                  labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                  datasets: [{
+                                      label: 'Peak Load (kVA)',
+                                      fill: false,
+                                      data: [{% for v in MDL  %} {{v}}, {% endfor %}],
+                                      backgroundColor: 'rgba(241, 130, 141,0.4)',
+                                      borderColor: 'rgba(241, 130, 141,0.5)',
+                                      borderWidth: 2
+                                  },
+                                  {
+                                      type: 'line',
+                                      label: 'Peak Load (kVA)',
+                                      fill: false,
+                                      data: [{% for v in MDL  %} {{v}}, {% endfor %}],
+                                      borderColor: 'rgba(241, 130, 141,1)',
+                                      borderWidth: 2
+                                  }]
+                              },
+                              options: {
+
+                                legend: {
+                                          labels: {
+                                              fontColor: "black",
+                                              fontSize: 13
+                                          }
+                                      },
+
+                                  scales: {
+                                      yAxes: [{
+                                          gridLines: {
+                                              color: "rgba(0,0,0,0.3)",
+                                          },
+                                          ticks: {
+                                              fontColor: "black",
+                                              beginAtZero: true,
+                                              fontSize: 17
+                                          }
+                                      }],
+
+                                      xAxes: [{
+                                          gridLines: {
+                                              color: "rgba(0,0,0,0.3)",
+                                          },
+                                          ticks: {
+                                            autoSkip: true,
+                                            maxTicksLimit: 12,
+                                            fontColor: "balck",
+                                            fontSize: 17,
+                                            maxRotation: 0,
+
+                                          }
+                                      }]
+                                  },
+
+                                  title: {
+                                      display: true,
+                                      text: 'Peak Load (kVA)',
+                                      fontSize: 17,
+                                      fontColor: "balck",
+                                      fontFamily: "Helvetica"
+                                  }
+                              }
+                          });
+      </script>
+    </div>
+
+    <div class="one-graph">
+      <canvas id="carbon"></canvas>
+      <script>
+        var carbon= document.getElementById('carbon').getContext('2d');
+                    var myChart = new Chart(carbon, {
+                        type: 'bar',
+                        data: {
+                            labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                            datasets: [{
+                                label: 'Carbon Footprint (KG)',
+                                fill: false,
+                                data: [{% for v in CF  %} {{v}}, {% endfor %}],
+                                backgroundColor: 'rgba(46, 204, 113, 0.4)',
+                                borderColor: 'rgba(46, 204, 113, 0.5)',
+                                borderWidth: 2
+                            },
+                            {
+                                type: 'line',
+                                label: 'Carbon Footprint (KG)',
+                                fill: false,
+                                data: [{% for v in CF  %} {{v}}, {% endfor %}],
+                                borderColor: 'rgba(46, 204, 113, 1)',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+
+                          legend: {
+                                    labels: {
+                                        fontColor: "black",
+                                        fontSize: 13
+                                    }
+                                },
+
+                            scales: {
+                                yAxes: [{
+                                    gridLines: {
+                                        color: "rgba(0,0,0,0.3)",
+                                    },
+                                    ticks: {
+                                        fontColor: "black",
+                                        beginAtZero: true,
+                                        fontSize: 17
+                                    }
+                                }],
+
+                                xAxes: [{
+                                    gridLines: {
+                                        color: "rgba(0,0,0,0.3)",
+                                    },
+                                    ticks: {
+                                      autoSkip: true,
+                                      maxTicksLimit: 12,
+                                      fontColor: "balck",
+                                      fontSize: 17,
+                                      maxRotation: 0,
+
+                                    }
+                                }]
+                            },
+
+                            title: {
+                                display: true,
+                                text: 'Carbon Footprint (KG)',
+                                fontSize: 17,
+                                fontColor: "balck",
+                                fontFamily: "Helvetica"
+                            }
+                        }
+                    });
+      </script>
+    </div>
+  </div>
+  <!-- class ="kpi-graphs" ends here -->
+</div>
+<!--KPI Ends here-->
+{% endblock %}

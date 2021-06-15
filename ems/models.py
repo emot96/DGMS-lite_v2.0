@@ -283,9 +283,6 @@ class LoginEmsAsset(models.Model):
     # Field name made lowercase.
     seller_name = models.CharField(db_column='Seller_Name', max_length=50)
     # Field name made lowercase.
-    service_provider = models.CharField(
-        db_column='Service_Provider', max_length=100)
-    # Field name made lowercase.
     date_of_installation = models.DateField(db_column='Date_Of_Installation')
     # Field name made lowercase.
     warranty_start_date = models.DateField(db_column='Warranty_Start_Date')

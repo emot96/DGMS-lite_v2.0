@@ -1,0 +1,214 @@
+{% extends 'dgms/KPI-base.html' %} {% block content %} {% load static %}
+<div class="kpi">
+  <div class="graphs-kpi">
+    <div class="one-graph">
+      <canvas id="diesel_level1"></canvas>
+      <script>
+        var diesel_lev = document.getElementById('diesel_level1').getContext('2d');
+        var myChart = new Chart(diesel_level1, {
+            type: 'bar',
+            data: {
+                labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                datasets: [{
+                    label: 'Diesel Level',
+                    fill: false,
+                    data: [{% for v in DL %} {{v}}, {% endfor %}],
+                    backgroundColor: "rgba(190, 144, 212,0.4)",
+                    borderColor: "rgba(190, 144, 212,0.5)",
+                    borderWidth: 1
+                },{
+                  label: 'Line: Diesel Level',
+                  fill: false,
+                  type: 'line',
+                  data: [{% for v in DL %} {{v}}, {% endfor %}],
+                  borderColor: 'rgba(145, 61, 136, 1)',
+                  borderWidth: 1
+              }]
+            },
+            options: {
+
+              legend: {
+                        labels: {
+                            fontColor: "black",
+                            fontSize: 13
+                        }
+                    },
+
+                scales: {
+                    yAxes: [{
+                        gridLines: {
+                            color: "rgba(0,0,0,0.3)",
+                        },
+                        ticks: {
+                            fontColor: "black",
+                            beginAtZero: true,
+                            fontSize: 17
+                        }
+                    }],
+
+                    xAxes: [{
+                        gridLines: {
+                            color: "rgba(0,0,0,0.3)",
+                        },
+                        ticks: {
+                          autoSkip: true,
+                          maxTicksLimit: 12,
+                          fontColor: "black",
+                          fontSize: 17,
+                          maxRotation: 0,
+                        }
+                    }]
+                },
+
+                title: {
+                    display: true,
+                    text: 'Diesel Level',
+                    fontSize: 17,
+                    fontColor: "balck",
+                    fontFamily: "Helvetica"
+                }
+            }
+        });
+      </script>
+    </div>
+
+    <div class="one-graph">
+      <canvas id="dg_battery"></canvas>
+      <script>
+        var dg_battery = document.getElementById('dg_battery').getContext('2d');
+                          var myChart1 = new Chart(dg_battery, {
+                              type: 'bar',
+                              data: {
+                                  labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                                  datasets: [{
+                                      label: 'DG Battery Voltage',
+                                      fill:false,
+                                      data: [{% for v in DBV %} {{v}}, {% endfor %}],
+                                      backgroundColor: "rgba(242, 121, 53, 0.5)",
+                                      borderColor: 'rgba(242, 121, 53,1)',
+                                      borderWidth: 2
+                                  },{
+                                    label: 'DG Battery Voltage',
+                                    fill:false,
+                                    type: 'line',
+                                    data: [{% for v in DBV %} {{v}}, {% endfor %}],
+                                    borderColor: 'rgba(242, 121, 53,1)',
+                                    borderWidth: 2
+                                }]
+                              },
+                              options: {
+
+                                legend: {
+                                          labels: {
+                                              fontColor: "black",
+                                              fontSize: 13
+                                          }
+                                      },
+
+                                  scales: {
+                                      yAxes: [{
+                                          gridLines: {
+                                              color: "rgba(0,0,0,0.3)",
+                                          },
+                                          ticks: {
+                                              fontColor: "black",
+                                              beginAtZero: true,
+                                              fontSize: 17
+                                          }
+                                      }],
+
+                                      xAxes: [{
+                                          gridLines: {
+                                              color: "rgba(0,0,0,0.3)",
+                                          },
+                                          ticks: {
+                                            autoSkip: true,
+                                            maxTicksLimit: 12,
+                                            fontColor: "black",
+                                            fontSize: 17,
+                                            maxRotation: 0,
+                                          }
+                                      }]
+                                  },
+
+                                  title: {
+                                      display: true,
+                                      text: 'DG Battery Voltage',
+                                      fontSize: 17,
+                                      fontColor: "balck",
+                                      fontFamily: "Helvetica"
+                                  }
+                              }
+                          });
+      </script>
+    </div>
+
+    <div class="one-graph">
+      <canvas id="rpm"></canvas>
+      <script>
+                    var rpm = document.getElementById('rpm').getContext('2d');
+        var myChart2 = new Chart(rpm, {
+            type: 'line',
+            data: {
+                labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                datasets: [{
+                    label: 'RPM',
+                    fill: false,
+                    data: [{% for v in RPM  %} {{v}}, {% endfor %}],
+                    borderColor: [
+                        'rgba(30, 130, 76, 1)'
+
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+
+              legend: {
+                        labels: {
+                            fontColor: "black",
+                            fontSize: 13
+                        }
+                    },
+
+                scales: {
+                    yAxes: [{
+                        gridLines: {
+                            color: "rgba(0,0,0,0.3)",
+                        },
+                        ticks: {
+                            fontColor: "black",
+                            beginAtZero: true,
+                            fontSize: 17
+                        }
+                    }],
+
+                    xAxes: [{
+                        gridLines: {
+                            color: "rgba(0,0,0,0.3)",
+                        },
+                        ticks: {
+                          autoSkip: true,
+                          maxTicksLimit: 12,
+                          fontColor: "black",
+                          fontSize: 17,
+                          maxRotation: 0,
+                        }
+                    }]
+                },
+                title: {
+                    display: true,
+                    text: 'RPM',
+                    fontSize: 17,
+                    fontColor: "balck",
+                    fontFamily: "Helvetica"
+                }
+            }
+        });
+      </script>
+    </div>
+  </div>
+  <!-- class ="kpi-graphs" ends here -->
+</div>
+<!--KPI Ends here-->
+{% endblock %}

@@ -1,0 +1,269 @@
+@import url("fonts.css");
+
+/* CSS for three blocks (assets, total installed and fuel) */
+/* .row{
+	margin: 0px 37px 10px 37px;
+} */
+.row div{
+	
+	width:0%;
+	margin:0px auto;
+	margin-top:20px;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+	overflow-x: auto;
+}
+
+
+#background{
+	background-color: rgb(255, 255, 255);
+	width: 400px;
+	min-height: 160px;
+	border: 1px solid rgb(164, 164, 164);
+}
+
+#background img{
+	margin: 13px 10px 0px 0px;
+	height: 35px;
+	width: 35px;
+}
+
+
+hr.devider{
+    margin-top: 5px;
+   margin-bottom: 0px;
+}
+
+.top{
+	display: flex;
+	justify-content: space-between;
+	list-style-type:none;
+	margin: 0px;
+	padding: 0px;
+}
+.head{
+	margin: 10px 10px 0px 10px;
+	font-size: 25px;
+	font-family: 'Heebo', sans-serif;
+	/*color: #3AB404;*/
+}
+
+.head1{
+	width: 100%;
+	text-align: left;
+    border-collapse: separate;
+    border-spacing: 17px;
+    }
+
+
+.head2 th{
+
+	font-weight: 100;
+	font-size: 13px;
+	color: #6B6B6B ;
+
+}
+
+.head3 td{
+	font-size: 15px;
+	
+}
+
+.unit{
+	font-size: 13px;
+}
+
+/*----End----*/
+
+
+
+
+.asset_info{
+
+	background-color: #C2EDFD;
+	margin: 20px 37px 10px 37px;
+	min-height: 60vh;
+	box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+	border: 1px solid rgb(171, 171, 171);
+	/* width: 70%; */
+}
+
+
+
+.drop_downs{
+	margin: 15px;
+}
+
+.top form select{
+ margin-left: 15px;
+ margin-top: 1px;
+ border: none;
+ font-size: 13px;
+ width: 8rem;
+ height: 2rem;
+ border-radius: 5px;
+ outline:none;
+opacity: 0.9;
+
+}
+
+
+.top form select:hover{
+ 
+ opacity: 1;
+ -webkit-box-shadow: 3px 3px 3px #666;
+    -moz-box-shadow: 3px 3px 3px #666;
+    box-shadow:3px 3px 3px #666;
+}
+
+
+.drop_downs .go{
+    text-transform: inherit;
+    outline: none;
+    border: none;
+    margin-top: 2px;
+    /* margin-left: 10px; */
+    background-color: #0d4162;
+    color: #ffffff;
+    border-radius: 50%;
+    width: 32px;
+    height: 30px;
+    text-align: center;
+    box-shadow: 1px 1.5px 1px  rgba(50, 50, 50, 0.6);
+	font-size: 13px;
+	margin-left: 10px;
+ 
+}
+
+.drop_downs .go:hover{
+   
+    background-color: rgb(27, 84, 120);
+    
+}
+
+.drop_downs .go:active{
+    background-color: rgb(27, 84, 120);
+    box-shadow: none;
+}
+
+
+
+
+
+.asset_info_table{
+	margin: 10px;
+	overflow-x:auto;
+	overflow-y:auto;
+	min-height: 49vh;
+	max-height: 49vh;
+	
+}
+
+.asset_table{
+
+     text-align: center;
+     /*border-collapse: collapse;*/
+     border-collapse: separate;
+     border-spacing: 0 1em;
+     width: 100%;
+
+}
+
+
+.asset_table tr:nth-child(n+2){
+	background-color: white;
+	box-shadow: 0 5px 6px -6px black;
+
+}
+
+.asset_table tr:nth-child(n+2):hover{
+	background-color: rgb(218, 218, 218);
+	color: rgb(0, 0, 0);
+
+}
+
+.asset_table td:nth-child(16){
+	border-left: 4px solid #C2EDFD;
+	padding: 10px 0;
+	/*border-right: 1px solid #E9E8E8;*/
+
+}
+
+.asset_table th:nth-child(16){
+	color: #796303;
+}
+
+.asset_table th:nth-child(17){
+	color: #796303;
+}
+
+
+
+.asset_table th, .asset_table td{
+	font-size: 12px;
+	/*border: 1px solid #ddd;*/
+    padding: 8px;
+   
+}
+.asset_table th{
+	background-color:#C2EDFD; 
+	color: #094A8B;
+	position: sticky;
+    top: 0; /* Don't forget this, required for the stickiness */
+    /*text-transform: uppercase;*/
+  
+}
+
+.asset_table td{
+	font-size: 12px;
+	text-transform: capitalize;
+}
+
+
+.on{
+	background-color: #fa5757;
+	height: 35px;
+	width: 35px;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	border-radius: 50%;
+	color: white;
+	font-weight: bold;
+-webkit-box-shadow: 5px 2px 4px -2px rgba(143,143,143,1);
+-moz-box-shadow: 5px 2px 4px -2px rgba(143,143,143,1);
+box-shadow: 5px 2px 4px -2px rgba(143,143,143,1);
+}
+
+
+.off{
+	background-color: #797979;
+	height: 35px;
+	width: 35px;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	border-radius: 50%;
+	color: white;
+	font-weight: bold;
+-webkit-box-shadow: 5px 2px 4px -2px rgba(143,143,143,1);
+-moz-box-shadow: 5px 2px 4px -2px rgba(143,143,143,1);
+box-shadow: 5px 2px 4px -2px rgba(143,143,143,1);
+}
+
+.asset_table a{
+color: #FF1C60;
+}
+
+.asset_table a:hover {
+  color: blue;
+}
+
+.rating img{
+	width: 100px;
+	height: 20px;
+}
+

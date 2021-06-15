@@ -1,0 +1,120 @@
+@import url("fonts.css");
+
+
+.asset_detail{
+    background-color: #C2EDFD;
+    min-height: 70vh;
+    margin: 90px 20px 20px 20px ;
+	box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+	border-radius: 5px;
+}
+
+.asset_img img{
+
+    height: 250px;
+    width: 270px;
+    position:absolute; 
+    top:33%; 
+    left:40%; 
+    border:none;
+    box-shadow: rgba(0, 0, 0, 1) 0px 3px 3px 0px;
+}
+
+.asset_info{
+
+    display: flex;
+    gap: 10px;
+    padding: 30px;
+    font-size: 25px;
+}
+
+.download_info img{
+    height: 15px;
+    width: 15px;
+    cursor: pointer;
+}
+
+
+.asset-table{
+	margin: 120px 20px 20px 20px;
+	overflow: auto;
+	/* background-color: darkgreen; */
+}
+
+.asset-table table{
+	width: 99.9%;
+	text-transform: capitalize;
+}
+
+.asset-table table tr.t_body th{
+    border-bottom: 2px solid rgb(224, 224, 224);
+	padding: 10px 50px 10px 50px;
+	background-color: rgb(21, 1, 66);
+	color: rgb(255, 255, 255);
+}
+
+.asset-table table  tr.t_body td{
+    border: 1px solid rgb(186, 186, 186);
+    padding: 10px 50px 10px 50px;
+	
+}
+
+.asset-table table tr.t_body td:nth-child(1)
+{
+	text-transform: uppercase;
+	font-weight: bold;
+}
+
+.asset-table table tr:nth-child(n){
+	background-color: rgb(255, 255, 255);
+	color: rgb(0, 0, 66);
+}
+
+.asset-table #asset-detail tr:nth-child(5),
+.asset-table #asset-detail tr:nth-child(10),
+.asset-table #asset-detail tr:nth-child(14),
+.asset-table #asset-detail tr:nth-child(19),
+.asset-table #asset-detail tr:nth-child(24),
+.asset-table #asset-detail tr:nth-child(29),
+
+
+.asset-table #service-history tr:nth-child(5),
+.asset-table #service-history tr:nth-child(7),
+.asset-table #service-history tr:nth-child(11),
+
+.asset-table #service-history-ups tr:nth-child(5),
+.asset-table #service-history-ups tr:nth-child(7),
+.asset-table #service-history-ups tr:nth-child(10),
+.asset-table #service-history-ups tr:nth-child(14),
+
+
+.asset-table #asset-detail-servo tr:nth-child(10),
+.asset-table #asset-detail-servo tr:nth-child(16),
+
+
+.asset-table #asset-detail-ups tr:nth-child(10)
+{
+	background-color: rgb(225, 245, 217);
+	color: rgb(2, 94, 16);
+}
+
+.asset-table #asset-detail-ups tr:nth-child(10).t_body{
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+
+@media screen and (max-width: 600px){
+  
+	
+.asset_img img{
+
+    height: 150px;
+    width: 130px;
+	top:30%; 
+    left:60%; 
+    
+}
+	
+
+}
