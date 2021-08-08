@@ -76,17 +76,17 @@
         <table>
           <tr class="t_body">
             <td class="bold">RY</td>
-            <td>{{ Details.vry_phase_voltage|floatformat:2}}</td>
+            <td>{{ Details.vry_phase_voltage|add:-20|floatformat:2 }}</td>
           </tr>
   
           <tr class="t_body">
             <td class="bold">YB</td>
-            <td>{{Details.vyb_phase_voltage|floatformat:2}}</td>
+            <td>{{Details.vyb_phase_voltage|add:-20|floatformat:2}}</td>
           </tr>
   
           <tr>
             <td class="bold">BR</td>
-            <td>{{Details.vbr_phase_voltage|floatformat:2}}</td>
+            <td>{{Details.vbr_phase_voltage|add:-20|floatformat:2}}</td>
           </tr>
         </table>
       </div>
@@ -167,17 +167,17 @@
         <table>
           <tr class="t_body">
             <td class="bold">RN</td>
-            <td>{{Details.vr_phase_voltage|floatformat:2}}</td>
+            <td>{{Details.vr_phase_voltage|add:-20|floatformat:2}}</td>
           </tr>
   
           <tr class="t_body">
             <td class="bold">YN</td>
-            <td>{{Details.vy_phase_voltage|floatformat:2}}</td>
+            <td>{{Details.vy_phase_voltage|add:-20|floatformat:2}}</td>
           </tr>
   
           <tr>
             <td class="bold">BN</td>
-            <td>{{Details.vb_phase_voltage|floatformat:2}}</td>
+            <td>{{Details.vb_phase_voltage|add:-20|floatformat:2}}</td>
           </tr>
         </table>
       </div>

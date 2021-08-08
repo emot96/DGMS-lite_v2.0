@@ -163,14 +163,27 @@
               <div class="last-data-time">{{LTOD}}</div>
               <div class="last-data-text">Last Data Recieved</div>
             </div>
+
+            <div class="network">
+              <div class="network-img">
+                <img src="{% static './images/gsm.png' %}" />
+              </div>
+              <div class="network-val">{{gsm}}</div>
+            </div>
+
+            <div class="battery">
+              <div class="battery-img">
+                <img src="{% static './images/battery.png' %}" />
+              </div>
+              <div class="battery-info">
+                <div class="battery-val">{{GWDB}}</div>
+                <div class="battery-text">{{PowerStatus}}</div>
+              </div>
+            </div>
           </div>
 
           <div class="dg_info_status">
-            {% if Stat == 'ON' %}
             <div class="status" id="dg_on">ON</div>
-            {% else %}
-            <div class="status" id="dg_off">OFF</div>
-            {% endif %}
             <div>{{diff}}</div>
           </div>
         </div>

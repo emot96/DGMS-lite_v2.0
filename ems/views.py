@@ -135,7 +135,22 @@ def ems(request):
             else:
                 Star = 5
 
-            return render(request, 'ems-servo/servo_dashboard_device.html', {'Star': Star, 'diff': diff, 'LTOD': LTOD, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'temperature': temperature, 'description': description, 'icon': icon, 'Time': Time, 'PL': PL, 'username': username, 'Customer_Name': Customer_Name, 'device_id': device_id, 'Details': Details, 'Details_graph': Details_graph})
+            gsm = DevicesInfo.objects.filter(
+                device_id=device_id).last().gsm_signal
+
+            GWDB = DevicesInfo.objects.filter(
+                device_id=device_id).last().gateway_device_battery
+
+            PS = DevicesInfo.objects.filter(
+                device_id=device_id).last().gateway_power_status
+
+            PowerStatus = 0
+            if PS == 1:
+                PowerStatus = 'Healthy'
+            else:
+                PowerStatus = 'Battery'
+
+            return render(request, 'ems-servo/servo_dashboard_device.html', {'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'Star': Star, 'diff': diff, 'LTOD': LTOD, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'temperature': temperature, 'description': description, 'icon': icon, 'Time': Time, 'PL': PL, 'username': username, 'Customer_Name': Customer_Name, 'device_id': device_id, 'Details': Details, 'Details_graph': Details_graph})
 
         elif request.user.is_manager:
             Customer_Name = LoginManager.objects.get(
@@ -238,10 +253,11 @@ def ems(request):
                 a = Device_ID[i].device_id
                 DeviceID.append(a)
 
-            Total = Device.objects.filter(device_id__in=DeviceID).count()
-            Capacity = Device.objects.filter(
-                device_id__in=DeviceID).aggregate(Sum('device_rating'))
-            Capacity = Capacity['device_rating__sum']
+            Total = LoginEmsAsset.objects.filter(
+                device_id__in=DeviceID).count()
+            Capacity = LoginEmsAsset.objects.filter(
+                device_id__in=DeviceID).aggregate(Sum('rating_in_kva'))
+            Capacity = Capacity['rating_in_kva__sum']
 
             Air_total = LoginEmsAsset.objects.filter(
                 device_id__in=DeviceID, cooling="AIR COOLED").count()
@@ -562,7 +578,21 @@ def emsDashboard(request, device_id):
         EDOI = LoginEmsAsset.objects.get(
             device_id=device_id).ems_date_of_installation
 
-    return render(request, 'ems-servo/servo_dashboard_device.html', {'EDOI': EDOI, 'service_details': service_details, 'asset_details': asset_details, 'alert_count': alert_count, 'Star': Star, 'diff': diff, 'LTOD': LTOD, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'temperature': temperature, 'description': description, 'icon': icon, 'Time': Time, 'PL': PL, 'username': username, 'Customer_Name': Customer_Name, 'device_id': device_id, 'Details': Details, 'Details_graph': Details_graph})
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
+
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+    return render(request, 'ems-servo/servo_dashboard_device.html', {'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'EDOI': EDOI, 'service_details': service_details, 'asset_details': asset_details, 'alert_count': alert_count, 'Star': Star, 'diff': diff, 'LTOD': LTOD, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'temperature': temperature, 'description': description, 'icon': icon, 'Time': Time, 'PL': PL, 'username': username, 'Customer_Name': Customer_Name, 'device_id': device_id, 'Details': Details, 'Details_graph': Details_graph})
 
 
 @ login_required(login_url='login')
@@ -680,7 +710,21 @@ def emsasset_detail(request, device_id):
         EDOI = LoginEmsAsset.objects.get(
             device_id=device_id).ems_date_of_installation
 
-    return render(request, 'ems-servo/servo_asset_asset-detail.html', {'Service_History': Service_History, 'EDOI': EDOI, 'Details': Details, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat})
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
+
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+    return render(request, 'ems-servo/servo_asset_asset-detail.html', {'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'Service_History': Service_History, 'EDOI': EDOI, 'Details': Details, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat})
 
 
 @ login_required(login_url='login')
@@ -1752,7 +1796,21 @@ def emsservice_history(request, device_id):
         Contract = LoginEmsServiceHistory.objects.get(
             device_id=device_id).service_contract
 
-    return render(request, 'ems-servo/servo_asset_service-history.html', {'Contract': Contract, 'EDOI': EDOI, 'Asset_Details': Asset_Details, 'Details': Details, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id})
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
+
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+    return render(request, 'ems-servo/servo_asset_service-history.html', {'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'Contract': Contract, 'EDOI': EDOI, 'Asset_Details': Asset_Details, 'Details': Details, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id})
 
 
 @ login_required(login_url='login')
@@ -2114,7 +2172,21 @@ def emsLoadKPI(request, device_id):
 
         Name = "Load Side KPI"
 
-        return render(request, 'ems-servo/servo_kpi_load-side.html', {'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'WT': WT, 'EO': EO, 'Time': Time, 'TR': TR, 'myFilter': myFilter, 'CA': CA, 'CR': CR, 'CY': CY, 'CB': CB, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
+
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+        return render(request, 'ems-servo/servo_kpi_load-side.html', {'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'alert_count': alert_count, 'WT': WT, 'EO': EO, 'Time': Time, 'TR': TR, 'myFilter': myFilter, 'CA': CA, 'CR': CR, 'CY': CY, 'CB': CB, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -2467,7 +2539,21 @@ def emsEnergyPara(request, device_id):
 
         Name = "Energy Parameter KPI"
 
-        return render(request, 'ems-servo/servo_kpi_energy-parameters.html', {'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'PF': PF, 'VLN': VLN, 'VLL': VLL,  'alert_count': alert_count, 'Time': Time,  'TR': TR, 'myFilter': myFilter,  'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
+
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+        return render(request, 'ems-servo/servo_kpi_energy-parameters.html', {'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'PF': PF, 'VLN': VLN, 'VLL': VLL,  'alert_count': alert_count, 'Time': Time,  'TR': TR, 'myFilter': myFilter,  'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -2844,7 +2930,21 @@ def emsDeviceInfoKPI(request, device_id):
 
         Name = "Device Info KPI"
 
-        return render(request, 'ems-servo/servo_kpi_device-info.html', {'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'GSMSignal': GSMSignal, 'PowerStatus': PowerStatus, 'BatteryVoltage': BatteryVoltage, 'GSM': GSM, 'GB': GB, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
+
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+        return render(request, 'ems-servo/servo_kpi_device-info.html', {'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'Name': Name, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'GSMSignal': GSMSignal, 'PowerStatus': PowerStatus, 'BatteryVoltage': BatteryVoltage, 'GSM': GSM, 'GB': GB, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -3234,4 +3334,18 @@ def emsdevice_alert(request, device_id):
 
         # http://openweathermap.org/img/w/{{icon}}.png
 
-        return render(request, 'ems-servo/servo_alert_device.html', {'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'alerts_details': alerts_details, 'alert_count': alert_count,  'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff,  'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, })
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
+
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+        return render(request, 'ems-servo/servo_alert_device.html', {'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'EDOI': EDOI, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'TR': TR, 'myFilter': myFilter, 'alerts_details': alerts_details, 'alert_count': alert_count,  'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff,  'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, })

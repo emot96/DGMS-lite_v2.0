@@ -1,26 +1,11 @@
 from urllib import request
-import requests
+# import urllib.request
+from django.db import reset_queries
+from django.db.models import fields
 from .models import *
 import django_filters
 from django_filters import DateFilter
 from django import forms
-
-
-# def alert(request):
-#     username = None
-#     email = None
-#     usertype = None
-#     if request.user.is_customer:
-#         Customer_Name = Customer.objects.get(
-#             Customer_Name=username).Customer_Name
-#         Customer_ID = Customer.objects.get(
-#             Customer_Name=username).Customer_ID
-#         Total = Device.objects.filter(account_id=Customer_ID).count()
-#         Device_ID = Device.objects.filter(account_id=Customer_ID)
-#         DeviceID = []
-#         for i in range(Total):
-#             a = Device_ID[i].device_id
-#             DeviceID.append(a)
 
 
 FILTER_CHOICES = (
@@ -53,6 +38,19 @@ ALTERSTATUS_CHOICES = (
     (False, 'Resolved'),
 )
 
+STATUS = (
+    ('ON', 'ON'),
+    ('OFF', 'OFF'),
+)
+
+LIBRARYTYPE = (
+    ("Approvals", "Approvals"),
+    ("Warranty", "Warranty"),
+    ("Test certificate", "Test certificate"),
+    ("Service Reports", "Service Reports"),
+    ("Quotation", "Quotation"),
+    ("Other", "Other")
+)
 # status = ['power_factor', 'gateway_device_battery', 'fuel_level_percentage', 'gsm_signal', 'energy_output_kw_total', 'dg_battery_voltage', 'room_temperature', 'frequency',
 #           'rpm_ctrl', 'current_b_phase', 'vll_average', 'energy_output_kva', 'current_r_phase', 'rpm', 'current_y_phase', ]
 
@@ -234,14 +232,8 @@ class AlertFilter(django_filters.FilterSet):
     alert_level = django_filters.ChoiceFilter(
         choices=ALTER_CHOICES, label='', field_name='alert_level',   lookup_expr='iexact', empty_label="Alert Level",)
 
-    # alert_open = django_filters.ChoiceFilter(
-    #     choices=ALTERSTATUS_CHOICES, label='', field_name='alert_open',   lookup_expr='iexact')
-
     device_id = django_filters.ChoiceFilter(
-        choices=[[u.Device_ID,  u.Device_ID] for u in User_Detail.objects.all()], field_name='device_id', lookup_expr='icontains', label='', empty_label="Device ID",)
-
-    # device_id = django_filters.ModelChoiceFilter(field_name='device_id', lookup_expr='icontains', label='',
-    #                                              empty_label="Device ID", widget=forms.Select(attrs={'class': 'form-control'}), queryset=None)
+        choices=None, field_name='device_id', lookup_expr='icontains', label='', empty_label="Device ID",)
 
     alert_type_name = django_filters.ChoiceFilter(
         choices=FILTER_CHOICES, label='', field_name='alert_type_name',   lookup_expr='iexact', empty_label="Alert Name",)
@@ -268,35 +260,39 @@ class AlertFilter(django_filters.FilterSet):
         exclude = ['alert_id', 'alert_type_name', 'device_id', 'alert_open', 'alert_level', 'param_value',
                    'param_threshold_value', 'created_at', 'updated_at', ]
 
-    # def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super(AlertFilter, self).__init__(*args, **kwargs)
+        request = kwargs['request']
+        if request.user.is_authenticated:
+            username = request.user.username
+            if request.user.is_customer:
+                Customer_Name = Customer.objects.get(
+                    Customer_Name=username).Customer_Name
+                Customer_ID = Customer.objects.get(
+                    Customer_Name=username).Customer_ID
+                my_deviceid = [[u.device_id,  u.device_id]
+                               for u in Device.objects.filter(account_id=Customer_ID).distinct()]
 
-    #     super(AlertFilter, self).__init__(*args, **kwargs)
-    #     request = kwargs['request']
-    #     if request.user.is_authenticated:
-    #         username = request.user.id
-    #         userlocation = request.user.location_id
-    #         if request.user.is_superuser:
-    #             self.filters['device_id'].queryset = User_Detail.objects.all()
-    #         elif request.user.is_customer:
-    #             self.filters['device_id'].queryset = User_Detail.objects.filter(
-    #                 Customer_Name=username)
-    #         elif request.user.is_manager:
-    #             self.filters['device_id'].queryset = User_Detail.objects.filter(
-    #                 Manager_Name=username)
-    #         elif request.user.is_user:
-    #             self.filters['device_id'].queryset = User_Detail.objects.filter(
-    #                 User_Name=username)
+            elif request.user.is_manager:
+                Customer_Name = Manager.objects.get(
+                    Manager_Name=username).Customer_Name
+                managername = Manager.objects.get(
+                    Manager_Name=username).Manager_Name
+                User_details = User_Detail.objects.all()
+                DeviceID = []
+                for det in User_details:
+                    if str(det.Manager_Name) == managername:
+                        DeviceID.append(det.Device_ID)
+                my_deviceid = [[u.device_id,  u.device_id]
+                               for u in Device.objects.filter(device_id__in=DeviceID).distinct()]
+
+            self.filters['device_id'].extra.update(
+                {'choices': my_deviceid})
 
 
 class DeviceAlertFilter(django_filters.FilterSet):
     alert_level = django_filters.ChoiceFilter(
         choices=ALTER_CHOICES, label='', field_name='alert_level',   lookup_expr='iexact', empty_label="Alter Level",)
-
-    # alert_open = django_filters.ChoiceFilter(
-    #     choices=ALTERSTATUS_CHOICES, label='', field_name='alert_open',   lookup_expr='iexact')
-
-    # device_id = django_filters.ChoiceFilter(choices=[[u.Device_ID,  u.Device_ID] for u in User_Detail.objects.all(
-    # )], field_name='device_id', lookup_expr='icontains', label='')
 
     alert_type_name = django_filters.ChoiceFilter(
         choices=FILTER_CHOICES, label='', field_name='alert_type_name',   lookup_expr='iexact', empty_label="Alter Type",)
@@ -322,3 +318,88 @@ class DeviceAlertFilter(django_filters.FilterSet):
         fields = "__all__"
         exclude = ['alert_id', 'alert_type_name', 'device_id', 'alert_open', 'alert_level', 'param_value',
                    'param_threshold_value', 'created_at', 'updated_at', ]
+
+
+class DashboardFilter(django_filters.FilterSet):
+
+    device_state = django_filters.ChoiceFilter(
+        choices=None, label='', field_name='device_state',   lookup_expr='iexact', empty_label="State")
+
+    device_location = django_filters.ChoiceFilter(
+        choices=None, field_name='device_location', lookup_expr='iexact', label='', empty_label="Location")
+
+    device_status = django_filters.ChoiceFilter(
+        choices=STATUS, label='', field_name='device_status',   lookup_expr='iexact', empty_label="Status")
+
+    device_id = django_filters.ChoiceFilter(
+        choices=None, field_name='device_id', lookup_expr='iexact', label='', empty_label="ID")
+
+    device_rating = django_filters.ChoiceFilter(
+        choices=None, field_name='device_rating', lookup_expr='icontains', label='', empty_label="Rating")
+
+    class Meta:
+        models = Device
+        fields = "__all__"
+        exclude = ["device_name", "device_desc", "device_type", "account_id",
+                   "device_created_at", "device_updated_at", "fuel_report_link", "operational_report_link"]
+
+    def __init__(self, *args, **kwargs):
+        super(DashboardFilter, self).__init__(*args, **kwargs)
+        request = kwargs['request']
+        if request.user.is_authenticated:
+            username = request.user.username
+            if request.user.is_customer:
+                Customer_Name = Customer.objects.get(
+                    Customer_Name=username).Customer_Name
+                Customer_ID = Customer.objects.get(
+                    Customer_Name=username).Customer_ID
+
+                my_deviceid = [[u.device_id,  u.device_id]
+                               for u in Device.objects.filter(account_id=Customer_ID).distinct()]
+                my_device_rating = [[u.device_rating,  u.device_rating]
+                                    for u in Device.objects.distinct("device_rating").filter(account_id=Customer_ID)]
+
+                my_device_location = [[u.device_location,  u.device_location] for u in Device.objects.distinct(
+                    "device_location").filter(account_id=Customer_ID)]
+
+                my_device_state = [[u.device_state,  u.device_state] for u in Device.objects.distinct(
+                    "device_state").filter(account_id=Customer_ID)]
+            elif request.user.is_manager:
+                Customer_Name = Manager.objects.get(
+                    Manager_Name=username).Customer_Name
+                managername = Manager.objects.get(
+                    Manager_Name=username).Manager_Name
+                User_details = User_Detail.objects.all()
+                DeviceID = []
+                for det in User_details:
+                    if str(det.Manager_Name) == managername:
+                        DeviceID.append(det.Device_ID)
+
+                my_deviceid = [[u.device_id,  u.device_id]
+                               for u in Device.objects.filter(device_id__in=DeviceID).distinct()]
+                my_device_rating = [[u.device_rating,  u.device_rating]
+                                    for u in Device.objects.distinct("device_rating").filter(device_id__in=DeviceID)]
+
+                my_device_location = [[u.device_location,  u.device_location] for u in Device.objects.distinct(
+                    "device_location").filter(device_id__in=DeviceID)]
+
+                my_device_state = [[u.device_state,  u.device_state] for u in Device.objects.distinct(
+                    "device_state").filter(device_id__in=DeviceID)]
+
+            self.filters['device_id'].extra.update({'choices': my_deviceid})
+            self.filters['device_rating'].extra.update(
+                {'choices': my_device_rating})
+            self.filters['device_location'].extra.update(
+                {'choices': my_device_location})
+            self.filters['device_state'].extra.update(
+                {'choices': my_device_state})
+
+
+class LibraryFilter(django_filters.FilterSet):
+    file_type = django_filters.ChoiceFilter(
+        choices=LIBRARYTYPE, label='', field_name='Type',   lookup_expr='iexact', empty_label="File Type",)
+
+    class Meta:
+        model = Library
+        fields = "__all__"
+        exclude = ['Device_ID', 'Type', 'File', 'Date']

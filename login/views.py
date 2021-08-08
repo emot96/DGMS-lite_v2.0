@@ -1,5 +1,6 @@
 from django.core.checks.messages import CRITICAL, ERROR
 from django.db.models.aggregates import Max
+from django.db.models.fields import DecimalField
 from django.db.models.lookups import In
 from django.db.models.manager import Manager
 from django.forms.widgets import PasswordInput
@@ -100,6 +101,9 @@ def dashboard(request):
                 if Run != None:
                     Run = Run.runtime_second_ctrl
 
+            PreRH = Before_DGMA_INSTALLATION.objects.get(
+                Device_ID=device_id).Previous_Run_Hour
+            Run = Run + int(PreRH)
             seconds = Run
             # seconds = seconds % (24 * 3600)
             hour = seconds // 3600
@@ -127,13 +131,6 @@ def dashboard(request):
             Fuel_Consumed = float(FuelConsumed['fuel_consumed__sum'])
             AvgFC = round(Fuel_Consumed/(Run*0.000277778), 2)
 
-            # Energy_output_avg = DevicesInfo.objects.filter(device_id=device_id).exclude(
-            #     energy_output_kva=0).aggregate(Avg('energy_output_kva'))
-            # Energy_output = round(
-            #     float(Energy_output_avg['energy_output_kva__avg']), 2)
-            # RatingD = Device.objects.get(device_id=device_id).device_rating
-            # Energy_OA = round((Energy_output/RatingD)*100, 2)
-
             Efficency = DeviceOperational.objects.filter(
                 device_id=device_id).aggregate(Avg('efficiency'))
             Energy_OA = round(float(Efficency['efficiency__avg']), 2)
@@ -155,18 +152,6 @@ def dashboard(request):
 
             DeviceC = DeviceCounterView.objects.filter(
                 device_id=device_id)[0].counter
-
-            DOI = Asset.objects.get(
-                Device_ID=device_id).Date_Of_Installation
-
-            WS = Asset.objects.get(Device_ID=device_id).Warranty_Status
-
-            LSD = Service_History.objects.get(
-                Device_ID=device_id).Last_Service_Date
-            NSD = Service_History.objects.get(
-                Device_ID=device_id).Next_Service_Date
-            SP = Service_History.objects.get(
-                Device_ID=device_id).Service_Provider
 
             RT = round(DevicesInfo.objects.filter(device_id=device_id).exclude(
                 room_temperature=0).last().room_temperature, 2)
@@ -250,11 +235,35 @@ def dashboard(request):
             description = r['weather'][0]['description']
             icon = r['weather'][0]['icon']
 
-            return render(request, 'dgms/dgms_dashboard_device.html', {'temperature': temperature, 'description': description, 'icon': icon, 'Fuel2': Fuel2, 'DDOI': DDOI, 'alert_count': alert_count, 'Fuel1': Fuel1, 'Time': Time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Fuel2': Fuel2, 'Tank_Size': Tank_Size, 'Fuel_Per': Fuel_Per, 'hh': hh, 'UG': UG, 'Carbon_Foot_Print': Carbon_Foot_Print, 'BV': BV, 'AvgFC': AvgFC, 'Energy_OA': Energy_OA, 'MaxDLoad': MaxDLoad, 'DeviceC': DeviceC, 'DOI': DOI, 'WS': WS, 'LSD': LSD, 'NSD': NSD, 'SP': SP, 'Star': Star, 'RT': RT, 'diff': diff, 'Level': Level, 'Fuel1': Fuel1, 'Time': Time})
+            gsm = DevicesInfo.objects.filter(
+                device_id=device_id).last().gsm_signal
+
+            GWDB = DevicesInfo.objects.filter(
+                device_id=device_id).last().gateway_device_battery
+
+            PS = DevicesInfo.objects.filter(
+                device_id=device_id).last().gateway_power_status
+
+            PowerStatus = 0
+            if PS == 1:
+                PowerStatus = 'Healthy'
+            else:
+                PowerStatus = 'Battery'
+
+            asset_info = Asset.objects.get(Device_ID=device_id)
+
+            service_info = Service_History.objects.get(Device_ID=device_id)
+
+            DTNS = (Service_History.objects.get(
+                Device_ID=device_id).Next_Service_Date) - (datetime.date.today())
+
+            return render(request, 'dgms/dgms_dashboard_device.html', {'DTNS': DTNS, 'service_info': service_info, 'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'temperature': temperature, 'description': description, 'icon': icon, 'Fuel2': Fuel2, 'DDOI': DDOI, 'alert_count': alert_count, 'Fuel1': Fuel1, 'Time': Time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Fuel2': Fuel2, 'Tank_Size': Tank_Size, 'Fuel_Per': Fuel_Per, 'hh': hh, 'UG': UG, 'Carbon_Foot_Print': Carbon_Foot_Print, 'BV': BV, 'AvgFC': AvgFC, 'Energy_OA': Energy_OA, 'MaxDLoad': MaxDLoad, 'DeviceC': DeviceC, 'asset_info': asset_info, 'Star': Star, 'RT': RT, 'diff': diff, 'Level': Level, 'Fuel1': Fuel1, 'Time': Time})
 
         elif request.user.is_manager:
             Customer_Name = Manager.objects.get(
                 Manager_Name=username).Customer_Name
+            Customer_ID = Customer.objects.get(
+                Customer_Name=Customer_Name).Customer_ID
             managername = Manager.objects.get(
                 Manager_Name=username).Manager_Name
             User_details = User_Detail.objects.all()
@@ -263,6 +272,16 @@ def dashboard(request):
             for det in User_details:
                 if str(det.Manager_Name) == managername:
                     DeviceID.append(det.Device_ID)
+
+            Device_ID = Device.objects.filter(device_id__in=DeviceID)
+
+            myFilter = DashboardFilter(
+                request.GET, queryset=Device_ID, request=request)
+            Device_ID = myFilter.qs
+
+            DeviceID = []
+            for i in Device_ID:
+                DeviceID.append(i.device_id)
 
             Total = 0
             Live = 0
@@ -334,7 +353,7 @@ def dashboard(request):
                 Loc = User_Detail.objects.filter(
                     Device_ID=j)[0].Location
                 Stat = Device.objects.filter(device_id=j)[0].device_status
-                Rat = Device.objects.filter(device_id=j)[0].device_rating
+                Rat = Asset.objects.get(Device_ID=j).Rating_In_KVA
                 Run = DevicesInfo.objects.filter(device_id=j).exclude(
                     dg_runtime_seconds=0).last()
                 RunHour1 = []
@@ -346,12 +365,12 @@ def dashboard(request):
                 if RunH != None:
                     RunH = RunH.runtime_second_ctrl
                     RunHour1.append(RunH)
-
-                # PreRH.append(Before_DGMA_INSTALLATION.objects.get(
-                    # Device_ID=j).Previous_Run_Hour)
-                # RunHour2 = zip(RunHour1, PreRH)
-                for rh in RunHour1:
-                    seconds = rh
+                PreRH = []
+                PreRH.append(int(Before_DGMA_INSTALLATION.objects.get(
+                    Device_ID=j).Previous_Run_Hour))
+                RunHour2 = zip(RunHour1, PreRH)
+                for rh, prh in RunHour2:
+                    seconds = rh + prh
                     # seconds = seconds % (24 * 3600)
                     hour = seconds // 3600
                     seconds %= 3600
@@ -371,13 +390,6 @@ def dashboard(request):
                 Cost_Per_U = float(Cost_Per_Unit['per_unit_cost__avg'])
                 Cost_Per_U = round(Cost_Per_U, 2)
                 CPU.append(Cost_Per_U)
-                # Energy_output_avg = DevicesInfo.objects.filter(
-                #     device_id=j).exclude(energy_output_kva=0).aggregate(Avg('energy_output_kva'))
-                # Energy_output = round(float(
-                #     Energy_output_avg['energy_output_kva__avg']), 2)
-                # RatingD = Device.objects.get(
-                #     device_id=j).device_rating
-                # Energy_OA = round((Energy_output/RatingD)*100, 2)
                 Efficency = DeviceOperational.objects.filter(
                     device_id=j).aggregate(Avg('efficiency'))
                 Energy_OA = round(float(Efficency['efficiency__avg']), 2)
@@ -387,17 +399,18 @@ def dashboard(request):
                 MaxDLoad = round(float(
                     MaxDL['maximum_demand_load__max']), 2)
                 MaxDemLoad.append(MaxDLoad)
-                for e in EnergyOA:
-                    if e < 25:
-                        Star.append(1)
-                    elif 25 < e < 40:
-                        Star.append(2)
-                    elif 40 < e < 50:
-                        Star.append(3)
-                    elif 50 < e < 60:
-                        Star.append(4)
-                    else:
-                        Star.append(5)
+
+                if Energy_OA < 25:
+                    Star.append(1)
+                elif 25 < Energy_OA < 40:
+                    Star.append(2)
+                elif 40 < Energy_OA < 50:
+                    Star.append(3)
+                elif 50 < Energy_OA < 60:
+                    Star.append(4)
+                else:
+                    Star.append(5)
+
                 Rating.append(Rat)
                 State.append(Sta)
                 City.append(Cit)
@@ -421,7 +434,7 @@ def dashboard(request):
                 device_id__in=DeviceID, alert_open=True).exclude(alert_type_name__in=status).order_by('-created_at')
             alert_count = len(alert)
 
-            return render(request, 'dgms/dgms_dashboard.html', {'alert_count': alert_count, 'username': username, 'Customer_Name': Customer_Name, 'Total': Total, 'Live': Live, 'Offline': Offline, 'Capacity': Capacity, 'InUse': InUse, 'Fuel__Consumed': Fuel__Consumed, 'Fuel__Cost': Fuel__Cost, 'Carbon_Foot__Print': Carbon_Foot__Print, 'UserDetail': UserDetail})
+            return render(request, 'dgms/dgms_dashboard.html', {'myFilter': myFilter, 'alert_count': alert_count, 'username': username, 'Customer_Name': Customer_Name, 'Total': Total, 'Live': Live, 'Offline': Offline, 'Capacity': Capacity, 'InUse': InUse, 'Fuel__Consumed': Fuel__Consumed, 'Fuel__Cost': Fuel__Cost, 'Carbon_Foot__Print': Carbon_Foot__Print, 'UserDetail': UserDetail})
 
         elif request.user.is_superuser:
             Customer_Name = 'Admin'
@@ -521,11 +534,11 @@ def dashboard(request):
                         RunH = RunH.runtime_second_ctrl
                         RunHour1.append(RunH)
 
-                    # PreRH.append(Before_DGMA_INSTALLATION.objects.get(
-                        # Device_ID=j).Previous_Run_Hour)
-                    # RunHour2 = zip(RunHour1, PreRH)
-                    for rh in RunHour1:
-                        seconds = rh
+                    PreRH.append(int(Before_DGMA_INSTALLATION.objects.get(
+                        Device_ID=j).Previous_Run_Hour))
+                    RunHour2 = zip(RunHour1, PreRH)
+                    for rh, prh in RunHour2:
+                        seconds = rh + prh
                         # seconds = seconds % (24 * 3600)
                         hour = seconds // 3600
                         seconds %= 3600
@@ -610,10 +623,14 @@ def dashboard(request):
             if InUse == None:
                 InUse = 0
             Device_ID = Device.objects.filter(account_id=Customer_ID)
+
+            myFilter = DashboardFilter(
+                request.GET, queryset=Device_ID, request=request)
+            Device_ID = myFilter.qs
+
             DeviceID = []
-            for i in range(Total):
-                a = Device_ID[i].device_id
-                DeviceID.append(a)
+            for i in Device_ID:
+                DeviceID.append(i.device_id)
 
             Fuel__Consumed = 0
             Fuel__Cost = 0
@@ -665,7 +682,7 @@ def dashboard(request):
                 Loc = User_Detail.objects.filter(
                     Device_ID=j)[0].Location
                 Stat = Device.objects.filter(device_id=j)[0].device_status
-                Rat = Device.objects.filter(device_id=j)[0].device_rating
+                Rat = Asset.objects.get(Device_ID=j).Rating_In_KVA
                 Run = DevicesInfo.objects.filter(device_id=j).exclude(
                     dg_runtime_seconds=0).last()
                 RunHour1 = []
@@ -677,12 +694,12 @@ def dashboard(request):
                 if RunH != None:
                     RunH = RunH.runtime_second_ctrl
                     RunHour1.append(RunH)
-
-                # PreRH.append(Before_DGMA_INSTALLATION.objects.get(
-                    # Device_ID=j).Previous_Run_Hour)
-                # RunHour2 = zip(RunHour1, PreRH)
-                for rh in RunHour1:
-                    seconds = rh
+                PreRH = []
+                PreRH.append(int(Before_DGMA_INSTALLATION.objects.get(
+                    Device_ID=j).Previous_Run_Hour))
+                RunHour2 = zip(RunHour1, PreRH)
+                for rh, prh in RunHour2:
+                    seconds = rh + prh
                     # seconds = seconds % (24 * 3600)
                     hour = seconds // 3600
                     seconds %= 3600
@@ -702,13 +719,6 @@ def dashboard(request):
                 Cost_Per_U = float(Cost_Per_Unit['per_unit_cost__avg'])
                 Cost_Per_U = round(Cost_Per_U, 2)
                 CPU.append(Cost_Per_U)
-                # Energy_output_avg = DevicesInfo.objects.filter(
-                #     device_id=j).exclude(energy_output_kva=0).aggregate(Avg('energy_output_kva'))
-                # Energy_output = round(float(
-                #     Energy_output_avg['energy_output_kva__avg']), 2)
-                # RatingD = Device.objects.get(
-                #     device_id=j).device_rating
-                # Energy_OA = round((Energy_output/RatingD)*100, 2)
                 Efficency = DeviceOperational.objects.filter(
                     device_id=j).aggregate(Avg('efficiency'))
                 Energy_OA = round(float(Efficency['efficiency__avg']), 2)
@@ -718,17 +728,18 @@ def dashboard(request):
                 MaxDLoad = round(float(
                     MaxDL['maximum_demand_load__max']), 2)
                 MaxDemLoad.append(MaxDLoad)
-                for e in EnergyOA:
-                    if e < 25:
-                        Star.append(1)
-                    elif 25 < e < 40:
-                        Star.append(2)
-                    elif 40 < e < 50:
-                        Star.append(3)
-                    elif 50 < e < 60:
-                        Star.append(4)
-                    else:
-                        Star.append(5)
+
+                if Energy_OA < 25:
+                    Star.append(1)
+                elif 25 < Energy_OA < 40:
+                    Star.append(2)
+                elif 40 < Energy_OA < 50:
+                    Star.append(3)
+                elif 50 < Energy_OA < 60:
+                    Star.append(4)
+                else:
+                    Star.append(5)
+
                 Rating.append(Rat)
                 State.append(Sta)
                 City.append(Cit)
@@ -743,8 +754,8 @@ def dashboard(request):
                     Diesel.append(DieselPrice)
                     Energy.append(EnergyPrice)
 
-                UserDetail = zip(State, City, Location,
-                                 Status, Rating, UnitGen, FuelCon, CarbonFP, FuelC, CPU, EnergyOA, MaxDemLoad, Star, Diesel, Energy, RunHour, DeviceID)
+            UserDetail = zip(State, City, Location,
+                             Status, Rating, UnitGen, FuelCon, CarbonFP, FuelC, CPU, EnergyOA, MaxDemLoad, Star, Diesel, Energy, RunHour, DeviceID)
 
             status = ['power_factor']
 
@@ -752,7 +763,7 @@ def dashboard(request):
                 device_id__in=Device_ID, alert_open=True).exclude(alert_type_name__in=status).order_by('-created_at')
             alert_count = len(alert)
 
-        return render(request, 'dgms/dgms_dashboard.html', {'alert_count': alert_count, 'username': username, 'Customer_Name': Customer_Name, 'Total': Total, 'Live': Live, 'Offline': Offline, 'Capacity': Capacity, 'InUse': InUse, 'Fuel__Consumed': Fuel__Consumed, 'Fuel__Cost': Fuel__Cost, 'Carbon_Foot__Print': Carbon_Foot__Print, 'UserDetail': UserDetail})
+        return render(request, 'dgms/dgms_dashboard.html', {'myFilter': myFilter, 'alert_count': alert_count, 'username': username, 'Customer_Name': Customer_Name, 'Total': Total, 'Live': Live, 'Offline': Offline, 'Capacity': Capacity, 'InUse': InUse, 'Fuel__Consumed': Fuel__Consumed, 'Fuel__Cost': Fuel__Cost, 'Carbon_Foot__Print': Carbon_Foot__Print, 'UserDetail': UserDetail})
 
 
 @ login_required(login_url='login')
@@ -774,80 +785,9 @@ def asset(request, device_id):
         if request.user.is_user:
             Customer_Name = User_Detail.objects.get(
                 Device_ID=device_id).Customer_Name
-
-        Cit = User_Detail.objects.get(Device_ID=device_id).City
-        Loc = User_Detail.objects.get(Device_ID=device_id).Location
-        Rat = Device.objects.get(device_id=device_id).device_rating
-        Tank_Size = Asset.objects.get(Device_ID=device_id).Diesel_Tank_Size
-        Oem = Asset.objects.get(Device_ID=device_id).OEM
-        SellerName = Asset.objects.get(Device_ID=device_id).Seller_Name
-        WSD = Asset.objects.get(Device_ID=device_id).Warranty_Start_Date
-        WED = Asset.objects.get(Device_ID=device_id).Warranty_End_Date
-        WP = Asset.objects.get(Device_ID=device_id).Warranty_Period
-        WS = Asset.objects.get(Device_ID=device_id).Warranty_Status
-        EM = Asset.objects.get(Device_ID=device_id).Engine_Make
-        EMN = Asset.objects.get(Device_ID=device_id).Engine_Model_No
-        ESN = Asset.objects.get(Device_ID=device_id).Engine_S_NO
-        EOI = Asset.objects.get(Device_ID=device_id).Engine_Other_Info
-        AM = Asset.objects.get(Device_ID=device_id).Alternator_Make
-        AMN = Asset.objects.get(Device_ID=device_id).Alternator_Model_No
-        ASN = Asset.objects.get(Device_ID=device_id).Alternator_S_NO
-        AOI = Asset.objects.get(Device_ID=device_id).Alternator_Other_Info
-        BM = Asset.objects.get(Device_ID=device_id).Battery_Make
-        BMN = Asset.objects.get(Device_ID=device_id).Battery_Model_No
-        BSN = Asset.objects.get(Device_ID=device_id).Battery_S_NO
-        BOI = Asset.objects.get(Device_ID=device_id).Battery_Other_Info
-        BCM = Asset.objects.get(Device_ID=device_id).Battery_Charger_Make
-        BCMN = Asset.objects.get(
-            Device_ID=device_id).Battery_Charger_Model_No
-        BCSN = Asset.objects.get(Device_ID=device_id).Battery_Charger_S_NO
-        BCOI = Asset.objects.get(
-            Device_ID=device_id).Battery_Charger_Other_Info
-        DSN = DGMS_Device_Info.objects.get(
-            Device_ID=device_id).Device_Serial_No
-        Version = DGMS_Device_Info.objects.get(Device_ID=device_id).Version
-        SC = DGMS_Device_Info.objects.get(Device_ID=device_id).Sim_Card
-        IMEI = DGMS_Device_Info.objects.get(Device_ID=device_id).IMEI_No
-        Other = DGMS_Device_Info.objects.get(Device_ID=device_id).Other
-        OtherInfo = DGMS_Device_Info.objects.get(
-            Device_ID=device_id).Other_Info
-        EMMI = Sensor_Info.objects.get(
-            Device_ID=device_id).Energy_Meter_Make_Info
-        EMMN = Sensor_Info.objects.get(
-            Device_ID=device_id).Energy_Meter_Model_No
-        EMS = Sensor_Info.objects.get(
-            Device_ID=device_id).Energy_Meter_S_No
-        CTMI = Sensor_Info.objects.get(
-            Device_ID=device_id).Current_Transformer_Make_Info
-        CTMN = Sensor_Info.objects.get(
-            Device_ID=device_id).Current_Transformer_Model_No
-        CTSN = Sensor_Info.objects.get(
-            Device_ID=device_id).Current_Transformer_S_No
-        CTCR = Sensor_Info.objects.get(
-            Device_ID=device_id).Current_Transformer_CT_Ratio
-        FSMI = Sensor_Info.objects.get(
-            Device_ID=device_id).Fuel_Sensor_Make_Info
-        FSMN = Sensor_Info.objects.get(
-            Device_ID=device_id).Fuel_Sensor_Model_No
-        FSN = Sensor_Info.objects.get(Device_ID=device_id).Fuel_SensorS_No
-        FSL = Sensor_Info.objects.get(
-            Device_ID=device_id).Fuel_Sensor_Length
-        DOI = DGMS_Device_Info.objects.get(
-            Device_ID=device_id).DGMS_Date_Of_Installation
-        CD = Asset.objects.get(Device_ID=device_id).Commissioning_Date
-        OP = Asset.objects.get(Device_ID=device_id).Operations
-        DP = Price.objects.get(Location=Cit).Diesel_Price
-        EP = Price.objects.get(Location=Cit).Energy_Price
-        now = datetime.datetime.now()
-        current_time = now.strftime('%Y-%m-%d %H:%M:%S')
-        PRH = Before_DGMA_INSTALLATION.objects.get(
-            Device_ID=device_id).Previous_Run_Hour
-        PFC = Before_DGMA_INSTALLATION.objects.get(
-            Device_ID=device_id).Previous_Fuel_Consumed
-        RC = Before_DGMA_INSTALLATION.objects.get(
-            Device_ID=device_id).Run_Count
-        UG = Before_DGMA_INSTALLATION.objects.get(
-            Device_ID=device_id).Units_Generated
+        if request.user.is_manager:
+            Customer_Name = Manager.objects.get(
+                Manager_Name=username).Customer_Name
 
         Cit = User_Detail.objects.get(Device_ID=device_id).City
         Loc = User_Detail.objects.get(Device_ID=device_id).Location
@@ -932,7 +872,23 @@ def asset(request, device_id):
 
         Address1 = Device.objects.get(device_id=device_id).device_location
 
-    return render(request, 'dgms/dgms_asset_detail.html', {'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'Address': Address, 'DDOI': DDOI, 'alert_count': alert_count, 'CD': CD, 'OP': OP, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'PRH': PRH, 'PFC': PFC, 'RC': RC, 'UG': UG, 'current_time': current_time, 'EP': EP, 'DP': DP, 'DOI': DOI, 'EMMI': EMMI, 'EMMN': EMMN, 'EMS': EMS, 'CTMI': CTMI, 'CTMN': CTMN, 'CTSN': CTSN, 'CTCR': CTCR, 'FSMI': FSMI, 'FSMN': FSMN, 'FSN': FSN, 'FSL': FSL, 'DSN': DSN, 'Version': Version, 'SC': SC, 'IMEI': IMEI, 'OtherInfo': OtherInfo, 'Other': Other, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Tank_Size': Tank_Size, 'SellerName': SellerName, 'Oem': Oem, 'WSD': WSD, 'WED': WED, 'WP': WP, 'WS': WS, 'EM': EM, 'EMN': EMN, 'ESN': ESN, 'EOI': EOI, 'BM': BM, 'BMN': BMN, 'BSN': BSN, 'BOI': BOI, 'AM': AM, 'AMN': AMN, 'ASN': ASN, 'AOI': AOI, 'BCM': EM, 'BCMN': BCMN, 'BCSN': BCSN, 'BCOI': BCOI})
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
+
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+        asset_info = Asset.objects.get(Device_ID=device_id)
+
+    return render(request, 'dgms/dgms_asset_detail.html', {'GWDB': GWDB, 'PowerStatus': PowerStatus, 'asset_info': asset_info, 'gsm': gsm, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'Address': Address, 'DDOI': DDOI, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat})
 
 
 @ login_required(login_url='login')
@@ -967,7 +923,8 @@ def alert(request):
                 alerts = Alerts.objects.filter(
                     device_id__in=Device_ID).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
-                myFilter = AlertFilter(request.GET, queryset=alerts)
+                myFilter = AlertFilter(
+                    request.GET, queryset=alerts, request=request)
                 alerts = myFilter.qs
 
                 enddate = (request.GET['start_date']).strftime('%d-%m-%Y')
@@ -980,7 +937,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(minutes=30)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -994,7 +951,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=1)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1008,7 +965,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=2)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1022,7 +979,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=7)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1036,7 +993,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=12)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1050,7 +1007,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=24)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1063,7 +1020,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=2)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1077,7 +1034,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=5)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1091,7 +1048,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(weeks=1)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1105,7 +1062,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(weeks=2)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1118,7 +1075,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=30)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1131,7 +1088,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=60)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1145,7 +1102,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=183)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1159,7 +1116,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=365)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1173,7 +1130,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=365*2)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1185,7 +1142,8 @@ def alert(request):
                     alerts = Alerts.objects.filter(device_id__in=Device_ID).exclude(
                         alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
-                    myFilter = AlertFilter(request.GET, queryset=alerts)
+                    myFilter = AlertFilter(
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     enddate = (Alerts.objects.filter(device_id__in=Device_ID).exclude(
@@ -1206,7 +1164,7 @@ def alert(request):
                     device_id__in=Device_ID).exclude(alert_type_name__in=status).order_by('-created_at').first().updated_at).strftime('%d-%m-%Y')
 
                 myFilter = AlertFilter(
-                    request.GET, queryset=alerts)
+                    request.GET, queryset=alerts, request=request)
                 alerts = myFilter.qs
 
             status = ['power_factor']
@@ -1277,7 +1235,8 @@ def alert(request):
                 alerts = Alerts.objects.filter().exclude(
                     alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
-                myFilter = AlertFilter(request.GET, queryset=alerts)
+                myFilter = AlertFilter(
+                    request.GET, queryset=alerts, request=request)
                 alerts = myFilter.qs
 
                 enddate = (request.GET['start_date']).strftime('%d-%m-%Y')
@@ -1290,7 +1249,7 @@ def alert(request):
                     ) - datetime.timedelta(minutes=30)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
@@ -1303,7 +1262,7 @@ def alert(request):
                     ) - datetime.timedelta(hours=1)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
@@ -1316,7 +1275,7 @@ def alert(request):
                     ) - datetime.timedelta(hours=2)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
@@ -1329,7 +1288,7 @@ def alert(request):
                     ) - datetime.timedelta(hours=7)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
@@ -1342,7 +1301,7 @@ def alert(request):
                     ) - datetime.timedelta(hours=12)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
@@ -1355,7 +1314,7 @@ def alert(request):
                     ) - datetime.timedelta(hours=24)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
@@ -1367,7 +1326,7 @@ def alert(request):
                     ) - datetime.timedelta(days=2)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
@@ -1380,7 +1339,7 @@ def alert(request):
                     ) - datetime.timedelta(days=5)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
@@ -1393,7 +1352,7 @@ def alert(request):
                     ) - datetime.timedelta(weeks=1)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
@@ -1406,7 +1365,7 @@ def alert(request):
                     ) - datetime.timedelta(weeks=2)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
@@ -1418,7 +1377,7 @@ def alert(request):
                     ) - datetime.timedelta(days=30)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
@@ -1430,7 +1389,7 @@ def alert(request):
                     ) - datetime.timedelta(days=60)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
@@ -1443,7 +1402,7 @@ def alert(request):
                     ) - datetime.timedelta(days=183)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
@@ -1456,7 +1415,7 @@ def alert(request):
                     ) - datetime.timedelta(days=365)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
@@ -1469,7 +1428,7 @@ def alert(request):
                     ) - datetime.timedelta(days=365*2)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()).strftime('%d-%m-%Y')
@@ -1490,7 +1449,7 @@ def alert(request):
                     '-created_at').exclude(alert_type_name__in=status).first().updated_at
 
             myFilter = AlertFilter(
-                request.GET, queryset=alerts)
+                request.GET, queryset=alerts, request=request)
             alerts = myFilter.qs
 
             alert = Alerts.objects.filter(
@@ -1571,7 +1530,8 @@ def alert(request):
                 alerts = Alerts.objects.filter(
                     device_id__in=Device_ID).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
-                myFilter = AlertFilter(request.GET, queryset=alerts)
+                myFilter = AlertFilter(
+                    request.GET, queryset=alerts, request=request)
                 alerts = myFilter.qs
 
                 enddate = (request.GET['start_date']).strftime('%d-%m-%Y')
@@ -1584,7 +1544,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(minutes=30)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1598,7 +1558,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=1)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1612,7 +1572,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=2)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1626,7 +1586,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=7)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1640,7 +1600,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=12)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1654,7 +1614,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=24)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1667,7 +1627,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=2)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1681,7 +1641,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=5)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1695,7 +1655,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(weeks=1)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1709,7 +1669,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(weeks=2)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1722,7 +1682,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=30)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1735,7 +1695,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=60)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1749,7 +1709,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=183)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1763,7 +1723,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=365)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1777,7 +1737,7 @@ def alert(request):
                         device_id__in=Device_ID, created_at__gte=datetime.datetime.now() - datetime.timedelta(days=365*2)).exclude(alert_type_name__in=status).order_by('-alert_open', '-created_at')
 
                     myFilter = AlertFilter(
-                        request.GET, queryset=alerts)
+                        request.GET, queryset=alerts, request=request)
                     alerts = myFilter.qs
 
                     startdate = (datetime.datetime.now()
@@ -1798,7 +1758,7 @@ def alert(request):
                     device_id__in=Device_ID).exclude(alert_type_name__in=status).order_by('-created_at').first().updated_at).strftime('%d-%m-%Y')
 
                 myFilter = AlertFilter(
-                    request.GET, queryset=alerts)
+                    request.GET, queryset=alerts, request=request)
                 alerts = myFilter.qs
 
             status = ['power_factor']
@@ -1871,24 +1831,28 @@ def servicehistory(request, device_id):
         if request.user.is_user:
             Customer_Name = User_Detail.objects.get(
                 Device_ID=device_id).Customer_Name
-        Cit = User_Detail.objects.get(Device_ID=device_id).City
-        Loc = User_Detail.objects.get(Device_ID=device_id).Location
-        SP = Service_History.objects.get(
-            Device_ID=device_id).Service_Provider
-        SC = Service_History.objects.get(
-            Device_ID=device_id).Contact
-        Address = Service_History.objects.get(Device_ID=device_id).Address
-        Con = Service_History.objects.get(Device_ID=device_id).Contact
-        LSD = Service_History.objects.get(
-            Device_ID=device_id).Last_Service_Date
-        Activity = Service_History.objects.get(
-            Device_ID=device_id).Activity
-        Remark = Service_History.objects.get(Device_ID=device_id).Remark
-        Activity1 = Service_History.objects.get(
-            Device_ID=device_id).Activity1
-        Remark1 = Service_History.objects.get(Device_ID=device_id).Remark1
-        NSD = Service_History.objects.get(
-            Device_ID=device_id).Next_Service_Date
+        if request.user.is_manager:
+            Customer_Name = Manager.objects.get(
+                Manager_Name=username).Customer_Name
+
+        # SP = Service_History.objects.get(
+        #     Device_ID=device_id).Service_Provider
+        # SC = Service_History.objects.get(
+        #     Device_ID=device_id).Contact
+        # Address = Service_History.objects.get(Device_ID=device_id).Address
+        # Con = Service_History.objects.get(Device_ID=device_id).Contact
+        # LSD = Service_History.objects.get(
+        #     Device_ID=device_id).Last_Service_Date
+        # Activity = Service_History.objects.get(
+        #     Device_ID=device_id).Activity
+        # Remark = Service_History.objects.get(Device_ID=device_id).Remark
+        # Activity1 = Service_History.objects.get(
+        #     Device_ID=device_id).Activity1
+        # Remark1 = Service_History.objects.get(Device_ID=device_id).Remark1
+        # NSD = Service_History.objects.get(
+        #     Device_ID=device_id).Next_Service_Date
+
+        service_info = Service_History.objects.get(Device_ID=device_id)
 
         Cit = User_Detail.objects.get(Device_ID=device_id).City
         Loc = User_Detail.objects.get(Device_ID=device_id).Location
@@ -1970,10 +1934,28 @@ def servicehistory(request, device_id):
 
         Address1 = Device.objects.get(device_id=device_id).device_location
 
-        Contract = Service_History.objects.get(
-            Device_ID=device_id).Service_Contract
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
 
-    return render(request, 'dgms/dgms_service_history.html', {'Contract': Contract, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'Tank_Size': Tank_Size, 'Remark1': Remark1, 'Activity1': Activity1, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'Remark': Remark, 'SP': SP, 'SC': SC, 'Address': Address, 'Con': Con, 'LSD': LSD, 'Activity': Activity, 'NSD': NSD, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id})
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+        try:
+            pdf_loc = service_info.Service_Document.url
+        except:
+            pdf_loc = "None"
+
+        asset = Asset.objects.get(Device_ID=device_id)
+
+    return render(request, 'dgms/dgms_service_history.html', {'asset': asset, 'pdf_loc': pdf_loc, 'service_info': service_info, 'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'Tank_Size': Tank_Size, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id})
 
 
 @ login_required(login_url='login')
@@ -1986,14 +1968,22 @@ def dgmsDashboard(request, device_id):
         if request.user.is_customer:
             Customer_Name = Customer.objects.get(
                 Customer_Name=username).Customer_Name
+        if request.user.is_manager:
+            Customer_Name = Manager.objects.get(
+                Manager_Name=username).Customer_Name
 
         Cit = User_Detail.objects.get(Device_ID=device_id).City
         Loc = User_Detail.objects.get(Device_ID=device_id).Location
         Rat = Device.objects.get(device_id=device_id).device_rating
         Stat = Device.objects.get(device_id=device_id).device_status
         Date = datetime.datetime.now()
-        Fuel2 = round(DevicesInfo.objects.filter(
-            device_id=device_id).exclude(fuel_level_litre=0).last().fuel_level_litre, 2)
+        try:
+            Fuel2 = round(DevicesInfo.objects.filter(
+                device_id=device_id).exclude(fuel_level_litre=0).last().fuel_level_litre, 2)
+
+        except:
+            Fuel2 = 0
+
         Tank_Size = Asset.objects.get(Device_ID=device_id).Diesel_Tank_Size
         Fuel_Per = round((Fuel2/Tank_Size)*100, 2)
         Run = DevicesInfo.objects.filter(device_id=device_id).exclude(
@@ -2006,6 +1996,9 @@ def dgmsDashboard(request, device_id):
             if Run != None:
                 Run = Run.runtime_second_ctrl
 
+        PreRH = Before_DGMA_INSTALLATION.objects.get(
+            Device_ID=device_id).Previous_Run_Hour
+        Run = Run + int(PreRH)
         seconds = Run
         # seconds = seconds % (24 * 3600)
         hour = seconds // 3600
@@ -2062,16 +2055,9 @@ def dgmsDashboard(request, device_id):
         DeviceC = DeviceCounterView.objects.filter(
             device_id=device_id)[0].counter
 
-        DOI = Asset.objects.get(Device_ID=device_id).Date_Of_Installation
-
-        WS = Asset.objects.get(Device_ID=device_id).Warranty_Status
-
-        LSD = Service_History.objects.get(
-            Device_ID=device_id).Last_Service_Date
-        NSD = Service_History.objects.get(
-            Device_ID=device_id).Next_Service_Date
-        SP = Service_History.objects.get(
-            Device_ID=device_id).Service_Provider
+        DeviceC = DeviceC + \
+            int(Before_DGMA_INSTALLATION.objects.get(
+                Device_ID=device_id).Run_Count)
 
         RT = round(DevicesInfo.objects.filter(device_id=device_id).exclude(
             room_temperature=0).last().room_temperature, 2)
@@ -2178,7 +2164,28 @@ def dgmsDashboard(request, device_id):
 
         LTOD = d1 + d21
 
-    return render(request, 'dgms/dgms_dashboard_device.html', {'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'Fuel2': Fuel2, 'DDOI': DDOI, 'alert_count': alert_count, 'Fuel1': Fuel1, 'Time': Time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Fuel2': Fuel2, 'Tank_Size': Tank_Size, 'Fuel_Per': Fuel_Per, 'hh': hh, 'UG': UG, 'Carbon_Foot_Print': Carbon_Foot_Print, 'BV': BV, 'AvgFC': AvgFC, 'Energy_OA': Energy_OA, 'MaxDLoad': MaxDLoad, 'DeviceC': DeviceC, 'DOI': DOI, 'WS': WS, 'LSD': LSD, 'NSD': NSD, 'SP': SP, 'Star': Star, 'RT': RT, 'diff': diff, 'Level': Level, 'Fuel1': Fuel1, 'Time': Time})
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
+
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+        asset_info = Asset.objects.get(Device_ID=device_id)
+
+        service_info = Service_History.objects.get(Device_ID=device_id)
+
+        DTNS = (Service_History.objects.get(
+            Device_ID=device_id).Next_Service_Date) - (datetime.date.today())
+
+    return render(request, 'dgms/dgms_dashboard_device.html', {'DTNS': DTNS, 'service_info': service_info, 'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'Fuel2': Fuel2, 'DDOI': DDOI, 'alert_count': alert_count, 'Fuel1': Fuel1, 'Time': Time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Fuel2': Fuel2, 'Tank_Size': Tank_Size, 'Fuel_Per': Fuel_Per, 'hh': hh, 'UG': UG, 'Carbon_Foot_Print': Carbon_Foot_Print, 'BV': BV, 'AvgFC': AvgFC, 'Energy_OA': Energy_OA, 'MaxDLoad': MaxDLoad, 'DeviceC': DeviceC, 'asset_info': asset_info, 'Star': Star, 'RT': RT, 'diff': diff, 'Level': Level, 'Fuel1': Fuel1, 'Time': Time})
 
 
 @ login_required(login_url='login')
@@ -2194,6 +2201,9 @@ def energyPara(request, device_id):
         if request.user.is_user:
             Customer_Name = User_Detail.objects.get(
                 Device_ID=device_id).Customer_Name
+        if request.user.is_manager:
+            Customer_Name = Manager.objects.get(
+                Manager_Name=username).Customer_Name
 
         Cit = User_Detail.objects.get(Device_ID=device_id).City
         Loc = User_Detail.objects.get(Device_ID=device_id).Location
@@ -2522,7 +2532,21 @@ def energyPara(request, device_id):
 
         Name = "Energy Parameters"
 
-        return render(request, 'dgms/dgms_energyPara.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'DDOI': DDOI, 'VLN': VLN, 'VLL': VLL, 'FREQ': FREQ, 'alert_count': alert_count, 'Time': Time,  'TR': TR, 'myFilter': myFilter, 'UG': UG, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
+
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+        return render(request, 'dgms/dgms_energyPara.html', {'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'DDOI': DDOI, 'VLN': VLN, 'VLL': VLL, 'FREQ': FREQ, 'alert_count': alert_count, 'Time': Time,  'TR': TR, 'myFilter': myFilter, 'UG': UG, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -2538,6 +2562,9 @@ def loadKPI(request, device_id):
         if request.user.is_user:
             Customer_Name = User_Detail.objects.get(
                 Device_ID=device_id).Customer_Name
+        if request.user.is_manager:
+            Customer_Name = Manager.objects.get(
+                Manager_Name=username).Customer_Name
 
         Cit = User_Detail.objects.get(Device_ID=device_id).City
         Loc = User_Detail.objects.get(Device_ID=device_id).Location
@@ -2866,7 +2893,21 @@ def loadKPI(request, device_id):
 
         Name = "Load Side KPI"
 
-        return render(request, 'dgms/dgms_loadKPI.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'DDOI': DDOI, 'alert_count': alert_count, 'WT': WT, 'EO': EO, 'Time': Time, 'TR': TR, 'myFilter': myFilter, 'CA': CA, 'CR': CR, 'CY': CY, 'CB': CB, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
+
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+        return render(request, 'dgms/dgms_loadKPI.html', {'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'DDOI': DDOI, 'alert_count': alert_count, 'WT': WT, 'EO': EO, 'Time': Time, 'TR': TR, 'myFilter': myFilter, 'CA': CA, 'CR': CR, 'CY': CY, 'CB': CB, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -2882,6 +2923,9 @@ def enginePara(request, device_id):
         if request.user.is_user:
             Customer_Name = User_Detail.objects.get(
                 Device_ID=device_id).Customer_Name
+        if request.user.is_manager:
+            Customer_Name = Manager.objects.get(
+                Manager_Name=username).Customer_Name
 
         Cit = User_Detail.objects.get(Device_ID=device_id).City
         Loc = User_Detail.objects.get(Device_ID=device_id).Location
@@ -3211,7 +3255,21 @@ def enginePara(request, device_id):
 
         Name = "Engine Parameters"
 
-        return render(request, 'dgms/dgms_enginePara.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'DDOI': DDOI, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'DL': DL, 'RPM': RPM, 'DBV': DBV, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
+
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+        return render(request, 'dgms/dgms_enginePara.html', {'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'DDOI': DDOI, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'DL': DL, 'RPM': RPM, 'DBV': DBV, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -3227,6 +3285,9 @@ def performanceKPI(request, device_id):
         if request.user.is_user:
             Customer_Name = User_Detail.objects.get(
                 Device_ID=device_id).Customer_Name
+        if request.user.is_manager:
+            Customer_Name = Manager.objects.get(
+                Manager_Name=username).Customer_Name
 
         Cit = User_Detail.objects.get(Device_ID=device_id).City
         Loc = User_Detail.objects.get(Device_ID=device_id).Location
@@ -3604,7 +3665,21 @@ def performanceKPI(request, device_id):
 
         Name = "PERFORMANCE BASED KPI"
 
-        return render(request, 'dgms/dgms_performanceKPI.html', {'Total_UG': Total_UG, 'Name': Name, 'LTOD': LTOD, 'RC': RC, 'temperature': temperature, 'description': description, 'icon': icon, 'Total_RH': Total_RH, 'RunCount': RunCount, 'Total_FC': Total_FC, 'Total_FCO': Total_FCO, 'UG': UG, 'DDOI': DDOI, 'RH': RH, 'MDL': MDL, 'LE': LE, 'CF': CF, 'FC': FC, 'FCO': FCO, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
+
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+        return render(request, 'dgms/dgms_performanceKPI.html', {'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'Total_UG': Total_UG, 'Name': Name, 'LTOD': LTOD, 'RC': RC, 'temperature': temperature, 'description': description, 'icon': icon, 'Total_RH': Total_RH, 'RunCount': RunCount, 'Total_FC': Total_FC, 'Total_FCO': Total_FCO, 'UG': UG, 'DDOI': DDOI, 'RH': RH, 'MDL': MDL, 'LE': LE, 'CF': CF, 'FC': FC, 'FCO': FCO, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -3620,6 +3695,9 @@ def deviceInfoKPI(request, device_id):
         if request.user.is_user:
             Customer_Name = User_Detail.objects.get(
                 Device_ID=device_id).Customer_Name
+        if request.user.is_manager:
+            Customer_Name = Manager.objects.get(
+                Manager_Name=username).Customer_Name
 
         Cit = User_Detail.objects.get(Device_ID=device_id).City
         Loc = User_Detail.objects.get(Device_ID=device_id).Location
@@ -3971,7 +4049,21 @@ def deviceInfoKPI(request, device_id):
 
         Name = "DGMS DEVICE INFO"
 
-        return render(request, 'dgms/dgms_deviceInfoKPI.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'GSMSignal': GSMSignal, 'PowerStatus': PowerStatus, 'BatteryVoltage': BatteryVoltage, 'DDOI': DDOI, 'GSM': GSM, 'GB': GB, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
+
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+        return render(request, 'dgms/dgms_deviceInfoKPI.html', {'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'GSMSignal': GSMSignal, 'PowerStatus': PowerStatus, 'BatteryVoltage': BatteryVoltage, 'DDOI': DDOI, 'GSM': GSM, 'GB': GB, 'alert_count': alert_count, 'Time': Time, 'myFilter': myFilter, 'TR': TR, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Star': Star, 'diff': diff})
 
 
 @ login_required(login_url='login')
@@ -3987,6 +4079,9 @@ def fuel_report(request, device_id):
         if request.user.is_user:
             Customer_Name = User_Detail.objects.get(
                 Device_ID=device_id).Customer_Name
+        if request.user.is_manager:
+            Customer_Name = Manager.objects.get(
+                Manager_Name=username).Customer_Name
 
         # Fuel = FuelFilledReport.objects.filter(
         #     device_id=device_id).order_by('device_time')
@@ -4207,10 +4302,14 @@ def fuel_report(request, device_id):
             Fuel = FuelFilledReport.objects.filter(
                 device_id=device_id).order_by('-device_time')
 
-            enddate = (FuelFilledReport.objects.filter(
-                device_id=device_id).order_by('-device_time').last().device_time).strftime('%d-%m-%Y')
-            startdate = (FuelFilledReport.objects.filter(
-                device_id=device_id).order_by('-device_time').first().device_time).strftime('%d-%m-%Y')
+            if len(Fuel) == 0:
+                enddate = 'None'
+                startdate = 'None'
+            else:
+                enddate = (FuelFilledReport.objects.filter(
+                    device_id=device_id).order_by('-device_time').last().device_time).strftime('%d-%m-%Y')
+                startdate = (FuelFilledReport.objects.filter(
+                    device_id=device_id).order_by('-device_time').first().device_time).strftime('%d-%m-%Y')
 
             myFilter = FuelFilledReportFilter(request.GET, queryset=Fuel)
             Fuel = myFilter.qs
@@ -4322,7 +4421,21 @@ def fuel_report(request, device_id):
 
         Name = "Fuel filled report"
 
-    return render(request, 'dgms/dgms_fuel_report.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'DDOI': DDOI, 'alert_count': alert_count, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'TR': TR, 'Address': Address, 'Tank_Size': Tank_Size, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'Fuel_Details': Fuel_Details, 'Total': Total, 'Count': Count, 'myFilter': myFilter})
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
+
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+    return render(request, 'dgms/dgms_fuel_report.html', {'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'DDOI': DDOI, 'alert_count': alert_count, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'TR': TR, 'Address': Address, 'Tank_Size': Tank_Size, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'Fuel_Details': Fuel_Details, 'Total': Total, 'Count': Count, 'myFilter': myFilter})
 
 
 @ login_required(login_url='login')
@@ -4338,6 +4451,9 @@ def operational_report(request, device_id):
         if request.user.is_user:
             Customer_Name = User_Detail.objects.get(
                 Device_ID=device_id).Customer_Name
+        if request.user.is_manager:
+            Customer_Name = Manager.objects.get(
+                Manager_Name=username).Customer_Name
         # OPR = DeviceOperational.objects.filter(
         #     device_id=device_id).order_by('start_time')
 
@@ -4772,7 +4888,21 @@ def operational_report(request, device_id):
 
         Name = "Operational report"
 
-    return render(request, 'dgms/dgms_operational_report.html', {'Name': Name, 'RC': RC, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'DDOI': DDOI, 'alert_count': alert_count, 'RC': RC, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'TR': TR, 'Address': Address, 'Tank_Size': Tank_Size, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'OP1': OP1, 'Count': Count, 'Total_RH': Total_RH, 'Total_F': Total_F, 'Total_FC': Total_FC, 'Total_EG': Total_EG, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'myFilter': myFilter})
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
+
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+    return render(request, 'dgms/dgms_operational_report.html', {'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'Name': Name, 'RC': RC, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'DDOI': DDOI, 'alert_count': alert_count, 'RC': RC, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'TR': TR, 'Address': Address, 'Tank_Size': Tank_Size, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'OP1': OP1, 'Count': Count, 'Total_RH': Total_RH, 'Total_F': Total_F, 'Total_FC': Total_FC, 'Total_EG': Total_EG, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'myFilter': myFilter})
 
 
 @ login_required(login_url='login')
@@ -4788,6 +4918,10 @@ def performance_report(request, device_id):
         if request.user.is_user:
             Customer_Name = User_Detail.objects.get(
                 Device_ID=device_id).Customer_Name
+        if request.user.is_manager:
+            Customer_Name = Manager.objects.get(
+                Manager_Name=username).Customer_Name
+
         Cit = User_Detail.objects.get(Device_ID=device_id).City
         Loc = User_Detail.objects.get(Device_ID=device_id).Location
         # PR = DeviceOperational.objects.filter(
@@ -5178,10 +5312,13 @@ def performance_report(request, device_id):
             else:
                 AFC.append(round(float(f/r), 2))
 
+        FuelConsumed = PR.aggregate(Sum('fuel_consumed'))
+        Fuel_Consumed = float(FuelConsumed['fuel_consumed__sum'])
+
         if len(AFC) == 0:
             Avg_FC = 0
         else:
-            Avg_FC = abs(round(sum(AFC)/len(AFC), 2))
+            Avg_FC = round(Fuel_Consumed/(Total_RH2 * 0.000277778), 2)
 
         # RC.reverse()
 
@@ -5222,7 +5359,21 @@ def performance_report(request, device_id):
 
         Name = "Performance report"
 
-    return render(request, 'dgms/dgms_performance_report.html', {'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'DDOI': DDOI, 'alert_count': alert_count, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'Avg_AL': Avg_AL, 'Avg_PL': Avg_PL, 'Avg_FC': Avg_FC, 'TR': TR, 'PR': PR, 'Address': Address, 'Tank_Size': Tank_Size, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'context1': context1, 'Count': Count, 'Total_RH': Total_RH, 'Total_F': Total_F, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'myFilter': myFilter})
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
+
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+    return render(request, 'dgms/dgms_performance_report.html', {'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'Name': Name, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'DDOI': DDOI, 'alert_count': alert_count, 'startdate': startdate, 'enddate': enddate, 'daterange': daterange, 'Avg_AL': Avg_AL, 'Avg_PL': Avg_PL, 'Avg_FC': Avg_FC, 'TR': TR, 'PR': PR, 'Address': Address, 'Tank_Size': Tank_Size, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'context1': context1, 'Count': Count, 'Total_RH': Total_RH, 'Total_F': Total_F, 'device_id': device_id, 'Customer_Name': Customer_Name, 'username': username, 'Cit': Cit, 'device_id': device_id, 'myFilter': myFilter})
 
 
 @ login_required(login_url='login')
@@ -5405,6 +5556,9 @@ def device_alert(request, device_id):
         if request.user.is_user:
             Customer_Name = User_Detail.objects.get(
                 Device_ID=device_id).Customer_Name
+        if request.user.is_manager:
+            Customer_Name = Manager.objects.get(
+                Manager_Name=username).Customer_Name
 
         Cit = User_Detail.objects.get(Device_ID=device_id).City
         Loc = User_Detail.objects.get(Device_ID=device_id).Location
@@ -5777,8 +5931,146 @@ def device_alert(request, device_id):
 
         # http://openweathermap.org/img/w/{{icon}}.png
 
-        return render(request, 'dgms/dgms_device_alert.html', {'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'Tank_Size': Tank_Size, 'Address': Address, 'TR': TR, 'myFilter': myFilter, 'alerts_details': alerts_details, 'alert_count': alert_count, 'DDOI': DDOI, 'Count': Count,  'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff,  'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, })
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
 
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+        return render(request, 'dgms/dgms_device_alert.html', {'PowerStatus': PowerStatus, 'GWDB': GWDB, 'gsm': gsm, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'startdate': startdate, 'enddate': enddate, 'Tank_Size': Tank_Size, 'Address': Address, 'TR': TR, 'myFilter': myFilter, 'alerts_details': alerts_details, 'alert_count': alert_count, 'DDOI': DDOI, 'Count': Count,  'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff,  'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, })
+
+
+@ login_required(login_url='login')
+def asset_library(request, device_id):
+    if request.user.is_authenticated:
+        username = request.user.username
+        email = request.user.email
+        if request.user.is_customer:
+            Customer_Name = Customer.objects.get(
+                Customer_Name=username).Customer_Name
+        if request.user.is_superuser:
+            Customer_Name = 'Admin'
+        if request.user.is_user:
+            Customer_Name = User_Detail.objects.get(
+                Device_ID=device_id).Customer_Name
+        if request.user.is_manager:
+            Customer_Name = Manager.objects.get(
+                Manager_Name=username).Customer_Name
+
+        Cit = User_Detail.objects.get(Device_ID=device_id).City
+        Loc = User_Detail.objects.get(Device_ID=device_id).Location
+        Rat = Device.objects.get(device_id=device_id).device_rating
+        Stat = Device.objects.get(device_id=device_id).device_status
+
+        Efficency = DeviceOperational.objects.filter(
+            device_id=device_id).aggregate(Avg('efficiency'))
+        Energy_OA = round(float(Efficency['efficiency__avg']), 2)
+
+        if Energy_OA < 25:
+            Star = 1
+        elif 25 < Energy_OA < 40:
+            Star = 2
+        elif 40 < Energy_OA < 50:
+            Star = 3
+        elif 50 < Energy_OA < 60:
+            Star = 4
+        else:
+            Star = 5
+
+        if Stat == 'ON':
+            now = datetime.datetime.now()
+            current_time = now.strftime('%Y-%m-%d %H:%M:%S')
+            format = '%Y-%m-%d %H:%M:%S'
+            Current_T = datetime.datetime.strptime(current_time, format)
+            Start_time = DeviceOperational.objects.filter(
+                device_id=device_id).last().start_time
+            diff = Current_T - Start_time
+        else:
+            now = datetime.datetime.now()
+            current_time = now.strftime('%Y-%m-%d %H:%M:%S')
+            format = '%Y-%m-%d %H:%M:%S'
+            Current_T = datetime.datetime.strptime(current_time, format)
+            Start_time = DeviceOperational.objects.filter(
+                device_id=device_id).last().start_time
+            End_time = DeviceOperational.objects.filter(
+                device_id=device_id).last().end_time
+            diff = Current_T - End_time
+
+        status = ['power_factor']
+
+        alert = Alerts.objects.filter(
+            device_id=device_id, alert_open=True).exclude(alert_type_name__in=status).order_by('-created_at')
+
+        alert_count = len(alert)
+
+        DDOI = DGMS_Device_Info.objects.get(
+            Device_ID=device_id).DGMS_Date_Of_Installation
+
+        Address = Service_History.objects.get(Device_ID=device_id).Address
+
+        url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&appid=6841e5450643e5d4ff59981dbf58944e'
+        r = requests.get(url.format(Cit)).json()
+        temperature = round((float(r['main']['temp'])-32)*0.555, 2)
+        description = r['weather'][0]['description']
+        icon = r['weather'][0]['icon']
+
+        UTC = '0000-00-00 05:30:00'
+        y = UTC[:4]
+        mo = UTC[5:7]
+        da = UTC[8:10]
+        h = UTC[11:13]
+        m = UTC[14:16]
+        s = UTC[17:19]
+        d1 = datetime.timedelta(days=(int(
+            y)*365 + int(mo)*30 + int(da)*1), hours=int(h), minutes=int(m), seconds=int(s))
+
+        LTOD1 = DevicesInfo.objects.filter(
+            device_id=device_id).last().device_time.strftime('%Y-%m-%d %H:%M:%S')
+
+        y1 = LTOD1[:4]
+        mo1 = LTOD1[5:7]
+        da1 = LTOD1[8:10]
+        h1 = LTOD1[11:13]
+        m1 = LTOD1[14:16]
+        s1 = LTOD1[17:19]
+        d21 = datetime.datetime(year=int(y1), month=int(mo1), day=int(
+            da1), hour=int(h1), minute=int(m1), second=int(s1))
+
+        LTOD = d1 + d21
+
+        Address1 = Device.objects.get(device_id=device_id).device_location
+
+        gsm = DevicesInfo.objects.filter(device_id=device_id).last().gsm_signal
+
+        GWDB = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_device_battery
+
+        PS = DevicesInfo.objects.filter(
+            device_id=device_id).last().gateway_power_status
+
+        PowerStatus = 0
+        if PS == 1:
+            PowerStatus = 'Healthy'
+        else:
+            PowerStatus = 'Battery'
+
+        asset_info = Asset.objects.get(Device_ID=device_id)
+
+        library = Library.objects.filter(Device_ID=device_id)
+
+        myFilter = LibraryFilter(
+            request.GET, queryset=library)
+        library = myFilter.qs
+
+    return render(request, 'dgms/dgms_asset_library.html', {'library': library, 'myFilter': myFilter, 'GWDB': GWDB, 'PowerStatus': PowerStatus, 'library': library, 'asset_info': asset_info, 'gsm': gsm, 'Address1': Address1, 'LTOD': LTOD, 'temperature': temperature, 'description': description, 'icon': icon, 'Address': Address, 'DDOI': DDOI, 'alert_count': alert_count, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat, 'Stat': Stat, 'Energy_OA': Energy_OA, 'Star': Star, 'diff': diff, 'current_time': current_time, 'device_id': device_id, 'username': username, 'Customer_Name': Customer_Name, 'Cit': Cit, 'Loc': Loc, 'Rat': Rat})
 
 # @ login_required(login_url='login')
 # def addCustomer(request):

@@ -29,6 +29,8 @@ urlpatterns = [
          views.operational_report, name='operational_report'),
     path('/<slug:device_id>/performance_report',
          views.performance_report, name='performance_report'),
+    path('/<slug:device_id>/asset_library',
+         views.asset_library, name='asset_library'),
     path('/<slug:device_id>/customer', views.customer, name='customer'),
     path('/<slug:device_id>/device_alert',
          views.device_alert, name='device_alert'),

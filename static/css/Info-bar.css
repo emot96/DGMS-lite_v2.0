@@ -2,7 +2,7 @@
   background-color: #ffffff;
   /* width: 50%; */
   margin: 0px 0px 0px 0px;
-  min-height: 9vh;
+  min-height: 9.5vh;
   /* border-radius: 5px; */
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
   position: -webkit-sticky;
@@ -73,6 +73,49 @@
 }
 
 .weather-type {
+  font-size: 14px;
+  /* text-align: center; */
+  color: rgb(56, 56, 56);
+  margin-top: 5px;
+  text-transform: capitalize;
+}
+
+.network {
+  margin-top: 10px;
+  margin-left: 35px;
+  display: flex;
+}
+
+.network-img img {
+  width: 42px;
+  height: 42px;
+  margin: 4px 0px 0px 0px;
+}
+
+.network-val {
+  padding: 29px 0px 0px 0px;
+  font-size: 14px;
+  text-align: center;
+  color: rgb(56, 56, 56);
+}
+
+.battery {
+  margin-top: 10px;
+  margin-left: 35px;
+  display: flex;
+}
+
+.battery-img img {
+  width: 42px;
+  height: 42px;
+  margin: 4px 0px 0px 0px;
+}
+
+.battery-info {
+  margin-left: 5px;
+}
+
+.battery-text {
   font-size: 14px;
   /* text-align: center; */
   color: rgb(56, 56, 56);

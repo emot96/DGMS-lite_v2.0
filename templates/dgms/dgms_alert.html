@@ -203,8 +203,7 @@
                 </tr>
               </thead>
               <tbody>
-                {% for s,t,a in alerts_details %} {% if a.alert_level == "R" and
-                a.alert_open == True %}
+                {% for s,t,a in alerts_details %} {% if a.alert_level == "R" and a.alert_open == True %}
                 <tr class="t_body">
                   <td>{{ forloop.counter }}</td>
                   <td>{{s}}</td>

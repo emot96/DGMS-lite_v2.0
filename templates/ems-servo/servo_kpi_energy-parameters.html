@@ -13,7 +13,7 @@
               {
                 label: "Input Voltage",
                 fill: false,
-                data: [{% for v in VLL %} {{v}}, {% endfor %}],
+                data: [{% for v in VLL %} {{v|add:-20|floatformat:2}}, {% endfor %}],
                 borderColor: "rgba(0, 230, 64, 1)",
                 borderWidth: 2,
               },

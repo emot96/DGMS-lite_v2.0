@@ -16,7 +16,7 @@
     />
 
     <link rel="stylesheet" href="{% static './css/navbar.css' %}" />
-    <link rel="stylesheet" href="{% static './css/dashboard.css' %}" />
+    <link rel="stylesheet" href="{% static './css/dgms_dashboard.css' %}" />
     <link rel="stylesheet" href="{% static './css/footer.css' %}" />
   </head>
 
@@ -209,8 +209,9 @@
           <ul class="top">
             <li class="head">Diesel Generator Information</li>
             <li>
-              <form class="drop_downs">
-                <select name="current_status">
+              <form class="drop_downs" method="get">
+                {{myFilter.form}}
+                <!-- <select name="current_status">
                   <option value="" selected disabled hidden>
                     Current Status
                   </option>
@@ -245,9 +246,9 @@
                   <option value="3">3</option>
                   <option value="2">3</option>
                   <option value="1">1</option>
-                </select>
+                </select> -->
 
-                <button class="go">GO</button>
+                <button type="submit" class="go">GO</button>
               </form>
             </li>
           </ul>

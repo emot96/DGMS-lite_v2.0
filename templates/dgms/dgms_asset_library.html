@@ -1,0 +1,170 @@
+{% extends 'dgms/base.html' %} {% load static %}
+{% block css %} 
+<link rel="stylesheet" href="{% static './css/dgms_asset_library.css' %}">
+{% endblock %}
+
+{% block content %} 
+
+
+  
+<div class="cont">
+
+<div class="internal_nav"> 
+    <div class="row" >
+        <div><p><a href="{% url 'dgmsDashboard' device_id %}">Dashboard</a></p></div>
+
+        <div class="drop_asset">
+          <p>KPI</p>
+   
+          <div class="drop-down ">
+           
+            <div><a href="{% url 'energyPara' device_id %}">Energy Parameters</a></div>
+            <hr>
+            <div><a href="{% url 'loadKPI' device_id %}">Load Side KPI</a></div>
+            <hr>
+            <div><a href="{% url 'enginePara' device_id %}">Engine Parameters</a></div>
+            <hr>
+            <div><a href="{% url 'performanceKPI' device_id %}">Performance based KPI</a></div>
+            <hr>
+            <div><a href="{% url 'deviceInfoKPI' device_id %}">DGMS Device Info</a></div>
+            
+          </div>
+   
+          </div> 
+
+       <div class="drop_asset active_link">
+       <p>Asset Information</p>
+
+       <div class="drop-down">
+        
+        <div ><a href="{% url 'asset' device_id  %}">Asset Detail</a></div>
+        <hr>
+        <div><a href="{% url 'servicehistory' device_id  %}">Service History</a></div>
+         
+       </div>
+
+       </div> 
+
+       <div class="drop_asset ">
+         <p>Reports</p>
+ 
+         <div class="drop-down">
+          
+          <div><a href="{% url 'fuel_report' device_id  %}">Fuel filled report</a></div>
+          <hr>
+          <div><a href="{% url 'operational_report' device_id  %}">Operational report</a></div>
+          <hr>
+          <div><a href="{% url 'performance_report' device_id  %}">Performance report</a></div>
+           
+         </div>
+ 
+         </div> 
+
+         <div ><p><a href="{% url 'device_alert' device_id  %}">Alerts</a></p></div>
+
+    </div>
+</div> <!-- class ="internal_nav" ends here -->
+
+
+<div class="library">
+
+<div class="lib_head">
+    <img src="{% static './images/lib.png' %}"/>
+     <div class="heading">Library</div>
+</div>
+
+<div class="lib_wrapper">
+    <form class="drop_downs" method="get">
+      {{myFilter.form}}
+
+        <button class="button_go">GO</button>
+    </form>
+
+  {% for lib in library %}
+  <div class="cont_wrapper">
+
+    <div class="file_cont">
+     <div class="left-side">
+         <div><img src="{% static './images/files.png' %}"/></div>
+         <div class="file_name">{{lib.File}}</div>
+     </div>
+
+     <div class="right-side">
+        <div><a href="{{lib.File.url}}" download="{{lib.File}}" target="_blank"><img src="{% static './images/direct-download.png' %}"/></a></div>
+     </div>
+    </div>
+
+  </div>
+  {% endfor %}
+
+
+</div> <!-- class ="lib_wrapper" ends here -->
+
+
+<div id="modal" class="pop-modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="close">&times;</span>
+    </div>
+    <div id="pdf_viewer">
+      <div id="canvas_container">
+          <canvas id="pdf_renderer"></canvas>
+      </div>
+
+      <div id="navigation_controls">
+          <button id="go_previous">Prev</button>
+          <input id="current_page" value="1" type="number"/> <span id="total_pages"></span>
+          <button id="go_next">Next</button>
+      </div>
+
+      <div id="zoom_controls">
+        <button id="zoom_out">-</button>  
+          <button id="zoom_in">+</button>
+      </div>
+  </div>
+  </div>
+</div>
+
+</div> <!-- class ="library" ends here -->
+
+
+
+
+</div> <!-- class ="cont" ends here -->
+
+
+
+<!--PDF STRUCTURE-->
+<div style="display: none; font-family:Arial, Helvetica, sans-serif">
+  <div id="pdfName" style="font-size: 25px;">DGMS Asset Detail</div>
+  <div id="customerName" style="font-size: 25px; font-weight: bold;">{{Customer_Name}}</div>
+    <div id="assetDetail">
+      <div><span style="font-weight: bold;">Asset:</span>{{Cit}}-{{Loc}}</span></div>
+      <div><span style="font-weight: bold;">Rating:</span>{{Rat}} kVA</div>
+      <div><span style="font-weight: bold;">Diesel Tank Size:</span> {{asset_info.Diesel_Tank_Size}} Liters</div>
+    </div>
+    <div id="assetAddress">
+      <div style="font-weight: bold;">Address:</div> 
+      <div>{{Address1}}</div>
+    </div>
+
+  </div>
+{% endblock %}
+
+{% block js %} 
+<!-- js -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.14/jspdf.plugin.autotable.min.js" ></script>
+
+    
+
+<script type="text/javascript" src="{% static './js/navbar.js' %}"></script>
+<script type="text/javascript" src="{% static './js/dgms_library_popup-modal.js' %}"></script>
+
+</body>
+
+</html>
+{% endblock %}

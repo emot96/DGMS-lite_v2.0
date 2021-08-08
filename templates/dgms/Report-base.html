@@ -161,9 +161,21 @@
           Last Data Recieved
         </div>
       </div>
-    </div>
 
-      <!-- </div> -->
+      <div class="network">
+        <div class="network-img"><img src="{% static './images/gsm.png' %}" ></div>
+        <div class="network-val">{{gsm}}</div>
+      </div> 
+      
+      <div class="battery">
+        <div class="battery-img"><img src="{% static './images/battery.png' %}" ></div>
+        <div class="battery-info">
+          <div class="battery-val">{{GWDB}}</div>
+          <div class="battery-text">{{PowerStatus}}</div>
+        </div>
+      </div>
+
+      </div>
 
       <div class="dg_info_status">
         {% if Stat == 'ON' %}

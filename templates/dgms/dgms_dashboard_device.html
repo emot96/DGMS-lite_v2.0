@@ -95,7 +95,7 @@
         </div>
         <!-- class ="internal_nav" ends here -->
 
-        <div class="dashboard">
+        <!-- <div class="dgmsDashboard">
           <div class="row-dashboard">
             <div class="left_side">
               <div class="three">
@@ -125,7 +125,6 @@
                   </div>
                 </div>
               </div>
-              <!-- class ="three" ends here -->
 
               <div class="three">
                 <div class="row">
@@ -157,7 +156,6 @@
                   </div>
                 </div>
               </div>
-              <!-- class ="three" ends here -->
 
               <div class="three">
                 <div class="row">
@@ -190,7 +188,6 @@
                 </div>
               </div>
             </div>
-            <!-- class ="left_side" ends here -->
 
             <div class="right_side">
               <div class="fuel_info">
@@ -208,7 +205,6 @@
                   <span class="bold">Fuel Tank Size:</span> {{Tank_Size}} L
                 </div>
               </div>
-              <!-- class ="fuel_info" ends here -->
 
               <div class="asset_info">
                 <div class="asset_nav">
@@ -231,152 +227,265 @@
                   <span class="bold">Service Provider:</span> {{SP}}
                 </div>
               </div>
-              <!-- class ="asset_info" ends here -->
             </div>
-            <!-- class ="right_side" ends here -->
           </div>
-          <!-- class ="row" ends here -->
+        </div> -->
+        <div class="dgmsDashboard">
+          <div class="left-side">
+           
+          <div class="row">
+            
+              <div class="container">
+                <div class="heading">Run Hour</div>
+                <div class="container-bottom">
+                <img src="{% static './images/running.png' %}" alt="run">
+                <div class="value">{{hh}}</div>
+              </div>
+              </div>
+        
+              <div class="container">
+                <div class="heading">Unit Generated</div>
+                <img src="{% static './images/energy.png' %}" alt="energy">
+                <div class="value">{{UG|floatformat:2}} kWh</div>
+              </div>
+        
+              <div class="container">
+                <div class="heading">Carbon Footprint</div>
+                <img src="{% static './images/footprint.png' %}" alt="footprint">
+                <div class="value">{{Carbon_Foot_Print|floatformat:2}} kg</div>
+              </div>
+            
+          </div> 
+        
+        
+            <div class="row">
+        
+             <div class="container">
+               <div class="heading">Average Fuel Consumption</div>
+               <img src="{% static './images/gas-station.png' %}" alt="battery">
+               <div class="value">{{AvgFC|floatformat:2}} L/Hr</div>
+             </div>
+        
+             <div class="container">
+              <div class="heading">Average Load</div>
+              <img src="{% static './images/law-scale.png' %}" alt="battery">
+              <div class="value">{{Energy_OA|floatformat:2}} %</div>
+             </div>
+        
+             <div class="container">
+              <div class="heading">Peak Load</div>
+              <img src="{% static './images/trend.png' %}" alt="battery">
+               <div class="value">{{MaxDLoad|floatformat:2}} kVA</div>
+             </div>
+        
+            </div>
+        
+        
+        
+           <div class="row">
+             
+            <div class="container">
+              <div class="heading">Room Temp.</div>
+              <img src="{% static './images/thermometer.png' %}" alt="run">
+              <div class="value">{{RT}} &#176; C</div>
+             </div>
 
-          <div class="graphs-dg">
-            <div class="one-graph">
-              <!-- <div class="graph_nav">
-        GSM Signal
-      </div> -->
-              <canvas id="diesel_level"></canvas>
-              <script>
-                var ctx = document.getElementById('diesel_level').getContext('2d');
-                var myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: [{% for t in Time %} '{{t}}', {% endfor %}],
-                        datasets: [{
-                            label: 'Diesel Level',
-                            // fill: false,
-                            data: [{% for f in Fuel1 %} {{f}}, {% endfor %}],
-                            backgroundColor: "rgba(190, 144, 212,0.4)",
-                            borderColor: "rgba(190, 144, 212,0.5)",
-                            borderWidth: 2
-                        },
-                        {
-                            label: 'Diesel Level',
-                            fill: false,
-                            type: 'line',
-                            data: [{% for f in Fuel1 %} {{f}}, {% endfor %}],
-                            borderColor:'rgba(155, 89, 182, 1)',
-                            borderWidth: 2
-                        },
-                        // {
-                        //     label: 'min diesel level',
-                        //     type: 'line',
-                        //     fill: false,
-                        //     data: [1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1],
-                        //     // backgroundColor: [
-                        //     //     'rgba(255, 255, 255, 0.4)'
+             <div class="container">
+              <div class="heading">Run Count</div>
+                <img src="{% static './images/pedometer.png' %}" alt="run">
+                <div class="value">{{DeviceC}}</div>
+             </div>
+          
+        
+            <div class="container">
+                <div class="heading">Battery Voltage</div>
+                <img src="{% static './images/lighting.png' %}" alt="battery">
+                <div class="value">{{BV|floatformat:2}} V DC</div>
+              </div> 
+        
+            </div>
+        
+          
+          </div> <!-- class ="left_side" ends here -->
+        
+        
+        
+          <div class="right-side">
+        
+            <!--SITE INFO-->
+            <div class="right-container">
+              <div class="right_nav">
+                <div class="nav_text"> Site Info </div>
+              </div>
+              <div class="right_body"><span class="bold">Carpet Area (SQ FT):</span>{{asset_info.Carpet_Area}}</div>
+              <div class="right_body"><span class="bold">Sanction Load (KW):</span>{{asset_info.Sanction_Load}}</div>
+              <div class="right_body"><span class="bold">Connected load (KW):</span>{{asset_info.Connected_Load}}</div>
+            </div>
+        
+            <!--FUEL INFO-->
+            <div class="right-container">
+              <div class="right_nav">
+                <div class="nav_text"> Fuel Info </div>
+              </div>
+              <div class="right_body"><span class="bold">Available Fuel:</span>{{Fuel2}} L</div>
+              <div class="right_body"><span class="bold">Fuel Percentage:</span>{{Fuel_Per}} %</div>
+              <div class="right_body"><span class="bold">Fuel Tank Size:</span>{{Tank_Size}} L</div>
+            </div>
+        
+        
+            <!--ASSET INFO-->
+            <div class="right-container">
+            <div class="right_nav">
+              <div class="nav_text"> Asset Info</div>
+            </div>
+            <div class="right_body"><span class="bold">Date of Installation:</span> {{asset_info.Date_Of_Installation}}</div>
+            <div class="right_body"><span class="bold">Warranty Status:</span> {{asset_info.Warranty_Status}}</div>
+            <div class="right_body"><span class="bold">Days to Next Service:</span> {{DTNS}} </div>
+            <div class="right_body"><span class="bold">Next Service Date:</span> {{service_info.Next_Service_Date}} </div>
+            <div class="right_body"><span class="bold">Last Service Date:</span> {{service_info.Last_Service_Date}}</div>
+            <div class="right_body"><span class="bold">Service Provider:</span> {{service_info.Service_Provider}} </div>
+          </div>
+          
+        
+          </div> <!-- class ="right_side" ends here -->
+        
+        </div> 
+        <!-- class ="dgmsDashboard" ends here -->
+        <div class="graphs-dg">
+          <div class="one-graph">
+            <canvas id="diesel_level"></canvas>
+            <script>
+              var ctx = document.getElementById('diesel_level').getContext('2d');
+              var myChart = new Chart(ctx, {
+                  type: 'bar',
+                  data: {
+                      labels: [{% for t in Time %} '{{t}}', {% endfor %}],
+                      datasets: [{
+                          label: 'Diesel Level',
+                          // fill: false,
+                          data: [{% for f in Fuel1 %} {{f}}, {% endfor %}],
+                          backgroundColor: "rgba(190, 144, 212,0.4)",
+                          borderColor: "rgba(190, 144, 212,0.5)",
+                          borderWidth: 2
+                      },
+                      {
+                          label: 'Diesel Level',
+                          fill: false,
+                          type: 'line',
+                          data: [{% for f in Fuel1 %} {{f}}, {% endfor %}],
+                          borderColor:'rgba(155, 89, 182, 1)',
+                          borderWidth: 2
+                      },
+                      // {
+                      //     label: 'min diesel level',
+                      //     type: 'line',
+                      //     fill: false,
+                      //     data: [1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1],
+                      //     // backgroundColor: [
+                      //     //     'rgba(255, 255, 255, 0.4)'
 
-                        //     // ],
-                        //     borderColor: [
-                        //         'rgba(238, 238, 0, 1)'
+                      //     // ],
+                      //     borderColor: [
+                      //         'rgba(238, 238, 0, 1)'
 
-                        //     ],
-                        //     borderWidth: 2
-                        // },{
-                        //     label: 'max diesel level',
-                        //     type: 'line',
-                        //     fill: false,
-                        //     data: [12, 12, 12, 12, 12, 12, 12,12, 12, 12, 12, 12, 12, 12],
-                        //     // backgroundColor: [
-                        //     //     'rgba(255, 255, 255, 0.4)'
+                      //     ],
+                      //     borderWidth: 2
+                      // },{
+                      //     label: 'max diesel level',
+                      //     type: 'line',
+                      //     fill: false,
+                      //     data: [12, 12, 12, 12, 12, 12, 12,12, 12, 12, 12, 12, 12, 12],
+                      //     // backgroundColor: [
+                      //     //     'rgba(255, 255, 255, 0.4)'
 
-                        //     // ],
-                        //     borderColor: [
-                        //         'rgba(240, 52, 52, 1)'
+                      //     // ],
+                      //     borderColor: [
+                      //         'rgba(240, 52, 52, 1)'
 
-                        //     ],
-                        //     borderWidth: 2
-                        // }
-                    ]
-                    },
+                      //     ],
+                      //     borderWidth: 2
+                      // }
+                  ]
+                  },
 
 
-                    options: {
+                  options: {
 
-                      legend: {
+                    legend: {
 
-                                labels: {
-                                    fontColor: "black",
-                                    fontSize: 13,
-                                    display: false
-                                }
-                            },
-
-                        scales: {
-                            yAxes: [{
-                                gridLines: {
-                                    color: "rgba(0,0,0,0.3)",
-                                },
-                                ticks: {
-                                    fontColor: "black",
-                                    beginAtZero: true,
-                                    fontSize: 17
-                                }
-                            }],
-
-                            xAxes: [{
-                                gridLines: {
-                                    color: "rgba(0,0,0,0.3)",
-                                },
-                                ticks: {
-                                  autoSkip: true,
-                                  maxTicksLimit: 12,
+                              labels: {
                                   fontColor: "black",
-                                  fontSize: 17,
-                                  maxRotation: 0,
-                                }
-                            }]
-                        },
+                                  fontSize: 13,
+                                  display: false
+                              }
+                          },
 
-                            title: {
-                                display: true,
-                                text: 'Diesel Level',
+                      scales: {
+                          yAxes: [{
+                              gridLines: {
+                                  color: "rgba(0,0,0,0.3)",
+                              },
+                              ticks: {
+                                  fontColor: "black",
+                                  beginAtZero: true,
+                                  fontSize: 17
+                              }
+                          }],
+
+                          xAxes: [{
+                              gridLines: {
+                                  color: "rgba(0,0,0,0.3)",
+                              },
+                              ticks: {
+                                autoSkip: true,
+                                maxTicksLimit: 12,
+                                fontColor: "black",
                                 fontSize: 17,
-                                fontColor: "balck",
-                                fontFamily: "Helvetica"
-                            }
+                                maxRotation: 0,
+                              }
+                          }]
+                      },
+
+                          title: {
+                              display: true,
+                              text: 'Diesel Level',
+                              fontSize: 17,
+                              fontColor: "balck",
+                              fontFamily: "Helvetica"
+                          }
+                  },
+                  interaction: {
+                    intersect: false
+                  },   
+                  plugins: {
+                    title: {
+                      display: true,
+                      text: 'Zoom plugin sample'
                     },
-                    interaction: {
-                      intersect: false
-                    },   
-                    plugins: {
-                      title: {
-                        display: true,
-                        text: 'Zoom plugin sample'
+                    zoom: {
+                      pan: {
+                        enabled: true,
+                        mode: 'x'
                       },
                       zoom: {
-                        pan: {
-                          enabled: true,
-                          mode: 'x'
-                        },
-                        zoom: {
-                          enabled: true,
-                          mode: 'x'
-                        },
-                        limits: {
-                          x: {
-                            minDelay: 0,
-                            maxDelay: 4000,
-                            minDuration: 1000,
-                            maxDuration: 20000
-                          }
+                        enabled: true,
+                        mode: 'x'
+                      },
+                      limits: {
+                        x: {
+                          minDelay: 0,
+                          maxDelay: 4000,
+                          minDuration: 1000,
+                          maxDuration: 20000
                         }
                       }
                     }
-                });
-              </script>
-            </div>
+                  }
+              });
+            </script>
           </div>
-          <!-- class ="kpi-graphs" ends here -->
         </div>
-        <!-- class ="dashboard" ends here -->
+        <!-- class ="graphs-dg" ends here -->
       </div>
       <!-- class ="cont" ends here -->
  {% endblock %}

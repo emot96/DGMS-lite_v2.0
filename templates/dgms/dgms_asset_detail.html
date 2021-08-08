@@ -59,19 +59,25 @@
  
          </div> 
 
-         <div ><p><a href="device_alert.html">Alerts</a></p></div>
+         <div ><p><a href="{% url 'device_alert' device_id  %}">Alerts</a></p></div>
 
     </div>
 </div> <!-- class ="internal_nav" ends here -->
 
  <div class="asset_detail">
  
-    <div class="asset_img"><img src="{% static './images/asset1.png' %}" alt="asset"></div>
+    <div class="asset_img"><img src={{asset_info.Asset_Photo.url}} alt="asset"></div>
+
+    <div class="head_wrapper">
 
     <div class="asset_info">
         <div class="asset_name">Asset Detail</div>
         <div class="download_info" onclick="genPDF()"><img src="{% static './images/download.png' %}" alt="asset"></div>
     </div>
+
+    <div class="lib"><a href="{% url 'asset_library' device_id  %}"> <img src="{% static './images/lib.png' %}"/>library</a></div>
+
+  </div>
 
   <div class="asset-table">
   <table id="asset-detail">
@@ -82,165 +88,190 @@
     </tr>
   </thead>
 
-  <tbody>  
+  <tbody> 
+    <tr class="no_display">
+      <td colspan="2"></td>
+    </tr>
+    <tr class="t_body" id="heading">
+      <td colspan="2">SITE INFO</td>
+    </tr>
+
+    <tr class="t_body">
+      <td>CARPET AREA (SQ FT)</td>
+      <td >{{asset_info.Carpet_Area}}</td>
+    </tr>
+
+    <tr class="t_body">
+      <td>SANCTION LOAD (KW)</td>
+      <td >{{asset_info.Sanction_Load}}</td>
+    </tr>
+
+    <tr class="t_body">
+      <td>CONNECTED LOAD (KW)</td>
+      <td >{{asset_info.Connected_Load}} </td>
+    </tr>
+
+    <tr class="t_body"  id="heading">
+      <td colspan="2">ASSET INFO</td>
+    </tr>
 
     <tr class="t_body">
       <td>RATING</td>
-      <td >{{Rat}} kVA </td>
+      <td >{{asset_info.Rating_In_KVA}} kVA </td>
     </tr>
 
     <tr class="t_body">
       <td>DIESEL TANK SIZE</td>
-      <td>{{Tank_Size}} L </td>
+      <td> {{asset_info.Diesel_Tank_Size}} L </td>
     </tr>
 
     <tr class="t_body">
       <td>OEM</td>
-      <td>{{Oem}}</td>
+      <td>{{asset_info.OEM}} </td>
     </tr>
 
     <tr class="t_body"> 
       <td>SELLER NAME</td>
-      <td>{{SellerName}}</td>
+      <td>{{asset_info.Seller_Name}}</td>
     </tr>
 
-    <tr class="t_body">
+    <tr class="t_body"  id="heading">
       <td colspan="2">WARRANTY</td>
     </tr>
 
     <tr class="t_body">
       <td>WARRANTY START DATE</td>
-      <td>{{WSD}}</td>
+      <td>{{asset_info.Warranty_Start_Date}}</td>
     </tr>
 
     <tr class="t_body">
       <td>WARRANTY END DATE</td>
-      <td>{{WED}}</td>
+      <td>{{asset_info.Warranty_End_Date}}</td>
     </tr>
 
     <tr class="t_body">
       <td>WARRANTY PERIOD (YEARS)</td>
-      <td>{{WP}}</td>
+      <td>{{asset_info.Warranty_Period}}</td>
     </tr>
 
     <tr class="t_body">
       <td>WARRANTY STATUS</td>
-      <td>{{WS}}</td>
+      <td>{{asset_info.Warranty_Status}}</td>
     </tr>
 
-    <tr class="t_body">
+    <tr class="t_body"  id="heading">
       <td colspan="2">INSTALLATION</td>
     </tr>
 
     <tr class="t_body">
       <td>DGMS INSTALLATION DATE</td>
-      <td>{{DOI}}</td>
+      <td>{{asset_info.Date_Of_Installation}}</td>
     </tr>
 
     <tr class="t_body">
       <td>COMMISSIONING DATE</td>
-      <td>{{CD}}</td>
+      <td>{{asset_info.Commissioning_Date}}</td>
     </tr>
 
     <tr class="t_body">
       <td>OPERATION</td>
-      <td>{{OP}}</td>
+      <td>{{asset_info.Operations}}</td>
     </tr>
 
-    <tr class="t_body">
+    <tr class="t_body"  id="heading">
       <td colspan="2">ENGINE</td>
     </tr>
 
     <tr class="t_body">
       <td>MAKE</td>
-      <td>{{EM}}</td>
+      <td>{{asset_info.Engine_Make}}</td>
     </tr>
 
     <tr class="t_body">
       <td>MODEL NO.</td>
-      <td>{{EMN}}</td>
+      <td>{{asset_info.Engine_Model_No}}</td>
     </tr>
 
     <tr class="t_body">
       <td>S.NO.</td>
-      <td>{{ESN}}</td>
+      <td>{{asset_info.Engine_S_NO}}</td>
     </tr>
 
     <tr class="t_body">
       <td>OTHER INFO</td>
-      <td> {{EOI}}</td>
+      <td>{{asset_info.Engine_Other_Info}}</td>
     </tr>
 
-    <tr class="t_body">
+    <tr class="t_body"  id="heading">
       <td colspan="2">ALTERNATOR</td>
     </tr>
 
     <tr class="t_body">
       <td>MAKE</td>
-      <td>{{AM}}</td>
+      <td>{{asset_info.Alternator_Make}}</td>
     </tr>
 
     <tr class="t_body">
       <td>MODEL NO.</td>
-      <td>{{AMN}}</td>
+      <td>{{asset_info.Alternator_Model_No}}</td>
     </tr>
 
     <tr class="t_body">
       <td>S.NO.</td>
-      <td>{{ASN}}</td>
+      <td>{{asset_info.Alternator_S_NO}}</td>
     </tr>
 
     <tr class="t_body">
       <td>OTHER INFO</td>
-      <td>{{AOI}}</td>
+      <td>{{asset_info.Alternator_Other_Info}}</td>
     </tr>
 
-    <tr class="t_body" >
+    <tr class="t_body" id="heading" >
       <td colspan="2">BATTERY</td>
     </tr>
 
     <tr class="t_body">
       <td>MAKE</td>
-      <td>{{BM}}</td>
+      <td>{{asset_info.Battery_Make}}</td>
     </tr>
 
     <tr class="t_body">
       <td>MODEL NO.</td>
-      <td>{{BMN}}</td>
+      <td>{{asset_info.Battery_Model_No}}</td>
     </tr>
 
     <tr class="t_body">
       <td>S.NO.</td>
-      <td>{{BSN}}</td>
+      <td>{{asset_info.Battery_S_NO}}</td>
     </tr>
 
     <tr class="t_body">
       <td>OTHER INFO</td>
-      <td>{{BOI}}</td>
+      <td>{{asset_info.Battery_Other_Info}}</td>
     </tr>
 
-    <tr class="t_body">
+    <tr class="t_body"  id="heading">
       <td colspan="2">BATTERY CHARGER</td>
     </tr>
 
     <tr class="t_body">
       <td>MAKE</td>
-      <td>{{BCM}}</td>
+      <td>{{asset_info.Battery_Charger_Make}}</td>
     </tr>
 
     <tr class="t_body">
       <td>MODEL NO.</td>
-      <td>{{BCMN}}</td>
+      <td>{{asset_info.Battery_Charger_Model_No}}</td>
     </tr>
 
     <tr class="t_body">
       <td>S.NO.</td>
-      <td>{{BCSN}}</td>
+      <td>{{asset_info.Battery_Charger_S_NO}}</td>
     </tr>
 
     <tr class="t_body">
       <td>OTHER INFO</td>
-      <td>{{BCOI}}</td>
+      <td>{{asset_info.Battery_Charger_Other_Info}}</td>
     </tr>
   </tbody>
 
@@ -264,7 +295,7 @@
     <div id="assetDetail">
       <div><span style="font-weight: bold;">Asset:</span>{{Cit}}-{{Loc}}</span></div>
       <div><span style="font-weight: bold;">Rating:</span>  {{Rat}}  kVA</div>
-      <div><span style="font-weight: bold;">Diesel Tank Size:</span>  {{Tank_Size}} Liters</div>
+      <div><span style="font-weight: bold;">Diesel Tank Size:</span>  {{asset_info.Diesel_Tank_Size}} Liters</div>
     </div>
     <div id="assetAddress">
       <div style="font-weight: bold;">Address:</div> 

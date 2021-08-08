@@ -31,7 +31,7 @@ function genPDF(){
         
         didParseCell: function (data) {
             
-            if (data.row.index ===  4 || data.row.index ===  9 || data.row.index ===  13 || data.row.index ===  18 || data.row.index ===  23 || data.row.index ===  28) {
+            if (data.row.index ===  1 || data.row.index ===  5 || data.row.index ===  10 || data.row.index ===  15 || data.row.index ===  19 || data.row.index ===  24 || data.row.index ===  29 || data.row.index ===  34) {
                 data.cell.styles.fillColor = [231, 232, 235];
                 data.cell.styles.fontStyle = "bold";
                 data.cell.styles.textColor = [139,0,139];

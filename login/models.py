@@ -1,10 +1,9 @@
-
 import datetime
 from django.db import models
 from django.db.models.aggregates import Count
 from django.db.models.base import Model
 from django.contrib.auth.models import AbstractUser, BaseUserManager, update_last_login
-from django.db.models.fields import CharField
+from django.db.models.fields import AutoField, CharField
 from django.db.models.manager import Manager
 from django.contrib.auth.models import User
 from datetime import timedelta, date
@@ -16,6 +15,11 @@ from .managers import UserManager
 STATUS = (
     ("YES", "YES"),
     ("NO", "NO"),
+)
+
+PHASE = (
+    ("SINGLE PHASE", "SINGLE PHASE"),
+    ("TRIPLE PHASE", "TRIPLE PHASE"),
 )
 
 COOLING = (
@@ -82,12 +86,24 @@ ALTERTYPE = (
     ("room_temperature", "room_temperature"),
 )
 
+LIBRARYTYPE = (
+    ("Approvals", "Approvals"),
+    ("Warranty", "Warranty"),
+    ("Test certificate", "Test certificate"),
+    ("Service Reports", "Service Reports"),
+    ("Quotation", "Quotation"),
+    ("Other", "Other")
+)
+
 
 class User(AbstractUser):
 
     is_customer = models.BooleanField(default=False)
     is_manager = models.BooleanField(default=False)
     is_user = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = 'Login Credential'
 
 
 class Customer(models.Model):
@@ -105,12 +121,16 @@ class Customer(models.Model):
     Pincode = models.BigIntegerField()
     Address = models.CharField(max_length=200, blank=True)
 
+    class Meta:
+        # db_table = 'Customer Details'
+        verbose_name = 'Customer Detail'
+
     def __str__(self):
         return self.Customer_Name
 
 
 class Manager (models.Model):
-    User = models.OneToOneField(
+    User = models.ForeignKey(
         User, on_delete=models.CASCADE, max_length=50)
     Customer_Name = models.ForeignKey(
         Customer, on_delete=models.CASCADE, max_length=50)
@@ -122,6 +142,10 @@ class Manager (models.Model):
 
     def __str__(self):
         return self.Manager_Name
+
+    class Meta:
+        # db_table = 'Manager Details'
+        verbose_name = 'Manager Detail'
 
 
 class User_Detail (models.Model):
@@ -146,6 +170,10 @@ class User_Detail (models.Model):
 
     def __str__(self):
         return self.Device_ID
+
+    class Meta:
+        # db_table = 'User Details'
+        verbose_name = 'User Detail'
 
 
 class AlertType(models.Model):
@@ -215,6 +243,12 @@ class Asset(models.Model):
     Battery_Charger_Model_No = models.CharField(max_length=50)
     Battery_Charger_S_NO = models.CharField(max_length=50)
     Battery_Charger_Other_Info = models.CharField(max_length=500)
+    Carpet_Area = models.CharField(max_length=50, default="Null")
+    Sanction_Load = models.CharField(max_length=50, default="Null")
+    Connected_Load = models.CharField(max_length=50, default="Null")
+
+    class Meta:
+        verbose_name = 'DGMS Asset Detail'
 
 
 class UPS_Asset(models.Model):
@@ -249,6 +283,9 @@ class UPS_Asset(models.Model):
         max_length=20, choices=STATUS, default='YES')
     UPS_EMS_Date_Of_Installation = models.DateField()
 
+    class Meta:
+        verbose_name = 'UPS Asset Details'
+
 
 class EMS_Asset(models.Model):
     Customer_Name = models.ForeignKey(
@@ -273,14 +310,18 @@ class EMS_Asset(models.Model):
     EMS_Date_Of_Installation = models.DateField()
     Other_Info_new = models.CharField(max_length=50)
 
+    class Meta:
+        verbose_name = 'EMS Asset Details'
+
 
 class Service_History(models.Model):
     Customer_Name = models.ForeignKey(
         Customer, on_delete=models.CASCADE, max_length=50)
     Device_ID = models.OneToOneField(
-        User_Detail, on_delete=models.CASCADE, max_length=50, primary_key=True, unique=True)
+        User_Detail, on_delete=models.CASCADE, max_length=50, primary_key=True)
     Service_Contract = models.CharField(
         max_length=20, choices=CONTRACT, default='AMC')
+    Service_Document = models.FileField(blank=True)
     Service_Provider = models.CharField(max_length=100)
     Address = models.CharField(max_length=100)
     Contact = models.CharField(max_length=20)
@@ -290,7 +331,12 @@ class Service_History(models.Model):
     Remark = models.CharField(max_length=300)
     Activity1 = models.CharField(max_length=300, default="NULL")
     Remark1 = models.CharField(max_length=300, default="NULL")
-    Next_Service_Date = models.DateField(max_length=50)
+    Next_Service_Date = models.DateField()
+    Battery_Next_Replacement_Date = models.DateField(blank=True)
+    Battery_Last_Replacement_Date = models.DateField(blank=True)
+
+    class Meta:
+        verbose_name = 'DGMS Service Detail'
 
 
 class UPS_Service_History(models.Model):
@@ -313,6 +359,9 @@ class UPS_Service_History(models.Model):
     Remark1 = models.CharField(max_length=300, default="NULL")
     Next_Service_Date = models.DateField(max_length=50)
 
+    class Meta:
+        verbose_name = 'UPS Service History'
+
 
 class EMS_Service_History(models.Model):
     Customer_Name = models.ForeignKey(
@@ -332,6 +381,9 @@ class EMS_Service_History(models.Model):
     Remark1 = models.CharField(max_length=300, default="NULL")
     Next_Service_Date = models.DateField()
 
+    class Meta:
+        verbose_name = 'EMS Service History'
+
 
 class DGMS_Device_Info(models.Model):
     Customer_Name = models.ForeignKey(
@@ -345,6 +397,9 @@ class DGMS_Device_Info(models.Model):
     IMEI_No = models.CharField(max_length=100)
     Other = models.CharField(max_length=200)
     Other_Info = models.CharField(max_length=500)
+
+    class Meta:
+        verbose_name = 'DGMS Device Info'
 
 
 class Sensor_Info(models.Model):
@@ -364,6 +419,9 @@ class Sensor_Info(models.Model):
     Fuel_SensorS_No = models.CharField(max_length=50)
     Fuel_Sensor_Length = models.CharField(max_length=50)
 
+    class Meta:
+        verbose_name = 'DGMS Sensor Info'
+
 
 class Before_DGMA_INSTALLATION(models.Model):
     Customer_Name = models.ForeignKey(
@@ -374,6 +432,9 @@ class Before_DGMA_INSTALLATION(models.Model):
     Previous_Fuel_Consumed = models.CharField(max_length=50)
     Run_Count = models.CharField(max_length=50)
     Units_Generated = models.CharField(max_length=50)
+
+    class Meta:
+        verbose_name = 'DGMS Before Installation Information'
 
 
 class Accounts(models.Model):
@@ -410,6 +471,8 @@ class Device(models.Model):
     fuel_report_link = models.CharField(max_length=200, blank=True, null=True)
     operational_report_link = models.CharField(
         max_length=200, blank=True, null=True)
+    device_tank_size = models.BigIntegerField(blank=True, null=True)
+    device_state = models.CharField(max_length=30, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -493,6 +556,9 @@ class Price(models.Model):
     Energy_Price = models.CharField(max_length=50)
     Diesel_Price = models.CharField(max_length=50)
 
+    class Meta:
+        verbose_name = 'Fuel & Energy Price'
+
 
 class DeviceCounterView(models.Model):
     device_id = models.CharField(max_length=20, primary_key=True)
@@ -562,3 +628,83 @@ class Automation(models.Model):
     Start_Time = models.DateTimeField()
     End_Time = models.DateTimeField()
     Button = models.CharField(max_length=30, blank=True)
+
+
+class ThresholdDetails(models.Model):
+    alert_type_id = models.IntegerField(blank=True, null=True)
+    alert_type_name = models.CharField(primary_key=True, max_length=50)
+    device_rating = models.FloatField()
+    threshold_name = models.CharField(max_length=50, blank=True, null=True)
+    threshold_type = models.CharField(max_length=1, blank=True, null=True)
+    threshold_value = models.FloatField(blank=True, null=True)
+    operator = models.CharField(max_length=1, blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'threshold_details'
+        unique_together = (('alert_type_name', 'device_rating'),)
+
+
+class ThresholdMetadata(models.Model):
+    rating = models.FloatField()
+    threshold_operator = models.CharField(max_length=1)
+    energy_output_kva = models.FloatField(blank=True, null=True)
+    energy_output_kw_total = models.FloatField(blank=True, null=True)
+    current_r_phase = models.FloatField(blank=True, null=True)
+    current_y_phase = models.FloatField(blank=True, null=True)
+    current_b_phase = models.FloatField(blank=True, null=True)
+    vll_average = models.FloatField(blank=True, null=True)
+    frequency = models.FloatField(blank=True, null=True)
+    power_factor = models.FloatField(blank=True, null=True)
+    rpm = models.FloatField(blank=True, null=True)
+    rpm_ctrl = models.FloatField(blank=True, null=True)
+    fuel_level_percentage = models.FloatField(blank=True, null=True)
+    dg_battery_voltage = models.FloatField(blank=True, null=True)
+    gateway_device_battery = models.FloatField(blank=True, null=True)
+    gsm_signal = models.FloatField(blank=True, null=True)
+    room_temperature = models.FloatField(blank=True, null=True)
+    device_phase = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'threshold_metadata'
+
+
+class ThresholdMetadataOld(models.Model):
+    rating = models.FloatField(primary_key=True)
+    threshold_operator = models.CharField(max_length=1)
+    energy_output_kva = models.FloatField(blank=True, null=True)
+    energy_output_kw_total = models.FloatField(blank=True, null=True)
+    current_r_phase = models.FloatField(blank=True, null=True)
+    current_y_phase = models.FloatField(blank=True, null=True)
+    current_b_phase = models.FloatField(blank=True, null=True)
+    vll_average = models.FloatField(blank=True, null=True)
+    frequency = models.FloatField(blank=True, null=True)
+    power_factor = models.FloatField(blank=True, null=True)
+    rpm = models.FloatField(blank=True, null=True)
+    rpm_ctrl = models.FloatField(blank=True, null=True)
+    fuel_level_percentage = models.FloatField(blank=True, null=True)
+    dg_battery_voltage = models.FloatField(blank=True, null=True)
+    gateway_device_battery = models.FloatField(blank=True, null=True)
+    gsm_signal = models.FloatField(blank=True, null=True)
+    room_temperature = models.FloatField(blank=True, null=True)
+    device_phase = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'threshold_metadata_old'
+        unique_together = (('rating', 'threshold_operator'),
+                           ('rating', 'threshold_operator'),)
+
+
+class Library(models.Model):
+    Device_ID = models.ForeignKey(User_Detail, on_delete=models.CASCADE)
+    Type = models.CharField(
+        max_length=20, choices=LIBRARYTYPE, default='Other')
+    File = models.FileField(blank=True)
+    Date = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'DGMS Library'

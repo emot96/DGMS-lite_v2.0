@@ -1,169 +1,135 @@
 @import url("fonts.css");
 
-.dashboard .row-dashboard{
-    margin: 10px;
-   display: flex;
-    }
-
-.left_side{
-    /* background-color: lime; */
-    width: 75%;
-     
+.dgmsDashboard {
+  gap: 40px;
+  margin: 20px;
+  min-height: 75vh;
+  display: flex;
+  /* background-color: blue; */
 }
 
-.right_side{
-    /* background-color: yellow; */
+.dgmsDashboard .left-side {
+  /* background-color: lime; */
+  width: 80%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* background-color: rgb(83, 51, 10); */
+  gap: 5px;
+}
+
+.dgmsDashboard .left-side .row {
+  /* margin: 0;
+    padding: 0; */
+  justify-content: space-between;
+  /* background-color: burlywood; */
+}
+
+/* ---------------CSS for left-side------------------ */
+
+.dgmsDashboard .left-side .row img {
+  height: 37px;
+  width: 37px;
+  margin: 20px 20px 20px 25px;
+}
+
+.dgmsDashboard .left-side .row .container {
+  /* min-height: 18vh; */
+  width: 30%;
+  text-align: center;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  border-radius: 5px;
+  background-color: white;
+  /* font-size: 17px; */
+  border: 2px solid #3fbd09;
+  min-height: 22vh;
+  /* margin-top: 15px; */
+}
+
+.row .heading {
+  margin: 5px;
+  /* font-weight: bold; */
+}
+
+.row .value {
+  margin: 10px 5px 5px 5px;
+}
+
+/* ---------------CSS for right-side------------------ */
+
+.dgmsDashboard .right-side {
+  /* background-color: yellow; */
+  width: 25%;
+  min-height: 100%;
+  margin-top: 1px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* .dgmsDashboard .right-side{
     width: 25%;
+    min-height: 100%;
+    margin-top: 1px;
+} */
+
+.dgmsDashboard .right-side .right-container {
+  /* width: 100%; */
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  border-radius: 5px;
+  /* margin-top: 15px; */
+  min-height: 19%;
+  border: 2px solid #3fbd09;
 }
 
-.left_side .row{
-    margin: 10px 10px 30px 0px;
-    /* background-color: rebeccapurple; */
-    justify-content: space-between;
-    gap: 2px;
-   
+.dgmsDashboard .right-side .right-container .right_nav {
+  border-bottom: 1px solid #3fbd09;
 }
 
-
-
-/* ---------------CSS for Fuel average consumption, Load efficiency, and max demand load------------------ */
-
-.left_side .three .row{
-   
-    gap:2px;
-    
-}
-
-.left_side .three .row img{
-    height: 37px;
-    width: 37px;
-    margin: 10px 10px 10px 10px;
-     
- }
-
-.three .row .container{
-    /* min-height: 18vh; */
-    width: 31%;
-    text-align: center;
-    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-    border-radius: 5px;
-    background-color: white;
-    font-size: 17px;
-    border:2px solid #3fbd09;
-}
-
-.three .row .heading{
-    margin: 5px;
-    
- }
- 
- .three .row .value{
-     margin: 10px 5px 5px 5px;
-     font-weight: bold;
-     
-  }
-
-
-/*--------------------------------------CSS for Fuel info, Asset info-------------------------------*/
-
-.right_side .asset_info, .fuel_info{
-    min-width: 90%;
-    margin: 10px 20px 20px 20px;
-    font-size: 17px;
-   
-}
-
-.right_side .asset_info, .fuel_info{
-    border-radius: 5px;
-}
-.right_side .asset_info,.fuel_info{
-  
-    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-}
-
-
-/*--------------------------------------CSS for Fuel info-------------------------------*/
-.right_side .fuel_info{
-    height: 30%;
-    background-color: #ffffff;
-    overflow-y: auto;
-    overflow-x: auto;
-}
-
-.right_side .fuel_info .fuel_nav{ 
-    text-transform: uppercase;
-    border-bottom: 3px solid rgb(150, 131, 8);
-    display: flex;
-
-}
-
-.right_side .nav_text{
+/* .dgmsDashboard .right-side .bal{
     padding: 10px;
+} */
+.dgmsDashboard .right-side hr {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 10px;
+}
+.dgmsDashboard .right-side .right-container .nav_text {
+  padding: 7px;
+  /* font-weight: bold; */
 }
 
-.right_side .fuel_info .fuel_body{ 
-    margin: 5px 5px 5px 10px;
+.dgmsDashboard .right-side .right_body {
+  margin: 4px 5px 7px 10px;
+  color: rgb(0, 0, 0);
 }
-
-.fuel_info .bold{
-    font-weight: normal;
-    color: rgb(49, 48, 6);
-    margin-right: 5px;
-}
-
-/*--------------------------------------CSS for Asset info-------------------------------*/
-.right_side .asset_info{
-    height: 58%;
-    background-color: #ffffff;
-     overflow-y: auto;
-    overflow-x: auto;
-}
-
-.right_side .asset_info .asset_nav{ 
-    text-transform: uppercase;
-    min-height: 5vh;
-    border-bottom: 3px solid rgb(25, 5, 78);
-    display: flex;
-}
-
-.right_side .asset_info .asset_body{ 
-    margin: 4px 5px 5px 10px;
-}
-
-.asset_info .bold{
-    font-weight: normal;
-    color: rgb(44, 92, 140);
-    margin-right: 5px;
+.dgmsDashboard .right-side .bold {
+  font-weight: normal;
+  color: rgb(71, 71, 71);
+  margin-right: 5px;
 }
 
 /*--------------------------------------CSS for grpahs-------------------------------*/
 
-
-.graphs-dg{
-    /* background-color: white; */
-    margin: 10px 22px 0px 22px;
-    
+.graphs-dg {
+  /* background-color: white; */
+  margin: 50px 22px 0px 22px;
 }
 
-.one-graph{
-    margin-bottom: 30px;
-    /* background-color: rgb(255, 255, 255); */
-    min-height: 64vh;
+.one-graph {
+  margin-bottom: 30px;
+  /* background-color: rgb(255, 255, 255); */
+  min-height: 64vh;
 }
 
 /**************************** Media Queries **********************************/
 
-@media only screen and (max-width: 1450px){
-
-    .left_side .four .row img{
-        height: 50px;
-        width: 50px;
-        margin: 30px 5px 30px 2px;
-     
-     }
-    
+@media only screen and (max-width: 1450px) {
+  .left-side .four .row img {
+    height: 50px;
+    width: 50px;
+    margin: 30px 5px 30px 2px;
+  }
 }
-
-
-
-

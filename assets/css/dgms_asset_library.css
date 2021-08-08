@@ -1,0 +1,254 @@
+.library{
+    margin: 25px;
+}
+
+.lib_head {
+    
+    display: flex;
+}
+
+.lib_head img{
+    width: 35px;
+    height: 35px;
+}
+
+.lib_head .heading{
+    font-size: 20px;
+    margin-left: 5px;
+    font-weight: bold;
+    margin-top: 2px;
+}
+
+.lib_wrapper{
+    min-height: 48vh;
+    margin-top: 40px;
+}
+
+.drop_downs select{
+ margin-top: 1px;
+ margin-bottom: 20px;
+ border: none;
+ font-size: 13px;
+ width: 8rem;
+ height: 2rem;
+ border-radius: 5px;
+ outline:none;
+ opacity: 0.9;
+ border: 1px solid rgb(177, 177, 177);
+}
+
+.drop_downs select:hover{
+    opacity: 1;
+    -webkit-box-shadow: 3px 3px 3px #666;
+       -moz-box-shadow: 3px 3px 3px #666;
+       box-shadow:3px 3px 3px #666;
+}
+.drop_downs button{
+  border-radius: 50%;
+  height: 32px;
+  width: 32px;
+  font-size: 11px;
+  outline: none;
+  background-color: rgb(51, 36, 103);
+  color: white;
+  margin-left: 10px;
+}
+
+
+.lib_wrapper .cont_wrapper{
+    background-color: rgb(255, 255, 255);
+    border-radius: 5px;
+    border:1px solid rgb(199, 199, 199);
+
+}
+
+
+.lib_wrapper .file_cont{
+    
+    width: 100%;
+    /* background-color: blueviolet; */
+    min-height: 6vh;
+    border-bottom:1px solid rgb(199, 199, 199);
+    display: flex;   
+}
+
+
+.lib_wrapper .file_cont .left-side{
+    width: 80%;
+    /* background-color: brown; */
+    display: flex;
+}
+
+.lib_wrapper .file_cont .right-side{
+    width: 20%;
+    /* background-color: rgb(113, 113, 113); */
+    display: flex;
+    justify-content: space-around;
+}
+
+.lib_wrapper .file_cont .left-side img{
+    margin: 20px;
+    width: 35px;
+    height: 35px;
+}
+
+.lib_wrapper .file_cont .left-side .file_name{
+    margin-top: 27px;
+}
+
+
+
+ .lib_wrapper .file_cont .right-side div{
+  border: 1px solid rgb(177, 177, 177);
+  width: 30%;
+  text-align: center;
+  margin: 10px;
+}
+
+.lib_wrapper .file_cont .right-side div:hover{
+    position: relative;
+    top: -1px;
+    border: 1px solid rgb(113, 113, 113);
+    cursor: pointer;
+}
+
+.lib_wrapper .file_cont .right-side div img{
+      margin: 14px;
+      width: 25px;
+      height: 25px;
+     
+} 
+
+
+
+/*----------------------CSS For Popup Modal-----------------------------------*/
+
+.pop-modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 15px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    min-height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  
+  /* Modal Content */
+  .modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    /* border: 1px solid #28a745; */
+    width: 50%;
+    min-height: 90vh;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s;
+  }
+  
+  /* Add Animation */
+  @-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0} 
+    to {top:0; opacity:1}
+  }
+  
+  @keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+  }
+  
+  /* The Close Button */
+  .close {
+    color: rgb(89, 128, 100);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: rgb(6, 126, 40);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .modal-header {
+    padding: 2px 16px;
+    /* background-color: #5cb85c; */
+    color: white;
+  }
+  
+  .modal-body {padding: 2px 16px;}
+  
+  .modal-footer {
+    padding: 2px 16px;
+    /* background-color: #5cb85c; */
+    color: white;
+  }
+
+
+  #canvas_container {
+    width: 100%;
+    height: 550px;
+    overflow: auto;
+    background: rgb(198, 198, 198);
+    text-align: center;
+    /* border-top: 1px solid #28a745;
+    border-bottom: 1px solid #28a745; */
+}
+
+
+/*----------------------CSS For Navigation Control-----------------------------------*/
+
+#navigation_controls{
+  text-align: center;
+  margin: 10px;
+}
+
+#navigation_controls button{
+  display: inline-block;
+  background-color: rgb(51, 36, 103);
+  /* border: 1px solid rgb(6, 126, 40); */
+  outline: none;
+  border-radius: 5px;
+  color: rgb(255, 255, 255);
+  font-size: 13px;
+}
+
+
+#navigation_controls input{
+  width: 100px;
+  height: 24px;
+  font-size: 15px;
+  margin-left: 20px;
+  margin-right: 20px;
+  color: rgb(51, 36, 103);
+  border: 1px solid rgb(51, 36, 103);
+  border-radius: 5px;
+  font-size: 13px;
+}
+
+#zoom_controls{
+  text-align: center;
+  margin: 10px;
+}
+
+#zoom_controls button
+{
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  outline: none;
+  font-size: 15px;
+  /* border: 1px solid rgb(6, 126, 40); */
+  background-color: rgb(51, 36, 103);
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+}

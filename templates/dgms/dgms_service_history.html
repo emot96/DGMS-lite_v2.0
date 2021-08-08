@@ -68,7 +68,7 @@
 
 <div class="asset_detail">
  
-    <div class="asset_img"><img src="{% static './images/asset1.png' %}" alt="asset"></div>
+    <div class="asset_img"><img src="{{asset.Asset_Photo.url}}" alt="asset"></div>
 
     <div class="asset_info">
         <div class="asset_name">Service History</div>
@@ -88,70 +88,85 @@
     
         <tr class="t_body">
           <td>SERVICE PROVIDER</td>
-          <td >{{SP}} </td>
+          <td >{{service_info.Service_Provider}} </td>
         </tr>
     
         <tr class="t_body">
           <td>ADDRESS</td>
-          <td> {{Address}} </td>
+          <td>{{service_info.Address}}</td>
         </tr>
     
         <tr class="t_body">
-          <td>CONTACT NUMBER</td>
-          <td>{{SC}}</td>
-        </tr>
-        
-        <tr class="t_body">
-          <td>EMAIL</td>
-          <td>{{SC}}</td>
+          <td>CONTACT</td>
+          <td>{{service_info.Contact}} </td>
         </tr>
 
         <tr class="t_body">
+          <td>EMAIL</td>
+          <td>{{service_info.Email}} </td>
+        </tr>
+
+        <tr class="t_body" id="heading">
           <td colspan="2">CONTRACT</td>
         </tr>
 
         <tr class="t_body">
           <td>CONTRACT TYPE</td>
-          <td>{{Contract}}</td>
-        </tr>
-    
-        <tr class="t_body">
-          <td colspan="2">LAST SERVICE</td>
-        </tr>
-    
-        <tr class="t_body">
-          <td>LAST SERVICE DATE</td>
-          <td>{{LSD}}</td>
-        </tr>
-    
-        <tr class="t_body">
-          <td>ACTIVITY</td>
-          <td>{{Activity}}</td>
-        </tr>
-    
-        <tr class="t_body">
-          <td>REMARK</td>
-          <td>{{Remark}}</td>
+          <td>{{service_info.Service_Contract}} </td>
         </tr>
 
+        <tr class="t_body" id="heading">
+          <td colspan="2">BATTERY INFO</td>
+        </tr>
 
         <tr class="t_body">
+          <td>NEXT REPLACEMENT DATE</td>
+          <td>{{service_info.Battery_Next_Replacement_Date}} </td>
+        </tr>
+
+        <tr class="t_body">
+          <td>LAST REPLACEMENT DATE</td>
+          <td>{{service_info.Battery_Last_Replacement_Date}} </td>
+        </tr>
+    
+    
+        <tr class="t_body" id="heading">
           <td colspan="2">NEXT SERVICE</td>
         </tr>
     
         <tr class="t_body">
-          <td>NEXT SERVICE DATE</td>
-          <td>{{NSD}}</td>
+          <td>SERVICE DATE</td>
+          <td>{{service_info.Next_Service_Date}}</td>
         </tr>
     
         <tr class="t_body">
           <td>ACTIVITY</td>
-          <td>{{Activity1}}</td>
+          <td>{{service_info.Activity1}}</td>
         </tr>
     
         <tr class="t_body">
           <td>REMARK</td>
-          <td>{{Remark1}}</td>
+          <td>{{service_info.Remark1}}</td>
+        </tr>
+
+
+        <tr class="t_body" id="heading">
+          <td colspan="2">LAST SERVICE</td>
+        </tr>
+    
+        <tr class="t_body">
+          <td>SERVICE DATE</td>
+          <td>{{service_info.Last_Service_Date}}</td>
+        </tr>
+    
+        <tr class="t_body">
+          <td>ACTIVITY</td>
+          <td>{{service_info.Activity}}</td>
+        </tr>
+    
+        <tr class="t_body">
+          <td>REMARK</td>
+          <td>{{service_info.Remark}}</td>
         </tr>
   
       </tbody>
@@ -195,7 +210,7 @@
     
 
 <script type="text/javascript" src="{% static './js/navbar.js' %}"></script>
-<script type="text/javascript" src="{% static './js/dgms_pdf-download_service-history.js ' %}"></script>
+<script type="text/javascript" src="{% static './js/dgms_pdf-download_service-history.js' %}"></script>
 
 </body>
 

@@ -23,26 +23,6 @@ class UserAdmin(UserAdmin):
     )
 
 
-#     add_form = UserCreationForm
-#     form = UserChangeForm
-#     model = User
-#     list_display = ('username', 'email', 'is_staff', 'is_active')
-#     list_filter = ('username', 'email', 'is_staff', 'is_active')
-#     fieldsets = (
-#         (None, {'fields': ('username', 'email', 'password')}),
-#         ('permissions', {'fields': ('is_staff', 'is_active')}),
-
-#     )
-#     add_fieldsets = (
-#         (None, {
-#             'classes': ('wide',),
-#             'fields': ('username', 'email', 'password', 'is_staff', 'is_active')}
-#          ),
-#     )
-#     search_fields = ('username', 'email',)
-#     ordering = ('username', 'email',)
-
-
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ('Customer_Name', 'Customer_ID', 'Email_ID')
     # search_fields = ('Customer_Name', 'Customer_ID', 'Email_ID')
@@ -100,9 +80,9 @@ class DeviceAdmin(admin.ModelAdmin):
     ordering = ['device_id', 'device_name', 'account_id', 'device_location']
 
 
-class DevicesInfoAdmin(admin.ModelAdmin):
-    list_display = ('device_header', 'device_id')
-    ordering = ['device_header', 'device_id']
+class DeviceOperationalAdmin(admin.ModelAdmin):
+    list_display = ('device_id', 'unit_generated_kwh', 'energy_generated_kwh')
+    ordering = ['device_id', 'unit_generated_kwh', 'energy_generated_kwh']
 
 
 class PriceAdmin(admin.ModelAdmin):
@@ -130,22 +110,35 @@ class UPS_Service_HistoryAdmin(admin.ModelAdmin):
     ordering = ['Customer_Name', 'Device_ID', 'Service_Provider']
 
 
+class ThresholdMetadataAdmin(admin.ModelAdmin):
+    list_display = ('rating', 'threshold_operator', 'device_phase')
+    ordering = ['rating', 'threshold_operator', 'device_phase']
+
+
+class LibraryAdmin(admin.ModelAdmin):
+    list_display = ('Device_ID', 'Type', 'File')
+    ordering = ['Device_ID', 'Type', 'File']
+
+
 # # # Register your models here.
 admin.site.register(User, UserAdmin)
 admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Manager, ManagerAdmin)
 admin.site.register(User_Detail,  User_DetailAdmin)
+admin.site.register(Accounts, AccountsAdmin)
 admin.site.register(Asset, AssetAdmin)
 admin.site.register(Service_History, Service_HistoryAdmin)
 admin.site.register(DGMS_Device_Info, DGMS_Device_InfoAdmin)
 admin.site.register(Sensor_Info, Sensor_InfoAdmin)
 admin.site.register(Before_DGMA_INSTALLATION, Before_DGMA_INSTALLATIONAdmin)
-admin.site.register(Accounts, AccountsAdmin)
+
 admin.site.register(Device, DeviceAdmin)
-admin.site.register(DevicesInfo, DevicesInfoAdmin)
+admin.site.register(DeviceOperational, DeviceOperationalAdmin)
 admin.site.register(Price, PriceAdmin)
 admin.site.register(EMS_Asset, EMS_AssetAdmin)
 admin.site.register(EMS_Service_History, EMS_Service_HistoryAdmin)
 admin.site.register(UPS_Asset, UPS_AssetAdmin)
 admin.site.register(UPS_Service_History, UPS_Service_HistoryAdmin)
 admin.site.register(Automation)
+admin.site.register(ThresholdMetadata, ThresholdMetadataAdmin)
+admin.site.register(Library, LibraryAdmin)
