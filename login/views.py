@@ -103,7 +103,7 @@ def dashboard(request):
 
             PreRH = Before_DGMA_INSTALLATION.objects.get(
                 Device_ID=device_id).Previous_Run_Hour
-            Run = Run + int(PreRH)
+            Run = int(Run) + int(PreRH)
             seconds = Run
             # seconds = seconds % (24 * 3600)
             hour = seconds // 3600
