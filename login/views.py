@@ -98,14 +98,14 @@ def dashboard(request):
             else:
                 
                 Run = 0
-#                 Run = DevicesInfo.objects.filter(device_id=device_id).exclude(
-#                     runtime_second_ctrl=0).last()
-#                 if Run != None:
-#                     Run = Run.runtime_second_ctrl
+                Run = DevicesInfo.objects.filter(device_id=device_id).exclude(
+                     runtime_second_ctrl=0).last()
+                 if Run != None:
+                    Run = Run.runtime_second_ctrl
 
             PreRH = Before_DGMA_INSTALLATION.objects.get(
                 Device_ID=device_id).Previous_Run_Hour
-            Run = int(Run )+ int(PreRH)
+            Run = Run + int(PreRH)
             seconds = Run
             # seconds = seconds % (24 * 3600)
             hour = seconds // 3600
