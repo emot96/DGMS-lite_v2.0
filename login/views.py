@@ -97,7 +97,7 @@ def dashboard(request):
                 Run = Run.dg_runtime_seconds
             else:
                 
-                Run = 0
+                Run = 1
 #                 Run = DevicesInfo.objects.filter(device_id=device_id).exclude(
 #                      runtime_second_ctrl=0).last()
 #                  if Run != None:
