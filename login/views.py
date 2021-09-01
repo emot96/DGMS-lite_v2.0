@@ -86,10 +86,12 @@ def dashboard(request):
             Rat = Device.objects.get(device_id=device_id).device_rating
             Stat = Device.objects.get(device_id=device_id).device_status
             Date = datetime.datetime.now()
-            
-            Fuel2 = round(DevicesInfo.objects.filter(
-                device_id=device_id).exclude(fuel_level_litre=0).last().fuel_level_litre, 2)
-            
+            try:
+                Fuel2 = round(DevicesInfo.objects.filter(
+                     device_id=device_id).exclude(fuel_level_litre=0).last().fuel_level_litre, 2)
+            except:
+                  Fuel2 = 0
+           
             Tank_Size = Asset.objects.get(
                 Device_ID=device_id).Diesel_Tank_Size
             Fuel_Per = round((Fuel2/Tank_Size)*100, 2)
@@ -98,13 +100,13 @@ def dashboard(request):
             if Run != None:
                 Run = Run.dg_runtime_seconds
             else:
-                Run = 1
                 
-#                Run = DevicesInfo.objects.filter(device_id=device_id).exclude(
-#                      runtime_second_ctrl=0).last()
-#                  if Run != None:
-#                     Run = Run.runtime_second_ctrl
-
+                Run = DevicesInfo.objects.filter(device_id=device_id).exclude(
+                    runtime_second_ctrl=0).last()
+                if Run != None:
+                    Run = Run.runtime_second_ctrl
+             
+          
             PreRH = Before_DGMA_INSTALLATION.objects.get(
                 Device_ID=device_id).Previous_Run_Hour
             Run = Run + int(PreRH)
